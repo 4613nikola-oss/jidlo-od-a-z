@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    container_name: jidlo-od-a-z
+    ports:
+      - "8080:80"
+    # Při vývoji se změny v souborech projeví hned, bez nového sestavení
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
+      - ./ikona.svg:/usr/share/nginx/html/ikona.svg:ro
+      - ./css:/usr/share/nginx/html/css:ro
+      - ./js:/usr/share/nginx/html/js:ro
+    restart: unless-stopped

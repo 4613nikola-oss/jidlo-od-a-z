@@ -26,6 +26,14 @@ js/data.js      recepty a články (zatím ukázková data)
 
 Stačí otevřít `index.html` v prohlížeči. Odkazy na články (`../clanky.html` apod.) fungují, když je složka aplikace umístěná ve složce webu.
 
+### Přes Docker
+
+```
+docker compose up -d --build
+```
+
+Appka poběží na http://localhost:8080. Změny v HTML, CSS a JS se projeví po obnovení stránky. Zastavení: `docker compose down`.
+
 ## Plán
 
 - skutečné recepty s kcal místo ukázkových
