@@ -1,0 +1,13 @@
+{
+  "name": "Jídlo od A–Z | Koláč od Niky",
+  "short_name": "Jídlo od A–Z",
+  "description": "Kalorická kalkulačka, jídelníček na míru a recepty z toho, co máš doma.",
+  "lang": "cs",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fdfbf7",
+  "theme_color": "#3b4d38",
+  "icons": [
+    { "src": "ikona.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

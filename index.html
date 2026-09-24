@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jídlo od A–Z – kalorická kalkulačka, jídelníček a recepty z ledničky | Koláč od Niky</title>
+    <meta name="description" content="Kalorická kalkulačka, jídelníček na míru a recepty z toho, co máš doma. Spočítej si denní příjem, rozděl ho do jídel a vytvoř si nákupní seznam.">
+    <meta name="theme-color" content="#3b4d38">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ikona.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+    <!-- HLAVIČKA -->
+    <header class="app-header">
+        <a href="../index.html" class="app-logo">Koláč od Niky</a>
+        <span class="app-name">Jídlo od A–Z</span>
+    </header>
+
+    <!-- NAVIGACE MEZI SEKCEMI (na mobilu dole) -->
+    <nav class="tabbar" aria-label="Sekce aplikace">
+        <button class="tab is-active" data-tab="profil" aria-current="page"><span aria-hidden="true">🧮</span> Profil</button>
+        <button class="tab" data-tab="den"><span aria-hidden="true">🍽️</span> Můj den</button>
+        <button class="tab" data-tab="lednicka"><span aria-hidden="true">🥕</span> Lednička</button>
+        <button class="tab" data-tab="recepty"><span aria-hidden="true">📖</span> Recepty</button>
+        <button class="tab" data-tab="nakup"><span aria-hidden="true">🛒</span> Nákup <span class="tab-count" id="shop-count" hidden></span></button>
+    </nav>
+
+    <main class="app-main">
+
+        <!-- 1) PROFIL A KALKULAČKA -->
+        <section class="panel" id="panel-profil">
+            <h1 class="panel-title">Kolik energie potřebuješ?</h1>
+            <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Údaje zůstávají jen v tvém prohlížeči.</p>
+
+            <form id="profile-form" class="card" novalidate>
+                <fieldset class="field">
+                    <legend>Tvůj cíl</legend>
+                    <div class="segmented">
+                        <label><input type="radio" name="goal" value="hubnout"> <span>Hubnout</span></label>
+                        <label><input type="radio" name="goal" value="udrzet" checked> <span>Udržet</span></label>
+                        <label><input type="radio" name="goal" value="nabrat"> <span>Nabrat</span></label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="field">
+                    <legend>Pohlaví</legend>
+                    <div class="radio-row">
+                        <label><input type="radio" name="gender" value="female" checked> Žena</label>
+                        <label><input type="radio" name="gender" value="male"> Muž</label>
+                    </div>
+                </fieldset>
+
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="age">Věk (roky)</label>
+                        <input type="number" id="age" inputmode="numeric" min="18" max="100" placeholder="30">
+                        <p class="field-error" id="age-error"></p>
+                    </div>
+                    <div class="field">
+                        <label for="weight">Hmotnost (kg)</label>
+                        <input type="number" id="weight" inputmode="decimal" step="0.1" min="30" max="250" placeholder="65">
+                        <p class="field-error" id="weight-error"></p>
+                    </div>
+                    <div class="field">
+                        <label for="height">Výška (cm)</label>
+                        <input type="number" id="height" inputmode="numeric" min="120" max="230" placeholder="170">
+                        <p class="field-error" id="height-error"></p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="activity">Fyzická aktivita</label>
+                    <select id="activity">
+                        <option value="1.2">Minimální (sedavé zaměstnání)</option>
+                        <option value="1.375">Lehká (pohyb 1–3× týdně)</option>
+                        <option value="1.55" selected>Střední (sport 3–5× týdně)</option>
+                        <option value="1.725">Vysoká (intenzivní sport 6–7× týdně)</option>
+                        <option value="1.9">Extrémní (vrcholový sport, fyzická práce)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full">Spočítat</button>
+            </form>
+
+            <section id="profile-results" class="card results" hidden aria-live="polite">
+                <h2 class="card-title">Tvoje čísla</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">Bazální metabolismus</span>
+                        <span class="stat-value"><span id="r-bmr">0</span> kcal</span>
+                        <span class="stat-hint">Tolik tělo spálí v úplném klidu.</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Denní výdej</span>
+                        <span class="stat-value"><span id="r-tdee">0</span> kcal</span>
+                        <span class="stat-hint">Průměrný výdej včetně pohybu.</span>
+                    </div>
+                    <div class="stat stat--main">
+                        <span class="stat-label">Tvůj denní cíl</span>
+                        <span class="stat-value"><span id="r-target">0</span> kcal</span>
+                        <span class="stat-hint" id="r-goal-note"></span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn--primary btn--full" data-action="go-day">Rozděl mi to do jídel →</button>
+
+                <div class="articles">
+                    <h3>Mohlo by tě zajímat</h3>
+                    <ul id="r-articles" class="article-list"></ul>
+                </div>
+            </section>
+        </section>
+
+        <!-- 2) MŮJ DEN -->
+        <section class="panel" id="panel-den" hidden>
+            <h1 class="panel-title">Můj den</h1>
+
+            <div id="day-empty" class="card empty">
+                <p>Nejdřív si spočítej svůj denní cíl a appka ti ho rozdělí do jídel.</p>
+                <button type="button" class="btn btn--primary" data-action="go-profil">Spočítat cíl</button>
+            </div>
+
+            <div id="day-content" hidden>
+                <p class="panel-lead">Tvůj cíl je <strong><span id="day-target">0</span> kcal</strong>. Tady je návrh, jak ho rozdělit. Recept vyměníš tlačítkem „Jiný recept“.</p>
+                <div id="day-meals" class="meal-list"></div>
+                <div class="card day-total">
+                    <span>Celkem za den</span>
+                    <strong><span id="day-sum">0</span> kcal</strong>
+                </div>
+                <button type="button" class="btn btn--ghost btn--full" data-action="shop-day">Přidat celý den na nákup</button>
+            </div>
+        </section>
+
+        <!-- 3) LEDNIČKA -->
+        <section class="panel" id="panel-lednicka" hidden>
+            <h1 class="panel-title">Co mám v ledničce?</h1>
+            <p class="panel-lead">Označ, co máš doma, a appka najde recepty, které z toho uvaříš.</p>
+
+            <div class="card">
+                <label for="fridge-search" class="sr-only">Hledat surovinu</label>
+                <input type="search" id="fridge-search" class="search" placeholder="Hledat surovinu, např. vejce">
+                <div id="fridge-chips" class="chips"></div>
+                <div class="fridge-footer">
+                    <span id="fridge-count">Nic nevybráno</span>
+                    <button type="button" class="link-btn" data-action="fridge-clear">Vymazat výběr</button>
+                </div>
+            </div>
+
+            <div id="fridge-results" class="recipe-list"></div>
+        </section>
+
+        <!-- 4) RECEPTY -->
+        <section class="panel" id="panel-recepty" hidden>
+            <h1 class="panel-title">Recepty</h1>
+            <div class="filters" id="recipe-filters">
+                <button type="button" class="chip is-on" data-filter="vse" aria-pressed="true">Vše</button>
+                <button type="button" class="chip" data-filter="slane" aria-pressed="false">Slané</button>
+                <button type="button" class="chip" data-filter="sladke" aria-pressed="false">Sladké</button>
+                <button type="button" class="chip" data-filter="napoje" aria-pressed="false">Nápoje</button>
+            </div>
+            <label for="recipe-search" class="sr-only">Hledat recept</label>
+            <input type="search" id="recipe-search" class="search" placeholder="Hledat recept">
+            <div id="recipe-list" class="recipe-list"></div>
+        </section>
+
+        <!-- 5) NÁKUPNÍ SEZNAM -->
+        <section class="panel" id="panel-nakup" hidden>
+            <h1 class="panel-title">Nákupní seznam</h1>
+
+            <form id="shop-form" class="shop-add">
+                <label for="shop-input" class="sr-only">Přidat položku</label>
+                <input type="text" id="shop-input" placeholder="Přidat vlastní položku">
+                <button type="submit" class="btn btn--primary">Přidat</button>
+            </form>
+
+            <ul id="shop-list" class="shop-list"></ul>
+            <p id="shop-empty" class="empty-text">Seznam je prázdný. Přidej suroviny z receptů tlačítkem „Na nákup“.</p>
+
+            <button type="button" class="btn btn--ghost btn--full" id="shop-clear-done" data-action="shop-clear-done" hidden>Smazat koupené</button>
+        </section>
+
+        <p class="disclaimer">Appka je určená pro dospělé a slouží jen pro orientaci, nejde o lékařskou radu. V těhotenství, při kojení nebo zdravotních potížích se poraď s lékařem či nutričním terapeutem.</p>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
