@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    image: nikolapaluskova/jidlo-od-a-z:latest
     container_name: jidlo-od-a-z
     ports:
       - "8080:80"
