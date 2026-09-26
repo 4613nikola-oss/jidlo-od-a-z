@@ -2,6 +2,11 @@
 
 Aplikace pro Niky's kitchen: kalorická kalkulačka, jídelníček a recepty z ledničky.
 
+**Živá ukázka:** https://4613nikola-oss.github.io/jidlo-od-a-z/
+**Docker obraz:** [nikolapaluskova/jidlo-od-a-z](https://hub.docker.com/r/nikolapaluskova/jidlo-od-a-z)
+
+Technologie: HTML, CSS, čistý JavaScript (bez frameworků), localStorage, PWA manifest, Docker + nginx.
+
 ## Co umí
 
 - **Profil** – z věku, váhy, výšky, pohybu a cíle (hubnout / udržet / nabrat) spočítá denní příjem v kcal (rovnice Mifflin-St Jeor).
