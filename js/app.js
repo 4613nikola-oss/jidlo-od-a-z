@@ -15,7 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const $ = (sel) => document.querySelector(sel);
 
-    // Bezpečné uložení/načtení – když prohlížeč ukládání nepovolí, appka funguje dál
+    // Když prohlížeč ukládání nepovolí, appka funguje dál, ale řekne to uživateli
+    function warnStorage() {
+        const el = $("#storage-warning");
+        if (el) el.hidden = false;
+    }
+
+    // Bezpečné uložení/načtení
     const store = {
         get(key, fallback) {
             try {
@@ -24,9 +30,15 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (e) { return fallback; }
         },
         set(key, value) {
-            try { localStorage.setItem("jidloaz-" + key, JSON.stringify(value)); } catch (e) { /* nic */ }
+            try { localStorage.setItem("jidloaz-" + key, JSON.stringify(value)); } catch (e) { warnStorage(); }
         }
     };
+
+    // Kontrola hned při spuštění, ať se to člověk dozví dřív, než něco vyplní
+    try {
+        localStorage.setItem("jidloaz-test", "1");
+        localStorage.removeItem("jidloaz-test");
+    } catch (e) { warnStorage(); }
 
     // Ochrana proti vložení HTML z textu, který napíše uživatel
     function esc(text) {
