@@ -1,0 +1,27 @@
+# Soubory, které se nikdy nenahrají na GitHub (hesla, klíče, soukromé věci)
+
+# Soukromá složka – sem si dávej cokoli, co nemá být veřejné
+soukrome/
+
+# Hesla, klíče a přístupové údaje
+.env*
+*.pem
+*.key
+*heslo*
+*hesla*
+*password*
+*secret*
+*token*
+
+# Zálohy, exporty a archivy
+*.zip
+*.rar
+*.7z
+*.sql
+*.db
+*.bak
+
+# Systémové soubory
+Thumbs.db
+desktop.ini
+.DS_Store
