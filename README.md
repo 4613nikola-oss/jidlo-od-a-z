@@ -26,6 +26,14 @@ Hodně lidí chce jíst zdravě, ale v praxi narazí na tohle:
 - krátké texty s možností rozkliknout víc, čeština a angličtina, důraz na přístupnost (i pro lidi se zrakovým postižením),
 - informace jen z ověřených zdrojů, bez zdravotních slibů.
 
+## Proč si appku otevřít (a přidat na plochu)
+
+- **Za pár minut víš, kolik toho denně sníst.** Stačí věk, výška, váha, pohyb a cíl, nic dalšího nezapisuješ.
+- **Neřeší jen čísla, ale konkrétní jídla.** Rozdělí příjem na snídani, oběd, večeři a svačinu a k nim navrhne recepty a porce.
+- **Uvaříš z toho, co máš doma.** Zadáš, co je v ledničce, a appka ukáže, co z toho jde uvařit a co dokoupit.
+- **Nákupní seznam se sestaví sám** a vezmeš si ho do obchodu v mobilu.
+- **Zdarma, bez registrace a bez reklam.** Údaje zůstávají jen v tvém prohlížeči, nikam se neposílají.
+- **Funguje jako appka v mobilu.** Přes „Přidat na plochu“ ji máš po ruce bez stahování z obchodu s aplikacemi.
 ## Niky's Kitchen – jak to spolu souvisí
 
 Niky's Kitchen má tři části. Cíl je pořád stejný: ulehčit lidem zdravé stravování bez složitého počítání a bez výčitek.
