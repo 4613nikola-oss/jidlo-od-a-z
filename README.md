@@ -3,7 +3,10 @@
 Webová appka značky **Niky's Kitchen**: spočítá, kolik toho denně sníst, rozdělí to do jídel, najde recepty podle toho, co máš v ledničce, a sestaví nákupní seznam. Česky, brzy i anglicky.
 
 **Živá appka:** https://4613nikola-oss.github.io/jidlo-od-a-z/
+**Web Niky's Kitchen:** https://4613nikola-oss.github.io/nikys-kitchen-web/
 **Docker obraz:** [nikolapaluskova/jidlo-od-a-z](https://hub.docker.com/r/nikolapaluskova/jidlo-od-a-z)
+
+![Appka Jídlo od A–Z: plán dne a lednička v mobilu, vlevo recept na webu Niky's Kitchen](docs/ukazky/ukazka-appka.webp)
 
 ## Jaký problém to řeší
 
@@ -34,6 +37,7 @@ Hodně lidí chce jíst zdravě, ale v praxi narazí na tohle:
 - **Nákupní seznam se sestaví sám** a vezmeš si ho do obchodu v mobilu.
 - **Zdarma, bez registrace a bez reklam.** Údaje zůstávají jen v tvém prohlížeči, nikam se neposílají.
 - **Funguje jako appka v mobilu.** Přes „Přidat na plochu“ ji máš po ruce bez stahování z obchodu s aplikacemi.
+
 ## Niky's Kitchen – jak to spolu souvisí
 
 Niky's Kitchen má tři části. Cíl je pořád stejný: ulehčit lidem zdravé stravování bez složitého počítání a bez výčitek.
@@ -46,7 +50,7 @@ Niky's Kitchen má tři části. Cíl je pořád stejný: ulehčit lidem zdravé
 
 **Jak na sebe navazují:** na webu najdeš recept nebo článek → v appce si spočítáš, co a kolik jíst, a uvaříš z toho, co máš doma → kdo chce víc, koupí si v obchodě hotový plán nebo e-book.
 
-Appka bude časem přímo součástí webu. Recepty v ní jsou zatím ukázkové, skutečné přibydou s receptům na webu.
+Appka bude časem přímo součástí webu. Už teď si bere recepty a články ze stejné databáze jako web (viz níže).
 
 ## Co appka umí
 
@@ -59,9 +63,25 @@ Appka bude časem přímo součástí webu. Recepty v ní jsou zatím ukázkové
 
 > Appka nenahrazuje lékařskou ani nutriční radu.
 
+## Ukázky
+
+| Profil | Můj den | Lednička | Recepty |
+|---|---|---|---|
+| ![Profil: výpočet denního příjmu](docs/ukazky/appka-profil.webp) | ![Můj den: rozdělení příjmu do jídel a návrh receptů](docs/ukazky/appka-den.webp) | ![Lednička: recepty podle surovin, které máš doma](docs/ukazky/appka-lednicka.webp) | ![Recepty: přehled s filtrem a hledáním](docs/ukazky/appka-recepty.webp) |
+## Odkud se berou recepty
+
+Recepty a články jsou uložené v **databázi PostgreSQL** projektu Niky's Kitchen (repozitář `nikys-kitchen-web`). Web z nich při sestavení vyrobí soubor `api/appka.json` a appka si ho při startu stáhne.
+
+- Appka se ukáže hned se záložními recepty z `js/data.js`. Jakmile dorazí recepty z databáze, překreslí se.
+- Když se stažení nepovede (bez internetu, web neběží), zůstanou záložní recepty, takže appka funguje vždycky.
+- Recepty bez kcal (Niky je ještě doplní) se v Receptech a Ledničce ukážou, ale do plánu dne se nedávají, protože se k nim nedá spočítat porce.
+- Na počítači (`localhost`) appka čte recepty z webu na http://localhost:3000, jinak z https://4613nikola-oss.github.io/nikys-kitchen-web/.
+
+![Pohled appka_recepty v databázi – recepty v podobě, jakou appka potřebuje](docs/ukazky/databaze-appka.webp)
+
 ## Technologie
 
-HTML, CSS, čistý JavaScript (bez frameworků), localStorage, PWA manifest, Docker + nginx.
+HTML, CSS, čistý JavaScript (bez frameworků), `fetch` + JSON z databáze PostgreSQL, localStorage, PWA manifest, Docker + nginx.
 
 ## Struktura
 
@@ -70,8 +90,9 @@ index.html      stránka aplikace
 manifest.json   nastavení pro přidání na plochu
 ikona.svg       ikona
 css/app.css     vzhled
-js/app.js       logika aplikace
-js/data.js      recepty a články (zatím ukázková data)
+js/app.js       logika aplikace (+ načtení receptů z databáze přes web)
+js/data.js      záložní recepty a články, když se databáze nenačte
+docs/ukazky/    screenshoty do README
 ```
 
 ## Spuštění
@@ -80,7 +101,7 @@ js/data.js      recepty a články (zatím ukázková data)
 docker compose up -d --build
 ```
 
-Appka poběží na http://localhost:8080. Změny v HTML, CSS a JS se projeví po obnovení stránky. Zastavení: `docker compose down`.
+Appka poběží na http://localhost:8080. Aby brala recepty z databáze, spusť vedle i web (`docker compose up -d` ve složce webu). Změny v HTML, CSS a JS se projeví po obnovení stránky. Zastavení: `docker compose down`.
 
 ## Větve
 
@@ -89,7 +110,7 @@ Appka poběží na http://localhost:8080. Změny v HTML, CSS a JS se projeví po
 
 ## Plán
 
-- skutečné recepty s kcal místo ukázkových
+- skutečné kcal u všech receptů (doplňují se v databázi)
 - anglická verze
 - týdenní jídelníček se „sladkou tečkou“
 - appka jako součást nového webu

@@ -56,6 +56,31 @@ document.addEventListener("DOMContentLoaded", function () {
         toastTimer = setTimeout(() => { el.hidden = true; }, 2500);
     }
 
+    /* ============ RECEPTY Z DATABÁZE ============ */
+
+    // Recepty a články jsou v databázi webu Niky's Kitchen. Web z nich při sestavení
+    // vyrobí soubor api/appka.json. Když se ho nepodaří stáhnout (bez internetu, web zrovna neběží),
+    // appka použije záložní recepty z js/data.js – funguje tedy vždycky.
+    const WEB_URL = ["localhost", "127.0.0.1"].includes(location.hostname)
+        ? "http://localhost:3000/"
+        : "https://4613nikola-oss.github.io/nikys-kitchen-web/";
+
+    async function loadFromWeb() {
+        try {
+            const res = await fetch(WEB_URL + "api/appka.json", { cache: "no-cache" });
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            if (!Array.isArray(data.recepty) || !data.recepty.length) throw new Error("žádné recepty");
+            RECEPTY.splice(0, RECEPTY.length, ...data.recepty.map((r) => ({ ...r, odkaz: WEB_URL + r.odkaz })));
+            if (Array.isArray(data.clanky) && data.clanky.length) {
+                CLANKY.splice(0, CLANKY.length, ...data.clanky.map((c) => ({ ...c, odkaz: WEB_URL + c.odkaz })));
+            }
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     const KATEGORIE = { slane: "Slané", sladke: "Sladké", napoje: "Nápoje" };
     const JIDLA = [
         { id: "snidane", nazev: "Snídaně", podil: 0.25 },
@@ -201,7 +226,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Recepty vhodné pro dané jídlo, seřazené od nejlépe sedícího
     function candidatesFor(mealId, targetKcal) {
         return RECEPTY
-            .filter((r) => r.jidlo.includes(mealId))
+            // recepty bez kcal (ještě je doplníme) do plánu dne nepatří – nedá se spočítat porce
+            .filter((r) => r.kcal && r.jidlo.includes(mealId))
             .map((r) => {
                 const porce = portionFor(r, targetKcal);
                 return { recipe: r, porce, diff: Math.abs(r.kcal * porce - targetKcal) + Math.abs(porce - 1) * 60 };
@@ -267,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return `<article class="card recipe">
             <div class="recipe-top">
                 <span class="badge badge--${r.kategorie}">${KATEGORIE[r.kategorie]}</span>
-                <span class="recipe-kcal">${fmt(r.kcal)} kcal / porce</span>
+                <span class="recipe-kcal">${r.kcal ? fmt(r.kcal) + " kcal / porce" : "kcal doplníme"}</span>
             </div>
             <h2 class="recipe-title"><a href="${esc(r.odkaz)}">${esc(r.nazev)}</a></h2>
             <p class="recipe-meta">${r.cas} min · ${tags}</p>
@@ -281,8 +307,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ============ 3) LEDNIČKA ============ */
 
-    const allIngredients = [...new Set(RECEPTY.flatMap((r) => r.suroviny))]
-        .sort((a, b) => a.localeCompare(b, "cs"));
+    // Všechny suroviny ze všech receptů (po načtení receptů z webu se přepočítají)
+    let allIngredients = [];
+    function refreshIngredients() {
+        allIngredients = [...new Set(RECEPTY.flatMap((r) => r.suroviny))]
+            .sort((a, b) => a.localeCompare(b, "cs"));
+    }
+    refreshIngredients();
 
     function renderFridge() {
         const q = $("#fridge-search").value.trim().toLowerCase();
@@ -481,4 +512,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const lastTab = store.get("tab", "profil");
     if (document.getElementById("panel-" + lastTab)) openTab(lastTab);
+
+    // Appka se ukáže hned se záložními recepty, a jakmile dorazí recepty z databáze, překreslí se
+    loadFromWeb().then((ok) => {
+        if (!ok) return;
+        refreshIngredients();
+        if (state.profile) renderProfileResults();
+        renderDay();
+        renderFridge();
+        renderRecipes();
+    });
 });
