@@ -44,7 +44,7 @@ Niky's Kitchen má tři části. Cíl je pořád stejný: ulehčit lidem zdravé
 
 | Část | Co to je | Stav |
 |------|----------|------|
-| 🌐 **Web s blogem** | recepty (slané, sladké, nápoje) a krátké články o výživě, česky i anglicky | připravujeme |
+| 🌐 **Web s blogem** | recepty (slané, sladké, nápoje) a krátké články o výživě, česky i anglicky | online: https://4613nikola-oss.github.io/nikys-kitchen-web/ |
 | 📱 **Appka Jídlo od A–Z** (tento projekt) | kalkulačka příjmu, plán jídel, recepty z ledničky, nákupní seznam | online, zdarma |
 | 🛒 **Obchod** | digitální produkty: e-booky, online kuchařka, jídelní plány, kurzy | připravujeme |
 
