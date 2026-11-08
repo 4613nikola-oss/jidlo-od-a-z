@@ -307,14 +307,15 @@ input[type="checkbox"] { accent-color: var(--primary); width: 18px; height: 18px
 }
 
 .btn--primary { background: var(--primary); color: #fff; }
-.btn--primary:hover { opacity: 0.9; }
+.btn--primary:hover { background: #2e3e26; }
 
 .btn--ghost {
     background: #fff;
     color: var(--primary);
     border-color: var(--border);
 }
-.btn--ghost:hover { background: var(--primary-soft); }
+/* najetí myší: plná tmavá zelená a bílý text – výrazný kontrast (dřív světle zelená) */
+.btn--ghost:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
 
 .btn--full { width: 100%; }
 
@@ -503,6 +504,25 @@ input[type="checkbox"] { accent-color: var(--primary); width: 18px; height: 18px
 }
 .recipe-title a { text-decoration: none; }
 .recipe-title a:hover { text-decoration: underline; }
+
+/* Celá karta je klikací (odkaz v názvu se roztáhne přes kartu), tlačítka zůstávají nad ním */
+.recipe, .meal { position: relative; }
+.recipe-title a::after, .meal-recipe::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
+.recipe-actions, .meal-actions, .match { position: relative; z-index: 1; }
+.recipe:hover, .meal:hover { border-color: var(--primary); box-shadow: 0 4px 14px rgba(44, 44, 44, 0.12); }
+
+/* Tip na obchod */
+.promo {
+    display: grid; gap: 4px; margin-top: 16px; text-decoration: none; color: var(--text);
+    border: 2px solid #a24e33; background: #fbf1ec;
+}
+.promo:hover { background: #f6e3dc; }
+.promo-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #a24e33; }
+.promo-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--primary); }
+.promo-text { color: var(--text-light); font-size: 0.95rem; }
+
+/* Prázdný výsledek hledání s nabídkou */
+.suggest { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
 .recipe-meta { margin: 0 0 12px; color: var(--text-light); font-size: 0.9rem; }
 

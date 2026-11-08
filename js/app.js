@@ -81,6 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Odkazy na web (hlavička, tipy na obchod) vedou na správnou adresu i na počítači při vývoji
+    document.querySelectorAll("[data-web-link]").forEach((a) => { a.href = WEB_URL + a.dataset.webLink; });
+
     const KATEGORIE = { slane: "Slané", sladke: "Sladké", napoje: "Nápoje" };
     const JIDLA = [
         { id: "snidane", nazev: "Snídaně", podil: 0.25 },
@@ -372,15 +375,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ============ 4) RECEPTY ============ */
 
+    /* Hledání, které promine překlep a nevadí mu diakritika („omleta“ najde „Omeleta“) */
+    const bezDiakritiky = (t) => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    function vzdalenost(a, b) {
+        const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+        for (let j = 1; j <= b.length; j++) d[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+            }
+        }
+        return d[a.length][b.length];
+    }
+    function slovaReceptu(r) {
+        return bezDiakritiky(`${r.nazev} ${r.suroviny.join(" ")}`).split(/[^a-z0-9]+/).filter(Boolean);
+    }
+    // Každé slovo dotazu musí sedět (přesně, začátkem, nebo s malým překlepem)
+    function sediNaDotaz(r, dotaz) {
+        const slova = slovaReceptu(r);
+        return bezDiakritiky(dotaz).split(/\s+/).filter(Boolean).every((w) => {
+            const tolerance = w.length >= 8 ? 2 : w.length >= 4 ? 1 : 0;
+            return slova.some((s) => s.includes(w) || Math.min(vzdalenost(w, s), vzdalenost(w, s.slice(0, w.length))) <= tolerance);
+        });
+    }
+    // Když nic nesedí, nabídneme 3 nejpodobnější recepty
+    function podobne(dotaz) {
+        const q = bezDiakritiky(dotaz).split(/\s+/).filter(Boolean);
+        return RECEPTY
+            .map((r) => {
+                const slova = slovaReceptu(r);
+                return { r, skore: q.reduce((sum, w) => sum + Math.min(...slova.map((s) => vzdalenost(w, s.slice(0, w.length)))), 0) };
+            })
+            .sort((a, b) => a.skore - b.skore)
+            .slice(0, 3)
+            .map((x) => x.r);
+    }
+
     function renderRecipes() {
-        const q = $("#recipe-search").value.trim().toLowerCase();
+        const q = $("#recipe-search").value.trim();
         const list = RECEPTY.filter((r) =>
-            (state.filter === "vse" || r.kategorie === state.filter) &&
-            (r.nazev.toLowerCase().includes(q) || r.suroviny.some((s) => s.includes(q)))
+            (state.filter === "vse" || r.kategorie === state.filter) && (!q || sediNaDotaz(r, q))
         );
-        $("#recipe-list").innerHTML = list.length
-            ? list.map((r) => recipeCard(r)).join("")
-            : `<p class="empty-text">Nic takového jsem nenašla.</p>`;
+        if (list.length) {
+            $("#recipe-list").innerHTML = list.map((r) => recipeCard(r)).join("");
+            return;
+        }
+        // Nikdy jen „nic tu není“: nabídneme podobné a cestu zpět
+        const tipy = q ? podobne(q) : [];
+        $("#recipe-list").innerHTML = `<div class="card empty">
+            <p><strong>${q ? `„${esc(q)}“ jsem nenašla.` : "V této kategorii zatím nic není."}</strong></p>
+            ${tipy.length ? `<p>Možná hledáš:</p>` : ""}
+            <div class="suggest">
+                ${tipy.map((r) => `<button type="button" class="chip" data-action="search-suggest" data-name="${esc(r.nazev)}">${esc(r.nazev)}</button>`).join("")}
+                <button type="button" class="btn btn--ghost btn--small" data-action="search-clear">Zobrazit všechny recepty</button>
+            </div>
+        </div>`;
     }
 
     $("#recipe-filters").addEventListener("click", (e) => {
@@ -454,6 +503,21 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!btn) return;
         const action = btn.dataset.action;
         const recipe = btn.dataset.id ? RECEPTY.find((r) => r.id === btn.dataset.id) : null;
+
+        if (action === "search-suggest") {
+            $("#recipe-search").value = btn.dataset.name;
+            renderRecipes();
+        }
+        if (action === "search-clear") {
+            $("#recipe-search").value = "";
+            state.filter = "vse";
+            document.querySelectorAll("#recipe-filters .chip").forEach((c) => {
+                const on = c.dataset.filter === "vse";
+                c.classList.toggle("is-on", on);
+                c.setAttribute("aria-pressed", on);
+            });
+            renderRecipes();
+        }
 
         if (action === "go-day") openTab("den");
         if (action === "go-profil") openTab("profil");
