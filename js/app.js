@@ -104,6 +104,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ============ ZÁLOŽKY ============ */
 
+    // Animace 3: Tečka → dort. Přehraje se znovu při každém otevření „Můj den“.
+    function replayMorph() {
+        const m = document.querySelector("#panel-den .morph");
+        if (!m) return;
+        m.classList.remove("play");
+        void m.getBoundingClientRect(); // restart animace
+        m.classList.add("play");
+    }
+
     function openTab(name) {
         document.querySelectorAll(".tab").forEach((tab) => {
             const active = tab.dataset.tab === name;
@@ -114,7 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".panel").forEach((panel) => {
             panel.hidden = panel.id !== "panel-" + name;
         });
-        if (name === "den") renderDay();
+        if (name === "den") {
+            renderDay();
+            replayMorph();
+        }
         window.scrollTo({ top: 0 });
         store.set("tab", name);
     }
@@ -184,9 +196,30 @@ document.addEventListener("DOMContentLoaded", function () {
             .join("");
 
         $("#profile-results").hidden = false;
+        renderProfileChip();
     }
 
+    // Štítek v hlavičce: zvolený avatar a dnešní cíl
+    function renderProfileChip() {
+        const chip = $("#profile-chip");
+        const p = state.profile;
+        chip.hidden = !p;
+        if (!p) return;
+        $("#profile-chip-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
+        $("#profile-chip-kcal").textContent = "Dnes: " + fmt(calculate(p).target) + " kcal";
+    }
+
+    // Avatar se uloží hned po kliknutí (když už je profil spočítaný)
+    $("#avatar-pick").addEventListener("change", (e) => {
+        if (!state.profile || !e.target.matches('input[name="avatar"]')) return;
+        state.profile.avatar = e.target.value;
+        store.set("profile", state.profile);
+        renderProfileChip();
+    });
+
     function fillForm(p) {
+        const av = form.querySelector(`input[name="avatar"][value="${p.avatar || "t-nova"}"]`);
+        if (av) av.checked = true;
         form.querySelector(`input[name="goal"][value="${p.goal}"]`).checked = true;
         form.querySelector(`input[name="gender"][value="${p.gender}"]`).checked = true;
         $("#age").value = p.age;
@@ -208,6 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         state.profile = {
+            avatar: (form.querySelector('input[name="avatar"]:checked') || {}).value || "t-nova",
             goal: form.querySelector('input[name="goal"]:checked').value,
             gender: form.querySelector('input[name="gender"]:checked').value,
             age, weight, height,
@@ -467,11 +501,17 @@ document.addEventListener("DOMContentLoaded", function () {
             <li class="shop-item${item.done ? " is-done" : ""}">
                 <label>
                     <input type="checkbox" data-index="${i}" ${item.done ? "checked" : ""}>
-                    <span>${esc(item.text)}</span>
+                    <svg class="check-box" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6"/><path d="M6.5 12.5l4 4 7-8.5"/></svg>
+                    <span class="check-text">${esc(item.text)}</span>
                 </label>
                 <button type="button" class="icon-btn" data-action="shop-remove" data-index="${i}" aria-label="Odebrat ${esc(item.text)}">×</button>
             </li>`).join("");
 
+        updateShopMeta();
+    }
+
+    // počítadlo na záložce a tlačítko „Smazat koupené“ (bez překreslení seznamu)
+    function updateShopMeta() {
         const open = state.shop.filter((i) => !i.done).length;
         $("#shop-empty").hidden = state.shop.length > 0;
         $("#shop-clear-done").hidden = !state.shop.some((i) => i.done);
@@ -493,7 +533,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!e.target.matches("input[type=checkbox]")) return;
         state.shop[e.target.dataset.index].done = e.target.checked;
         store.set("shop", state.shop);
-        renderShop();
+        // jen přepnout třídu – fajfka se nakreslí a text přeškrtne (animace 4)
+        e.target.closest(".shop-item").classList.toggle("is-done", e.target.checked);
+        updateShopMeta();
     });
 
     /* ============ TLAČÍTKA NAPŘÍČ APPKOU ============ */

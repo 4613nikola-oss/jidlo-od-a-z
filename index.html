@@ -1,22 +1,109 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jídlo od A–Z – kalorická kalkulačka, jídelníček a recepty z ledničky | Koláč od Niky</title>
     <meta name="description" content="Kalorická kalkulačka, jídelníček na míru a recepty z toho, co máš doma. Spočítej si denní příjem, rozděl ho do jídel a vytvoř si nákupní seznam.">
-    <meta name="theme-color" content="#3b4d38">
+    <meta name="theme-color" content="#3d5233">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+    <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="listek"><path d="M17.5 3.2c1.6-1.4 3.6-1.4 4.6-.6-.8 1.8-2.8 2.6-4.6.6z" fill="#5e7769" stroke="#3d5233" stroke-width=".7"/></g>
+    <symbol id="i-cas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="13" r="8"/><path d="M11 8.5V13l3 2"/></g><use href="#listek"/></symbol>
+    <symbol id="i-kcal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3c1 3.2 5 5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.4-4.8.2 1.8 1 2.8 2.4 3 .4-3.4-1.2-5.4.2-8.2z"/></g><use href="#listek"/></symbol>
+    <symbol id="i-porce" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="13.5" r="7.5"/><circle cx="13" cy="13.5" r="4"/><path d="M3 5v5a1.5 1.5 0 0 0 3 0V5M4.5 10v11"/></g><use href="#listek"/></symbol>
+    <symbol id="i-slane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a2 2 0 0 0 4 0V3M8 9v12"/><path d="M15 21V3c2.5 1.2 3.5 4 3.5 7.5H15"/></g><use href="#listek"/></symbol>
+    <symbol id="i-sladke" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h17V12L3 15.5z"/><path d="M3 15.5 17 9.5"/><path d="M3 17.2h17"/></g><circle cx="16" cy="7.4" r="1.8" fill="#a24e33"/><use href="#listek"/></symbol>
+    <symbol id="i-napoje" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h12l-1.6 13.5H6.6z"/><path d="M13 7l2.5-5"/><path d="M6 12h10"/></g><use href="#listek"/></symbol>
+    <symbol id="i-alergen" viewBox="0 0 24 24"><path d="M11 3 21 20H1z" fill="#f59e0b" stroke="#2c2c2c" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 9v5" stroke="#2c2c2c" stroke-width="1.9" stroke-linecap="round"/><circle cx="11" cy="16.8" r="1.1" fill="#2c2c2c"/></symbol>
+    <symbol id="i-lednicka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="12" height="18.5" rx="2"/><path d="M5 9.5h12M8 6v1.5M8 12.5v3"/></g><use href="#listek"/></symbol>
+    <symbol id="i-nakup" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h14l-1.3 12H5.3z"/><path d="M8 8.5V7a3 3 0 0 1 6 0v1.5"/></g><use href="#listek"/></symbol>
+    <symbol id="i-profil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="9" r="4"/><path d="M3.5 21c1.4-4 4.2-6 7.5-6s6.1 2 7.5 6"/></g><use href="#listek"/></symbol>
+    <symbol id="i-den" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="16" height="16" rx="2"/><path d="M3 10h16M7.5 3v4M14.5 3v4"/><circle cx="11" cy="15.5" r="1.6" fill="#a24e33" stroke="none"/></g><use href="#listek"/></symbol>
+    <symbol id="i-recepty" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H17v-5"/><path d="M8 7.5h5M8 11h5"/></g><use href="#listek"/></symbol>
+    <symbol id="i-oblibene" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 11 7.6 4.2 4.2 0 0 1 18.5 10c0 5.4-7.5 10-7.5 10z"/></g><use href="#listek"/></symbol>
+    <symbol id="i-vari" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11h15v5.5a4 4 0 0 1-4 4h-7a4 4 0 0 1-4-4z"/><path d="M1.5 11h2M18.5 11h2M8 7.5c-.6-1 .6-2 0-3M12 7.5c-.6-1 .6-2 0-3"/></g><use href="#listek"/></symbol>
+
+    <!-- další ikonky -->
+    <symbol id="i-snidane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13v5a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M16 11.5h1.5a2.5 2.5 0 0 1 0 5H15.6"/><path d="M7 7c-.5-1 .5-2 0-3M11 7c-.5-1 .5-2 0-3"/></g><use href="#listek"/></symbol>
+    <symbol id="i-vecere" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="15" r="6.5"/><circle cx="11" cy="15" r="3"/><path d="M17.5 3.5a3.5 3.5 0 1 0 3 5.5 4 4 0 0 1-3-5.5z" fill="#bfa97f" stroke="#3d5233"/></g></symbol>
+    <symbol id="i-svacina" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 8c-3-2-8-1-8 5s3 9 5 9c1.3 0 2-.6 3-.6s1.7.6 3 .6c2 0 5-3 5-9s-5-7-8-5z"/><path d="M11 8c0-2 .6-3.5 2-4.5"/></g><use href="#listek"/></symbol>
+    <symbol id="i-hledat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="11" r="6.5"/><path d="M15 16l5.5 5.5"/></g><use href="#listek"/></symbol>
+    <symbol id="i-filtr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h16M6 12h10M9 18h4"/></g><use href="#listek"/></symbol>
+    <symbol id="i-tyden" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="16" height="16" rx="2"/><path d="M3 10h16M7.5 3v4M14.5 3v4"/></g><g fill="#5e7769"><circle cx="6.5" cy="13.5" r="1"/><circle cx="9.5" cy="13.5" r="1"/><circle cx="12.5" cy="13.5" r="1"/><circle cx="15.5" cy="13.5" r="1"/><circle cx="6.5" cy="17" r="1"/><circle cx="9.5" cy="17" r="1"/><circle cx="12.5" cy="17" r="1" fill="#a24e33"/></g><use href="#listek"/></symbol>
+    <symbol id="i-stahnout" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h8l4 4v14H5z"/><path d="M13 3v4h4"/><path d="M11 10v7M8 14l3 3 3-3"/></g></symbol>
+    <symbol id="i-vege" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C5 10 10 5 19 4c0 9-5 15-14 15z" fill="#eef2ef"/><path d="M5 19 14 10"/></g></symbol>
+    <symbol id="i-bezlepku" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21V8"/><path d="M11 9c-2-1-3-3-3-5 2 0 3 1.5 3 3M11 9c2-1 3-3 3-5-2 0-3 1.5-3 3M11 14c-2-1-3-3-3-5 2 0 3 1.5 3 3M11 14c2-1 3-3 3-5-2 0-3 1.5-3 3"/></g><path d="M3 21 20 4" stroke="#a24e33" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-trouba" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="17" height="18" rx="2"/><path d="M3 8h17"/><rect x="6" y="11" width="11" height="7" rx="1"/><circle cx="7" cy="5.5" r=".6"/><circle cx="10" cy="5.5" r=".6"/></g><use href="#listek"/></symbol>
+    <symbol id="i-babicka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15 15 5a2.5 2.5 0 0 1 3.5 3.5l-10 10A2.5 2.5 0 0 1 5 15z"/><path d="M3.5 20.5l2-2M18.5 5.5l2-2"/></g><path d="M11 9.5c0-1.2 1.6-1.6 2-.5.4-1.1 2-.7 2 .5 0 1.3-2 2.5-2 2.5s-2-1.2-2-2.5z" fill="#a24e33"/></symbol>
+    <symbol id="i-newsletter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="17" height="13" rx="2"/><path d="M2.5 8l8.5 6 8.5-6"/></g><use href="#listek"/></symbol>
+    <symbol id="i-kosik" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10c0-7 12-7 12 0"/><path d="M2.5 10h17l-2 10h-13z"/><path d="M8 13v4M11 13v4M14 13v4"/></g></symbol>
+    <symbol id="i-zvonek" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M9 21a2 2 0 0 0 4 0"/></g><use href="#listek"/></symbol>
+    <symbol id="i-nastaveni" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="3"/><path d="M11 3v2.5M11 18.5V21M3 12h2.5M16.5 12H19M5.3 6.3l1.8 1.8M14.9 15.9l1.8 1.8M5.3 17.7l1.8-1.8M14.9 8.1l1.8-1.8"/></g></symbol>
+
+    <!-- avatary: jídla s obličejem ve stylu nové Tečky -->
+    <g id="oci"><circle cx="-12" cy="0" r="4" fill="#2c2c2c"/><circle cx="12" cy="0" r="4" fill="#2c2c2c"/><path d="M-8 12c5 5 11 5 16 0" fill="none" stroke="#2c2c2c" stroke-width="3" stroke-linecap="round"/></g>
+    <symbol id="a-salat" viewBox="0 0 120 120"><path d="M28 50c4-14 14-20 22-14 6-10 18-10 22 0 8-6 20 0 22 14z" fill="#9fbf8f" stroke="#3d5233" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="44" r="6" fill="#a24e33"/><circle cx="76" cy="42" r="5" fill="#e8913f"/><path d="M18 52h84c0 26-18 42-42 42S18 78 18 52z" fill="#fbfaf6" stroke="#3d5233" stroke-width="3"/><use href="#oci" transform="translate(60 68)"/></symbol>
+    <symbol id="a-kase" viewBox="0 0 120 120"><path d="M22 50c10-8 66-8 76 0" fill="#efe4cc" stroke="#3d5233" stroke-width="2.5"/><circle cx="50" cy="44" r="5" fill="#5a6fb0"/><circle cx="62" cy="42" r="5" fill="#a24e33"/><circle cx="72" cy="45" r="4" fill="#5a6fb0"/><path d="M18 52h84c0 26-18 42-42 42S18 78 18 52z" fill="#bfa97f" stroke="#3d5233" stroke-width="3"/><use href="#oci" transform="translate(60 68)"/></symbol>
+    <symbol id="a-smoothie" viewBox="0 0 120 120"><path d="M70 28l10-16" stroke="#a24e33" stroke-width="4" stroke-linecap="round"/><path d="M34 30h52l-6 72H40z" fill="#9fbf8f" stroke="#3d5233" stroke-width="3" stroke-linejoin="round"/><path d="M34 30h52" stroke="#3d5233" stroke-width="5" stroke-linecap="round"/><use href="#oci" transform="translate(60 60)"/></symbol>
+    <symbol id="a-avokado" viewBox="0 0 120 120"><path d="M60 14c18 0 30 30 30 56s-14 36-30 36-30-10-30-36 12-56 30-56z" fill="#5e7769" stroke="#3d5233" stroke-width="3"/><path d="M60 22c13 0 22 26 22 48s-10 28-22 28-22-6-22-28 9-48 22-48z" fill="#dfe9c4"/><circle cx="60" cy="80" r="11" fill="#8a6a4a"/><use href="#oci" transform="translate(60 52) scale(.8)"/></symbol>
+    <symbol id="a-rajce" viewBox="0 0 120 120"><circle cx="60" cy="66" r="38" fill="#a24e33" stroke="#3d5233" stroke-width="3"/><path d="M60 30l-6-8M60 30l8-8M60 30l-12 2M60 30l12 2" stroke="#5e7769" stroke-width="4" stroke-linecap="round"/><g transform="translate(60 66)"><circle cx="-12" cy="0" r="4" fill="#fff"/><circle cx="12" cy="0" r="4" fill="#fff"/><path d="M-8 12c5 5 11 5 16 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g></symbol>
+    <symbol id="a-mrkev" viewBox="0 0 120 120"><path d="M42 30c18-6 40 0 40 6L66 104c-2 6-10 6-12 0z" transform="rotate(14 60 60)" fill="#e8913f" stroke="#3d5233" stroke-width="3" stroke-linejoin="round"/><path d="M58 26l-8-14M62 26l4-16M66 28l12-10" stroke="#5e7769" stroke-width="4" stroke-linecap="round"/><use href="#oci" transform="translate(62 52) scale(.8)"/></symbol>
+  </defs>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- nová Tečka: tenká linka jako logo -->
+    <symbol id="t-nova" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="186" rx="44" ry="6" fill="#3d5233" opacity=".08"/>
+      <circle cx="100" cy="112" r="64" fill="#f1e8d3" stroke="#3d5233" stroke-width="3"/>
+      <path d="M100 48c-1-8 1-15 4-21" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M104 30c10-14 26-15 34-10-7 14-24 16-34 10z" fill="#5e7769" stroke="#3d5233" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M102 34c-9-10-21-10-28-5 6 11 19 12 28 5z" fill="#bfa97f" stroke="#3d5233" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="80" cy="108" r="4.5" fill="#2c2c2c"/><circle cx="120" cy="108" r="4.5" fill="#2c2c2c"/>
+      <path d="M90 126c6 6 14 6 20 0" fill="none" stroke="#2c2c2c" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="70" cy="122" r="6" fill="#e8a487" opacity=".35"/><circle cx="130" cy="122" r="6" fill="#e8a487" opacity=".35"/>
+    </symbol>
+    <symbol id="t-nova-radost" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="186" rx="44" ry="6" fill="#3d5233" opacity=".08"/>
+      <circle cx="100" cy="112" r="64" fill="#f1e8d3" stroke="#3d5233" stroke-width="3"/>
+      <path d="M100 48c-1-8 1-15 4-21" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M104 30c10-14 26-15 34-10-7 14-24 16-34 10z" fill="#5e7769" stroke="#3d5233" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M102 34c-9-10-21-10-28-5 6 11 19 12 28 5z" fill="#bfa97f" stroke="#3d5233" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M73 110c4-6 10-6 14 0M113 110c4-6 10-6 14 0" fill="none" stroke="#2c2c2c" stroke-width="3" stroke-linecap="round"/>
+      <path d="M86 124c8 11 20 11 28 0" fill="#a24e33" stroke="#2c2c2c" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="70" cy="122" r="6" fill="#e8a487" opacity=".35"/><circle cx="130" cy="122" r="6" fill="#e8a487" opacity=".35"/>
+    </symbol>
+    <symbol id="t-nova-dort" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="186" rx="60" ry="6" fill="#3d5233" opacity=".08"/>
+      <path d="M36 168h128V112L36 140z" fill="#f1e8d3" stroke="#3d5233" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M36 140 150 98c8-3 14 3 14 14" fill="#fbfaf6" stroke="#3d5233" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M36 154h128" stroke="#bfa97f" stroke-width="5"/>
+      <circle cx="146" cy="88" r="8" fill="#a24e33" stroke="#3d5233" stroke-width="2"/>
+      <path d="M146 80c0-6 2-10 5-13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M150 68c8-10 19-10 25-6-5 10-17 11-25 6z" fill="#5e7769" stroke="#3d5233" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="84" cy="150" r="4" fill="#2c2c2c"/><circle cx="114" cy="146" r="4" fill="#2c2c2c"/>
+      <path d="M92 162c5 4 11 4 16-1" fill="none" stroke="#2c2c2c" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
 
     <!-- HLAVIČKA -->
     <header class="app-header">
         <a href="https://4613nikola-oss.github.io/nikys-kitchen-web/cs/" class="app-logo" data-web-link="cs/" title="Zpět na web Niky's Kitchen">← Niky's Kitchen</a>
         <span class="app-name">Jídlo od A–Z</span>
+        <!-- profil: avatar a dnešní cíl (ukáže se po výpočtu) -->
+        <button type="button" class="profile-chip" id="profile-chip" data-action="go-profil" hidden>
+            <svg aria-hidden="true"><use id="profile-chip-avatar" href="#t-nova"/></svg>
+            <span><b>Můj profil</b><small id="profile-chip-kcal"></small></span>
+        </button>
     </header>
 
     <!-- UPOZORNĚNÍ: prohlížeč nepovolil ukládání (anonymní okno, plné úložiště) -->
@@ -26,11 +113,11 @@
 
     <!-- NAVIGACE MEZI SEKCEMI (na mobilu dole) -->
     <nav class="tabbar" aria-label="Sekce aplikace">
-        <button class="tab is-active" data-tab="profil" aria-current="page"><span aria-hidden="true">🧮</span> Profil</button>
-        <button class="tab" data-tab="den"><span aria-hidden="true">🍽️</span> Můj den</button>
-        <button class="tab" data-tab="lednicka"><span aria-hidden="true">🥕</span> Lednička</button>
-        <button class="tab" data-tab="recepty"><span aria-hidden="true">📖</span> Recepty</button>
-        <button class="tab" data-tab="nakup"><span aria-hidden="true">🛒</span> Nákup <span class="tab-count" id="shop-count" hidden></span></button>
+        <button class="tab is-active" data-tab="profil" aria-current="page"><svg class="tab-icon" aria-hidden="true"><use href="#i-profil"/></svg> Profil</button>
+        <button class="tab" data-tab="den"><svg class="tab-icon" aria-hidden="true"><use href="#i-den"/></svg> Můj den</button>
+        <button class="tab" data-tab="lednicka"><svg class="tab-icon" aria-hidden="true"><use href="#i-lednicka"/></svg> Lednička</button>
+        <button class="tab" data-tab="recepty"><svg class="tab-icon" aria-hidden="true"><use href="#i-recepty"/></svg> Recepty</button>
+        <button class="tab" data-tab="nakup"><svg class="tab-icon" aria-hidden="true"><use href="#i-nakup"/></svg> Nákup <span class="tab-count" id="shop-count" hidden></span></button>
     </nav>
 
     <main class="app-main">
@@ -41,6 +128,20 @@
             <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Údaje zůstávají jen v tvém prohlížeči.</p>
 
             <form id="profile-form" class="card" novalidate>
+                <fieldset class="field">
+                    <legend>Kdo budeš v appce?</legend>
+                    <div class="avatar-pick" id="avatar-pick">
+                        <label><input type="radio" name="avatar" value="t-nova" checked><svg aria-hidden="true"><use href="#t-nova"/></svg><span>Tečka</span></label>
+                        <label><input type="radio" name="avatar" value="a-salat"><svg aria-hidden="true"><use href="#a-salat"/></svg><span>Salát</span></label>
+                        <label><input type="radio" name="avatar" value="a-kase"><svg aria-hidden="true"><use href="#a-kase"/></svg><span>Kaše</span></label>
+                        <label><input type="radio" name="avatar" value="a-smoothie"><svg aria-hidden="true"><use href="#a-smoothie"/></svg><span>Smoothie</span></label>
+                        <label><input type="radio" name="avatar" value="a-avokado"><svg aria-hidden="true"><use href="#a-avokado"/></svg><span>Avokádo</span></label>
+                        <label><input type="radio" name="avatar" value="a-rajce"><svg aria-hidden="true"><use href="#a-rajce"/></svg><span>Rajče</span></label>
+                        <label><input type="radio" name="avatar" value="a-mrkev"><svg aria-hidden="true"><use href="#a-mrkev"/></svg><span>Mrkev</span></label>
+                        <label><input type="radio" name="avatar" value="t-nova-dort"><svg aria-hidden="true"><use href="#t-nova-dort"/></svg><span>Dort</span></label>
+                    </div>
+                </fieldset>
+
                 <fieldset class="field">
                     <legend>Tvůj cíl</legend>
                     <div class="segmented">
@@ -121,7 +222,15 @@
 
         <!-- 2) MŮJ DEN -->
         <section class="panel" id="panel-den" hidden>
-            <h1 class="panel-title">Můj den</h1>
+            <div class="day-head">
+                <h1 class="panel-title">Můj den</h1>
+                <!-- animace 3: Tečka se promění v dort (sladká tečka patří do plánu) -->
+                <svg class="morph" viewBox="0 0 200 200" aria-hidden="true">
+                    <g class="morph-a"><use href="#t-nova-radost"/></g>
+                    <g class="morph-b"><use href="#t-nova-dort"/></g>
+                    <g class="morph-spark" fill="#bfa97f"><circle cx="30" cy="50" r="7"/><circle cx="172" cy="40" r="8"/><circle cx="182" cy="130" r="6"/><circle cx="22" cy="140" r="6"/></g>
+                </svg>
+            </div>
 
             <div id="day-empty" class="card empty">
                 <p>Nejdřív si spočítej svůj denní cíl a appka ti ho rozdělí do jídel.</p>
