@@ -156,6 +156,21 @@ a { color: var(--primary); }
     padding: 20px 16px 32px;
 }
 
+/* Babiččina kuchařka: obsah na papírovém listu, vzor jen po stranách (stejně jako web) */
+.app-main {
+    margin: 12px auto 24px;
+    background-color: #fdfaf2;
+    border: 1px solid #e9e1cf;
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgba(44, 44, 44, 0.1), 0 2px 6px rgba(44, 44, 44, 0.06);
+}
+@media (max-width: 760px) { .app-main { margin: 8px; } }
+.panel-title::after {
+    content: ""; display: block; width: 8rem; height: 0.6rem; margin-top: 4px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 12'%3E%3Cpath d='M2 8c18-6 34 3 52-1s30-6 48-2 24 3 36-1' fill='none' stroke='%23bfa97f' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left center / contain;
+}
+.day-head .panel-title::after { width: 6rem; }
+
 .panel-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.75rem;
