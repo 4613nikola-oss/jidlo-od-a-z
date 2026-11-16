@@ -67,7 +67,11 @@ Appka bude časem přímo součástí webu. Už teď si bere recepty a články 
 
 | Profil | Můj den | Lednička | Recepty |
 |---|---|---|---|
-| ![Profil: výpočet denního příjmu](docs/ukazky/appka-profil.webp) | ![Můj den: rozdělení příjmu do jídel a návrh receptů](docs/ukazky/appka-den.webp) | ![Lednička: recepty podle surovin, které máš doma](docs/ukazky/appka-lednicka.webp) | ![Recepty: přehled s filtrem a hledáním](docs/ukazky/appka-recepty.webp) |
+| ![Profil: výběr avatara a výpočet denního příjmu](docs/ukazky/appka-profil.webp) | ![Můj den: rozdělení příjmu do jídel a návrh receptů](docs/ukazky/appka-den.webp) | ![Lednička: recepty podle surovin, které máš doma](docs/ukazky/appka-lednicka.webp) | ![Recepty: přehled s filtrem a hledáním](docs/ukazky/appka-recepty.webp) |
+
+Vzhled je stejný jako na webu Niky's Kitchen: vlastní ikonky, maskot Tečka, avatar v profilu a mikroanimace. Při odškrtnutí položky v nákupu se nakreslí fajfka a text se přeškrtne:
+
+![Animace: odškrtnutí položek v nákupním seznamu](docs/ukazky/animace-odskrtnuti.gif)
 ## Odkud se berou recepty
 
 Recepty a články jsou uložené v **databázi PostgreSQL** projektu Niky's Kitchen (repozitář `nikys-kitchen-web`). Web z nich při sestavení vyrobí soubor `api/appka.json` a appka si ho při startu stáhne.
