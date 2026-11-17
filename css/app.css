@@ -687,3 +687,26 @@ input[type="checkbox"] { accent-color: var(--primary); width: 18px; height: 18px
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* =====================================================================
+   NOVINY + KOMIKS (od 17. 11. 2026) – stejný styl jako web Niky's Kitchen
+   ===================================================================== */
+:root { --ink: #1f1d1a; --bg: #f3ecdc; --text: #1f1d1a; --text-light: #5c544a; --radius: 6px; }
+body {
+    background-color: var(--bg);
+    background-image: radial-gradient(rgba(120, 100, 60, 0.09) 1px, transparent 1.3px);
+    background-size: 6px 6px;
+}
+.app-header { background: var(--bg); border-bottom: 4px double var(--ink); }
+.app-logo { color: var(--ink); text-transform: uppercase; letter-spacing: 0.02em; }
+.app-name { border: 2px solid var(--ink); background: #e9b949; color: var(--ink); }
+.panel-title { color: var(--ink); text-transform: uppercase; font-weight: 700; border-top: 4px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 4px 0; }
+.card { border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+.btn { border: 3px solid var(--ink) !important; box-shadow: 4px 4px 0 var(--ink); }
+.btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.chip { border: 1.5px solid var(--ink); }
+.search, .shop-add input, input[type="number"], select { border: 2px solid var(--ink); }
+.tabbar { border-top: 3px solid var(--ink); background: var(--bg); }
+.profile-chip { border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.avatar-pick label { border-color: var(--ink); }
+.promo { background: #f7e2a6; background-image: radial-gradient(rgba(162, 78, 51, 0.16) 22%, transparent 24%); background-size: 12px 12px; }
