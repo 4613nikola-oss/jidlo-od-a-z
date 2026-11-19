@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="utf-8">
@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#3d5233">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -122,7 +122,8 @@
 
         <!-- 1) PROFIL A KALKULAČKA -->
         <section class="panel" id="panel-profil">
-            <h1 class="panel-title">Kolik energie potřebuješ?</h1>
+            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-profil"/></svg>Kolik energie potřebuješ?</h1>
+            <div class="app-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
             <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Údaje zůstávají jen v tvém prohlížeči.</p>
 
             <form id="profile-form" class="card" novalidate>
@@ -221,7 +222,7 @@
         <!-- 2) MŮJ DEN -->
         <section class="panel" id="panel-den" hidden>
             <div class="day-head">
-                <h1 class="panel-title">Můj den</h1>
+                <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-den"/></svg>Můj den</h1>
                 <!-- animace 3: Tečka se promění v dort (sladká tečka patří do plánu) -->
                 <svg class="morph" viewBox="0 0 200 200" aria-hidden="true">
                     <g class="morph-a"><use href="#t-nova-radost"/></g>
@@ -255,7 +256,8 @@
 
         <!-- 3) LEDNIČKA -->
         <section class="panel" id="panel-lednicka" hidden>
-            <h1 class="panel-title">Co mám v ledničce?</h1>
+            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-lednicka"/></svg>Co mám v ledničce?</h1>
+            <div class="app-comic" aria-hidden="false"><p class="app-bubble">Tři vajíčka a cuketa? To je večeře, ne prázdná lednice.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova-radost"/></svg></div>
             <p class="panel-lead">Označ, co máš doma, a appka najde recepty, které z toho uvaříš.</p>
 
             <div class="card">
@@ -273,12 +275,13 @@
 
         <!-- 4) RECEPTY -->
         <section class="panel" id="panel-recepty" hidden>
-            <h1 class="panel-title">Recepty</h1>
+            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg>Recepty</h1>
+            <div class="app-comic" aria-hidden="false"><p class="app-bubble">Nevíš, co vařit? Zkus filtry. Já zatím zamíchám.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
             <div class="filters" id="recipe-filters">
-                <button type="button" class="chip is-on" data-filter="vse" aria-pressed="true">Vše</button>
-                <button type="button" class="chip" data-filter="slane" aria-pressed="false">Slané</button>
-                <button type="button" class="chip" data-filter="sladke" aria-pressed="false">Sladké</button>
-                <button type="button" class="chip" data-filter="napoje" aria-pressed="false">Nápoje</button>
+                <button type="button" class="chip is-on" data-filter="vse" aria-pressed="true"><svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg>Vše</button>
+                <button type="button" class="chip" data-filter="slane" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-slane"/></svg>Slané</button>
+                <button type="button" class="chip" data-filter="sladke" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-sladke"/></svg>Sladké</button>
+                <button type="button" class="chip" data-filter="napoje" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-napoje"/></svg>Nápoje</button>
             </div>
             <label for="recipe-search" class="sr-only">Hledat recept</label>
             <input type="search" id="recipe-search" class="search" placeholder="Hledat recept">
@@ -293,7 +296,8 @@
 
         <!-- 5) NÁKUPNÍ SEZNAM -->
         <section class="panel" id="panel-nakup" hidden>
-            <h1 class="panel-title">Nákupní seznam</h1>
+            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-nakup"/></svg>Nákupní seznam</h1>
+            <div class="app-comic" aria-hidden="false"><p class="app-bubble">Seznam máš v appce. Košík neseš ty.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova-radost"/></svg></div>
 
             <form id="shop-form" class="shop-add">
                 <label for="shop-input" class="sr-only">Přidat položku</label>
