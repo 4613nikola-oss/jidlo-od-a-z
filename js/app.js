@@ -99,8 +99,22 @@ document.addEventListener("DOMContentLoaded", function () {
         day: store.get("day", {}),             // vybraný recept pro každé jídlo
         fridge: store.get("fridge", []),       // vybrané suroviny
         shop: store.get("shop", []),           // položky nákupu { text, done }
+        fav: store.get("fav", []),             // oblíbené recepty (id)
+        view: store.get("view", "day"),        // Můj den: den / týden
         filter: "vse"
     };
+
+    // Orientační cena běžného balení v Kč (odhad nákupu; skutečné ceny se liší podle obchodu)
+    const CENY = {
+        "banán": 35, "borůvky": 69, "brambory": 30, "cibule": 15, "citron": 12, "cuketa": 25, "datle": 59, "feta": 45,
+        "jablko": 30, "jahody": 69, "jogurt": 25, "kakao": 49, "kiwi": 39, "kuřecí maso": 129, "kváskový chléb": 59,
+        "káva": 149, "limetka": 12, "med": 99, "mléko": 25, "mozzarella": 30, "máta": 29, "okurka": 20, "olej": 59,
+        "olivový olej": 179, "ovesné vločky": 25, "ořechy": 69, "paprika": 25, "pažitka": 25, "piniové oříšky": 89,
+        "quinoa": 69, "rajčata": 39, "rostlinné mléko": 45, "sýr": 49, "tvaroh": 30, "vejce": 59, "zázvor": 25,
+        "čaj": 39, "česnek": 15, "čočka": 39, "ředkvičky": 25, "špenát": 39
+    };
+    const cena = (text) => CENY[text.toLowerCase()] || 30; // vlastní položka: odhad 30 Kč
+    const DNY = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"];
 
     /* ============ ZÁLOŽKY ============ */
 
@@ -283,10 +297,59 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /* ---- MŮJ TÝDEN ---- */
+    // Obědy a večeře se mění po 3 dnech (jeden základ uvaříš dopředu), snídaně a svačiny každý den.
+    function weekPlan() {
+        const target = calculate(state.profile).target;
+        return DNY.map((nazevDne, d) => ({
+            nazevDne,
+            jidla: JIDLA.map((meal) => {
+                const mealTarget = target * meal.podil;
+                const list = candidatesFor(meal.id, mealTarget);
+                if (!list.length) return { meal, pick: null };
+                const posun = meal.id === "obed" || meal.id === "vecere" ? Math.floor(d / 3) : d;
+                return { meal, pick: list[((state.day[meal.id] || 0) + posun) % list.length] };
+            })
+        }));
+    }
+
+    function renderWeek() {
+        $("#week-days").innerHTML = weekPlan().map((den, d) => {
+            const sum = den.jidla.reduce((a, j) => a + (j.pick ? j.pick.recipe.kcal * j.pick.porce : 0), 0);
+            return `<article class="card week-day${d % 2 ? " week-day--alt" : ""}">
+                <header class="meal-head"><h2>${den.nazevDne}</h2><span class="meal-kcal">~ ${fmt(sum)} kcal</span></header>
+                <ul class="week-meals">${den.jidla.map((j) => j.pick
+                    ? `<li><span class="week-meal">${j.meal.nazev}</span> <a href="${esc(j.pick.recipe.odkaz)}">${esc(j.pick.recipe.nazev)}</a></li>`
+                    : `<li><span class="week-meal">${j.meal.nazev}</span> <em>zatím bez receptu</em></li>`).join("")}</ul>
+            </article>`;
+        }).join("");
+    }
+
+    function renderView() {
+        const hasProfile = !!state.profile;
+        $("#view-switch").hidden = !hasProfile;
+        $("#week-content").hidden = !hasProfile || state.view !== "week";
+        document.querySelectorAll("#view-switch .seg").forEach((b) => {
+            const on = b.dataset.view === state.view;
+            b.classList.toggle("is-on", on);
+            b.setAttribute("aria-pressed", on);
+        });
+        if (hasProfile && state.view === "week") renderWeek();
+    }
+
+    $("#view-switch").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-view]");
+        if (!b) return;
+        state.view = b.dataset.view;
+        store.set("view", state.view);
+        renderDay();
+    });
+
     function renderDay() {
         const hasProfile = !!state.profile;
         $("#day-empty").hidden = hasProfile;
-        $("#day-content").hidden = !hasProfile;
+        $("#day-content").hidden = !hasProfile || state.view === "week";
+        renderView();
         if (!hasProfile) return;
 
         const target = calculate(state.profile).target;
@@ -332,7 +395,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <span class="badge badge--${r.kategorie}">${KATEGORIE[r.kategorie]}</span>
                 <span class="recipe-kcal">${r.kcal ? fmt(r.kcal) + " kcal / porce" : "kcal doplníme"}</span>
             </div>
-            <h2 class="recipe-title"><a href="${esc(r.odkaz)}">${esc(r.nazev)}</a></h2>
+            <h2 class="recipe-title"><a href="${esc(r.odkaz)}">${esc(r.nazev)}</a>
+                <button type="button" class="fav-btn${state.fav.includes(r.id) ? " is-fav" : ""}" data-action="fav" data-id="${r.id}"
+                    aria-pressed="${state.fav.includes(r.id)}" aria-label="${state.fav.includes(r.id) ? "Odebrat z oblíbených" : "Přidat do oblíbených"}: ${esc(r.nazev)}">
+                    <svg aria-hidden="true"><use href="#i-oblibene"/></svg></button></h2>
             <p class="recipe-meta">${r.cas} min · ${tags}</p>
             ${extra || ""}
             <div class="recipe-actions">
@@ -448,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderRecipes() {
         const q = $("#recipe-search").value.trim();
         const list = RECEPTY.filter((r) =>
-            (state.filter === "vse" || r.kategorie === state.filter) && (!q || sediNaDotaz(r, q))
+            (state.filter === "vse" || r.kategorie === state.filter || (state.filter === "oblibene" && state.fav.includes(r.id))) && (!q || sediNaDotaz(r, q))
         );
         if (list.length) {
             $("#recipe-list").innerHTML = list.map((r) => recipeCard(r)).join("");
@@ -457,7 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Nikdy jen „nic tu není“: nabídneme podobné a cestu zpět
         const tipy = q ? podobne(q) : [];
         $("#recipe-list").innerHTML = `<div class="card empty">
-            <p><strong>${q ? `„${esc(q)}“ jsem nenašla.` : "V této kategorii zatím nic není."}</strong></p>
+            <p><strong>${q ? `„${esc(q)}“ jsem nenašla.` : state.filter === "oblibene" ? "Zatím nemáš oblíbené recepty. Přidáš je srdíčkem u receptu." : "V této kategorii zatím nic není."}</strong></p>
             ${tipy.length ? `<p>Možná hledáš:</p>` : ""}
             <div class="suggest">
                 ${tipy.map((r) => `<button type="button" class="chip" data-action="search-suggest" data-name="${esc(r.nazev)}">${esc(r.nazev)}</button>`).join("")}
@@ -504,6 +570,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <svg class="check-box" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6"/><path d="M6.5 12.5l4 4 7-8.5"/></svg>
                     <span class="check-text">${esc(item.text)}</span>
                 </label>
+                <span class="shop-links">
+                    <a href="https://www.rohlik.cz/hledat?q=${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--r" aria-label="Najít ${esc(item.text)} na Rohlíku">R</a>
+                    <a href="https://www.kosik.cz/vyhledavani?search=${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--k" aria-label="Najít ${esc(item.text)} na Košíku">K</a>
+                </span>
                 <button type="button" class="icon-btn" data-action="shop-remove" data-index="${i}" aria-label="Odebrat ${esc(item.text)}">×</button>
             </li>`).join("");
 
@@ -514,6 +584,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateShopMeta() {
         const open = state.shop.filter((i) => !i.done).length;
         $("#shop-empty").hidden = state.shop.length > 0;
+        // odhad ceny jen za to, co ještě nemáš koupené
+        $("#shop-tools").hidden = open === 0;
+        $("#shop-price").textContent = fmt(state.shop.filter((i) => !i.done).reduce((a, i) => a + cena(i.text), 0));
         $("#shop-clear-done").hidden = !state.shop.some((i) => i.done);
 
         const badge = $("#shop-count");
@@ -587,6 +660,37 @@ document.addEventListener("DOMContentLoaded", function () {
             toast(n ? "Celý den je na nákupu" : "Suroviny už na seznamu máš");
         }
 
+        if (action === "shop-week" && state.profile) {
+            const items = weekPlan().flatMap((den) => den.jidla.filter((j) => j.pick).flatMap((j) => j.pick.recipe.suroviny));
+            const n = addToShop([...new Set(items)]);
+            toast(n ? `Celý týden je na nákupu (${n} ${n === 1 ? "položka" : n < 5 ? "položky" : "položek"})` : "Suroviny už na seznamu máš");
+        }
+
+        if (action === "fav" && recipe) {
+            state.fav = state.fav.includes(recipe.id) ? state.fav.filter((x) => x !== recipe.id) : [...state.fav, recipe.id];
+            store.set("fav", state.fav);
+            toast(state.fav.includes(recipe.id) ? "Přidáno do oblíbených" : "Odebráno z oblíbených");
+            renderRecipes();
+            renderFridge();
+        }
+
+        // „Kup hotové“ bez vypisování: celý seznam do schránky nebo poslat dál
+        const seznamText = () => state.shop.filter((i) => !i.done).map((i) => "• " + i.text).join("\n");
+        if (action === "shop-copy") {
+            navigator.clipboard?.writeText(seznamText()).then(() => toast("Seznam je zkopírovaný"), () => toast("Kopírování se nepovedlo"));
+        }
+        if (action === "shop-share") {
+            const text = "Nákup z appky Jídlo od A–Z:\n" + seznamText();
+            if (navigator.share) navigator.share({ title: "Nákupní seznam", text }).catch(() => {});
+            else navigator.clipboard?.writeText(text).then(() => toast("Sdílení tu nejde, seznam jsem zkopírovala"));
+        }
+
+        if (action === "guide-done") {
+            store.set("guide-done", true);
+            $("#guide").hidden = true;
+            $("#age").focus();
+        }
+
         if (action === "shop-remove") {
             state.shop.splice(Number(btn.dataset.index), 1);
             store.set("shop", state.shop);
@@ -607,6 +711,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     /* ============ START ============ */
+
+    // průvodce jen při prvním spuštění (bez profilu a dokud ho člověk nezavře)
+    $("#guide").hidden = !!state.profile || store.get("guide-done", false);
 
     if (state.profile) {
         fillForm(state.profile);

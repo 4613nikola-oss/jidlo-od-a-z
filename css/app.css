@@ -736,3 +736,33 @@ body {
 .panel-lead, .empty-text { font-family: "Caveat", cursive; font-size: 1.35rem; line-height: 1.3; color: #4a4036; }
 /* žádná zářivě bílá ani v appce */
 .btn--ghost, .search, .shop-add input { background: #fbf4e2; }
+
+/* ===== Fáze C (19. 11.): průvodce, Den/Týden, oblíbené, nákup s cenou a odkazy na Rohlík/Košík ===== */
+.guide { background-color: var(--card-med); }
+.guide-steps { padding-left: 1.3rem; margin: 6px 0 14px; }
+.guide-steps li { margin-bottom: 8px; }
+.view-switch { display: flex; gap: 0; margin: 4px 0 16px; border: 3px solid var(--ink); border-radius: 999px; overflow: hidden; width: fit-content; box-shadow: 3px 3px 0 var(--ink); }
+.seg { font: inherit; font-weight: 700; padding: 8px 22px; border: 0; background: #fbf4e2; color: var(--ink); cursor: pointer; min-height: 44px; }
+.seg.is-on { background: var(--primary); color: #fff; }
+.week-list { display: grid; gap: 14px; margin-bottom: 16px; }
+.week-day--alt { background-color: var(--card-med); }
+.week-meals { list-style: none; padding: 0; margin: 8px 0 0; }
+.week-meals li { padding: 6px 0; border-bottom: 1px dashed rgba(31, 29, 26, 0.2); }
+.week-meals li:last-child { border-bottom: 0; }
+.week-meal { display: inline-block; min-width: 5.5em; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #a24e33; }
+.recipe-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.fav-btn { flex: none; width: 40px; height: 40px; border: 2px solid var(--ink); border-radius: 50%; background: #fbf4e2; cursor: pointer; display: grid; place-items: center; color: var(--primary); }
+.fav-btn svg { width: 22px; height: 22px; }
+.fav-btn.is-fav { background: #a24e33; color: #fff; }
+.fav-btn.is-fav svg path { fill: currentColor; }
+.shop-tools { background-color: var(--card-med); }
+.shop-price { font-size: 1.15rem; margin: 0 0 4px; }
+.shop-note { font-size: .85rem; color: var(--text-light); margin: 0 0 10px; }
+.shop-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.shop-links { display: inline-flex; gap: 4px; margin-left: auto; margin-right: 6px; }
+.shop-link { display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid var(--ink); border-radius: 50%; font-weight: 800; font-size: .8rem; text-decoration: none; }
+.shop-link--r { background: #e3ebdd; color: #2f4a26; }
+.shop-link--k { background: #f4ddd6; color: #8a3a22; }
+
+/* srdíčko musí být nad roztaženým odkazem karty, jinak klepnutí otevře recept */
+.fav-btn { position: relative; z-index: 2; }

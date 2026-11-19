@@ -126,6 +126,17 @@
             <div class="app-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
             <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Údaje zůstávají jen v tvém prohlížeči.</p>
 
+            <!-- Průvodce prvním spuštěním: 3 kroky, zmizí po „Jdeme na to“ -->
+            <section id="guide" class="card guide" hidden aria-labelledby="guide-title">
+                <h2 id="guide-title" class="card-title">Ahoj! Takhle to funguje</h2>
+                <ol class="guide-steps">
+                    <li><strong>Spočítej si příjem.</strong> Pár údajů a víš, kolik ti stačí.</li>
+                    <li><strong>Můj den nebo týden.</strong> Appka to rozdělí do jídel a navrhne recepty.</li>
+                    <li><strong>Nákup.</strong> Jedním klepnutím seznam, odhad ceny a odkaz na Rohlík či Košík.</li>
+                </ol>
+                <button type="button" class="btn btn--primary" data-action="guide-done">Jdeme na to</button>
+            </section>
+
             <form id="profile-form" class="card" novalidate>
                 <fieldset class="field">
                     <legend>Kdo budeš v appce?</legend>
@@ -236,6 +247,19 @@
                 <button type="button" class="btn btn--primary" data-action="go-profil">Spočítat cíl</button>
             </div>
 
+            <!-- Přepínač: jeden den, nebo celý týden -->
+            <div class="view-switch" id="view-switch" role="group" aria-label="Zobrazit plán">
+                <button type="button" class="seg is-on" data-view="day" aria-pressed="true">Den</button>
+                <button type="button" class="seg" data-view="week" aria-pressed="false">Týden</button>
+            </div>
+
+            <!-- MŮJ TÝDEN: obědy a večeře se opakují po 3 dnech (vaříš dopředu jeden základ) -->
+            <div id="week-content" hidden>
+                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají.</p>
+                <div id="week-days" class="week-list"></div>
+                <button type="button" class="btn btn--primary btn--full" data-action="shop-week">Celý týden na nákup</button>
+            </div>
+
             <div id="day-content" hidden>
                 <p class="panel-lead">Tvůj cíl je <strong><span id="day-target">0</span> kcal</strong>. Tady je návrh, jak ho rozdělit. Recept vyměníš tlačítkem „Jiný recept“.</p>
                 <div id="day-meals" class="meal-list"></div>
@@ -282,6 +306,7 @@
                 <button type="button" class="chip" data-filter="slane" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-slane"/></svg>Slané</button>
                 <button type="button" class="chip" data-filter="sladke" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-sladke"/></svg>Sladké</button>
                 <button type="button" class="chip" data-filter="napoje" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-napoje"/></svg>Nápoje</button>
+                <button type="button" class="chip" data-filter="oblibene" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-oblibene"/></svg>Oblíbené</button>
             </div>
             <label for="recipe-search" class="sr-only">Hledat recept</label>
             <input type="search" id="recipe-search" class="search" placeholder="Hledat recept">
@@ -304,6 +329,16 @@
                 <input type="text" id="shop-input" placeholder="Přidat vlastní položku">
                 <button type="submit" class="btn btn--primary">Přidat</button>
             </form>
+
+            <!-- Odhad ceny a „kup hotové“: kopírovat, sdílet, u položek odkazy na Rohlík a Košík -->
+            <div id="shop-tools" class="card shop-tools" hidden>
+                <p class="shop-price">Odhad nákupu: <strong>asi <span id="shop-price">0</span> Kč</strong></p>
+                <p class="shop-note">Orientačně podle běžných cen v obchodech, skutečná cena se liší. U každé položky ji najdeš na Rohlíku (R) nebo Košíku (K).</p>
+                <div class="shop-buttons">
+                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-copy">Zkopírovat seznam</button>
+                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-share">Sdílet</button>
+                </div>
+            </div>
 
             <ul id="shop-list" class="shop-list"></ul>
             <p id="shop-empty" class="empty-text">Seznam je prázdný. Přidej suroviny z receptů tlačítkem „Na nákup“.</p>
