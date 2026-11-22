@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fridge: store.get("fridge", []),       // vybrané suroviny
         shop: store.get("shop", []),           // položky nákupu { text, done }
         fav: store.get("fav", []),             // oblíbené recepty (id)
-        view: store.get("view", "day"),        // Můj den: den / týden
+        view: store.get("view", "day"),        // Můj den: den / týden / měsíc
+        swaps: store.get("swaps", {}),         // „Jiný recept“ v týdnu a měsíci (klíč = jídlo + den nebo 3denní blok)
         filter: "vse"
     };
 
@@ -297,31 +298,72 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ---- MŮJ TÝDEN ---- */
+    /* ---- MŮJ TÝDEN A MĚSÍC ---- */
     // Obědy a večeře se mění po 3 dnech (jeden základ uvaříš dopředu), snídaně a svačiny každý den.
-    function weekPlan() {
+    // Měsíc = 4 týdny za sebou; dny se počítají průběžně, takže se týdny navzájem liší.
+    const variDopredu = (mealId) => mealId === "obed" || mealId === "vecere";
+    // Klíč pro „Jiný recept“: oběd/večeře platí pro celý 3denní blok, ostatní jen pro jeden den
+    const swapKey = (mealId, den) => variDopredu(mealId) ? `${mealId}-b${Math.floor(den / 3)}` : `${mealId}-d${den}`;
+
+    // Pondělí tohoto týdne (od něj se počítají data v plánu)
+    function mondayOf(date) {
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+        return d;
+    }
+    const kratkeDatum = (d) => `${d.getDate()}. ${d.getMonth() + 1}.`;
+
+    function weekPlan(t = 0) {
         const target = calculate(state.profile).target;
-        return DNY.map((nazevDne, d) => ({
-            nazevDne,
-            jidla: JIDLA.map((meal) => {
-                const mealTarget = target * meal.podil;
-                const list = candidatesFor(meal.id, mealTarget);
-                if (!list.length) return { meal, pick: null };
-                const posun = meal.id === "obed" || meal.id === "vecere" ? Math.floor(d / 3) : d;
-                return { meal, pick: list[((state.day[meal.id] || 0) + posun) % list.length] };
-            })
-        }));
+        const start = mondayOf(new Date());
+        return DNY.map((nazevDne, d) => {
+            const den = t * 7 + d; // pořadí dne od začátku plánu
+            const datum = new Date(start);
+            datum.setDate(start.getDate() + den);
+            return {
+                nazevDne, datum, den,
+                jidla: JIDLA.map((meal) => {
+                    const mealTarget = target * meal.podil;
+                    const list = candidatesFor(meal.id, mealTarget);
+                    if (!list.length) return { meal, pick: null };
+                    const key = swapKey(meal.id, den);
+                    const posun = (variDopredu(meal.id) ? Math.floor(den / 3) : den) + (state.swaps[key] || 0);
+                    return { meal, key, pick: list[((state.day[meal.id] || 0) + posun) % list.length] };
+                })
+            };
+        });
+    }
+
+    const daySum = (den) => den.jidla.reduce((a, j) => a + (j.pick ? j.pick.recipe.kcal * j.pick.porce : 0), 0);
+
+    function weekDaysHtml(t) {
+        return weekPlan(t).map((den, d) => `<article class="card week-day${d % 2 ? " week-day--alt" : ""}">
+                <header class="meal-head"><h2>${den.nazevDne} <span class="week-date">${kratkeDatum(den.datum)}</span></h2><span class="meal-kcal">~ ${fmt(daySum(den))} kcal</span></header>
+                <ul class="week-meals">${den.jidla.map((j) => j.pick
+                    ? `<li><span class="week-meal">${j.meal.nazev}</span> <a href="${esc(j.pick.recipe.odkaz)}">${esc(j.pick.recipe.nazev)}</a>
+                        <button type="button" class="swap-btn" data-action="swap-plan" data-key="${j.key}" aria-label="Jiný recept: ${j.meal.nazev}, ${den.nazevDne}" title="Jiný recept">🔄</button></li>`
+                    : `<li><span class="week-meal">${j.meal.nazev}</span> <em>zatím bez receptu</em></li>`).join("")}</ul>
+            </article>`).join("");
     }
 
     function renderWeek() {
-        $("#week-days").innerHTML = weekPlan().map((den, d) => {
-            const sum = den.jidla.reduce((a, j) => a + (j.pick ? j.pick.recipe.kcal * j.pick.porce : 0), 0);
-            return `<article class="card week-day${d % 2 ? " week-day--alt" : ""}">
-                <header class="meal-head"><h2>${den.nazevDne}</h2><span class="meal-kcal">~ ${fmt(sum)} kcal</span></header>
-                <ul class="week-meals">${den.jidla.map((j) => j.pick
-                    ? `<li><span class="week-meal">${j.meal.nazev}</span> <a href="${esc(j.pick.recipe.odkaz)}">${esc(j.pick.recipe.nazev)}</a></li>`
-                    : `<li><span class="week-meal">${j.meal.nazev}</span> <em>zatím bez receptu</em></li>`).join("")}</ul>
-            </article>`;
+        $("#week-days").innerHTML = weekDaysHtml(0);
+    }
+
+    // Kolik různých receptů je v plánu – když málo, upozorníme, že se jídla opakují
+    function renderMonth() {
+        const tydny = [0, 1, 2, 3];
+        const ruzne = new Set(tydny.flatMap((t) => weekPlan(t).flatMap((den) => den.jidla.filter((j) => j.pick).map((j) => j.pick.recipe.id))));
+        $("#month-note").hidden = ruzne.size >= 20;
+        $("#month-weeks").innerHTML = tydny.map((t) => {
+            const dny = weekPlan(t);
+            const prumer = dny.reduce((a, den) => a + daySum(den), 0) / 7;
+            const nazev = t === 0 ? "Tento týden" : t === 1 ? "Příští týden" : `Týden ${t + 1}`;
+            return `<details class="card month-week"${t === 0 ? " open" : ""}>
+                <summary><span class="month-week-title">${nazev}</span> <span class="week-date">${kratkeDatum(dny[0].datum)} – ${kratkeDatum(dny[6].datum)}</span> <span class="meal-kcal">~ ${fmt(prumer)} kcal / den</span></summary>
+                <div class="week-list">${weekDaysHtml(t)}</div>
+                <button type="button" class="btn btn--primary btn--full" data-action="shop-week" data-week="${t}">${nazev} na nákup</button>
+            </details>`;
         }).join("");
     }
 
@@ -329,12 +371,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const hasProfile = !!state.profile;
         $("#view-switch").hidden = !hasProfile;
         $("#week-content").hidden = !hasProfile || state.view !== "week";
+        $("#month-content").hidden = !hasProfile || state.view !== "month";
         document.querySelectorAll("#view-switch .seg").forEach((b) => {
             const on = b.dataset.view === state.view;
             b.classList.toggle("is-on", on);
             b.setAttribute("aria-pressed", on);
         });
         if (hasProfile && state.view === "week") renderWeek();
+        if (hasProfile && state.view === "month") renderMonth();
     }
 
     $("#view-switch").addEventListener("click", (e) => {
@@ -348,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderDay() {
         const hasProfile = !!state.profile;
         $("#day-empty").hidden = hasProfile;
-        $("#day-content").hidden = !hasProfile || state.view === "week";
+        $("#day-content").hidden = !hasProfile || state.view !== "day";
         renderView();
         if (!hasProfile) return;
 
@@ -661,9 +705,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (action === "shop-week" && state.profile) {
-            const items = weekPlan().flatMap((den) => den.jidla.filter((j) => j.pick).flatMap((j) => j.pick.recipe.suroviny));
+            const items = weekPlan(Number(btn.dataset.week) || 0).flatMap((den) => den.jidla.filter((j) => j.pick).flatMap((j) => j.pick.recipe.suroviny));
             const n = addToShop([...new Set(items)]);
-            toast(n ? `Celý týden je na nákupu (${n} ${n === 1 ? "položka" : n < 5 ? "položky" : "položek"})` : "Suroviny už na seznamu máš");
+            toast(n ? `Týden je na nákupu (${n} ${n === 1 ? "položka" : n < 5 ? "položky" : "položek"})` : "Suroviny už na seznamu máš");
+        }
+
+        if (action === "swap-plan" && state.profile) {
+            const key = btn.dataset.key;
+            state.swaps[key] = (state.swaps[key] || 0) + 1;
+            store.set("swaps", state.swaps);
+            // otevřené týdny v měsíci zůstanou otevřené
+            const open = [...document.querySelectorAll("#month-weeks details")].map((x) => x.open);
+            renderView();
+            document.querySelectorAll("#month-weeks details").forEach((x, i) => { if (open.length) x.open = open[i]; });
+            toast(/-b\d+$/.test(key) ? "Vyměněno – platí pro všechny 3 dny, kdy se to jí" : "Vyměněno");
         }
 
         if (action === "fav" && recipe) {

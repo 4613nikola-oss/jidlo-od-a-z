@@ -749,7 +749,19 @@ body {
 .week-meals { list-style: none; padding: 0; margin: 8px 0 0; }
 .week-meals li { padding: 6px 0; border-bottom: 1px dashed rgba(31, 29, 26, 0.2); }
 .week-meals li:last-child { border-bottom: 0; }
-.week-meal { display: inline-block; min-width: 5.5em; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #a24e33; }
+.week-meals li { display: flex; align-items: center; gap: 6px; }
+.week-meals li a { flex: 1; }
+.week-date { font-family: inherit; font-size: .85rem; font-weight: 600; color: var(--text-light); }
+.swap-btn { flex: none; width: 44px; height: 44px; border: 2px solid var(--ink); border-radius: 50%; background: #fbf4e2; cursor: pointer; font-size: 1.1rem; line-height: 1; }
+.swap-btn:hover { background: #fff; }
+.swap-btn:focus-visible { outline: 3px solid var(--sage); outline-offset: 2px; }
+.month-list { display: grid; gap: 14px; }
+.month-week summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 4px 0; min-height: 44px; }
+.month-week[open] summary { margin-bottom: 12px; }
+.month-week-title { font-family: "Playfair Display", serif; font-size: 1.25rem; font-weight: 700; }
+.month-week summary .meal-kcal { margin-left: auto; }
+.month-note { background: #fff3d6; border: 2px dashed var(--ink); border-radius: 12px; padding: 10px 14px; font-size: .95rem; }
+.week-meal { flex: none; display: inline-block; min-width: 5.5em; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #a24e33; }
 .recipe-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .fav-btn { flex: none; width: 40px; height: 40px; border: 2px solid var(--ink); border-radius: 50%; background: #fbf4e2; cursor: pointer; display: grid; place-items: center; color: var(--primary); }
 .fav-btn svg { width: 22px; height: 22px; }

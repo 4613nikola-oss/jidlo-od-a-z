@@ -247,15 +247,23 @@
                 <button type="button" class="btn btn--primary" data-action="go-profil">Spočítat cíl</button>
             </div>
 
-            <!-- Přepínač: jeden den, nebo celý týden -->
+            <!-- Přepínač: jeden den, týden, nebo měsíc (4 týdny) -->
             <div class="view-switch" id="view-switch" role="group" aria-label="Zobrazit plán">
                 <button type="button" class="seg is-on" data-view="day" aria-pressed="true">Den</button>
                 <button type="button" class="seg" data-view="week" aria-pressed="false">Týden</button>
+                <button type="button" class="seg" data-view="month" aria-pressed="false">Měsíc</button>
+            </div>
+
+            <!-- MŮJ MĚSÍC: 4 týdny za sebou, nákup vždy po týdnech (čerstvé věci nevydrží měsíc) -->
+            <div id="month-content" hidden>
+                <p class="panel-lead">Plán na 4 týdny dopředu. Nakupuj vždycky jen na jeden týden, ať se nic nezkazí. Jídlo vyměníš tlačítkem 🔄.</p>
+                <p class="month-note" id="month-note" hidden>Receptů je zatím málo, takže se některá jídla opakují. Jak přibydou nové recepty na webu, měsíc bude pestřejší.</p>
+                <div id="month-weeks" class="month-list"></div>
             </div>
 
             <!-- MŮJ TÝDEN: obědy a večeře se opakují po 3 dnech (vaříš dopředu jeden základ) -->
             <div id="week-content" hidden>
-                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají.</p>
+                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají. Jídlo vyměníš tlačítkem 🔄.</p>
                 <div id="week-days" class="week-list"></div>
                 <button type="button" class="btn btn--primary btn--full" data-action="shop-week">Celý týden na nákup</button>
             </div>
