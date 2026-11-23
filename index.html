@@ -187,6 +187,16 @@
                     </div>
                 </div>
 
+                <fieldset class="field">
+                    <legend>Jídelníček <span class="legend-hint">(nepovinné)</span></legend>
+                    <div class="diet-row">
+                        <label><input type="checkbox" name="diet" value="vege"> 🥕 Jím vegetariánsky</label>
+                        <label><input type="checkbox" name="diet" value="bezlepku"> Bez lepku</label>
+                        <label><input type="checkbox" name="diet" value="bezmleka"> Bez mléka</label>
+                    </div>
+                    <p class="field-hint">Plán pak navrhne jen jídla, která ti sedí. Při alergii vždy zkontroluj složení receptu.</p>
+                </fieldset>
+
                 <div class="field">
                     <label for="activity">Fyzická aktivita</label>
                     <select id="activity">
@@ -295,7 +305,22 @@
                 <div class="card day-total">
                     <span>Celkem za den</span>
                     <strong><span id="day-sum">0</span> kcal</strong>
+                    <span class="day-protein" id="day-protein"></span>
                 </div>
+
+                <!-- Pitný režim: sklenice po 250 ml, cíl podle profilu (orientačně podle EFSA) -->
+                <section class="card water" aria-labelledby="water-title">
+                    <div class="water-head">
+                        <h2 class="card-title" id="water-title">💧 Pití dnes</h2>
+                        <span class="water-count" id="water-count" aria-live="polite"></span>
+                    </div>
+                    <div class="water-glasses" id="water-glasses" aria-hidden="true"></div>
+                    <div class="water-actions">
+                        <button type="button" class="btn btn--primary btn--small" data-action="water-plus">+ sklenice</button>
+                        <button type="button" class="btn btn--ghost btn--small" data-action="water-minus">− vrátit</button>
+                    </div>
+                    <p class="water-note">1 sklenice = 250 ml. Cíl je orientační (doporučení EFSA pro pití, zbytek vody dá jídlo), nejde o lékařskou radu.</p>
+                </section>
                 <button type="button" class="btn btn--ghost btn--full" data-action="shop-day">Přidat celý den na nákup</button>
 
                 <!-- Tip na obchod: den je zdarma, celý týden je v plánu -->
@@ -335,6 +360,7 @@
                 <button type="button" class="chip" data-filter="slane" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-slane"/></svg>Slané</button>
                 <button type="button" class="chip" data-filter="sladke" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-sladke"/></svg>Sladké</button>
                 <button type="button" class="chip" data-filter="napoje" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-napoje"/></svg>Nápoje</button>
+                <button type="button" class="chip" data-filter="vege" aria-pressed="false">🥕 Vege</button>
                 <button type="button" class="chip" data-filter="oblibene" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-oblibene"/></svg>Oblíbené</button>
             </div>
             <label for="recipe-search" class="sr-only">Hledat recept</label>

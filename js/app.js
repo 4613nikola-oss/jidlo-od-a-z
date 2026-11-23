@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         swaps: store.get("swaps", {}),         // „Jiný recept“ v týdnu a měsíci (klíč = jídlo + den nebo 3denní blok)
         stamps: store.get("stamps", []),       // razítka do kuchařky { typ, klic, datum, popis }
         changeSkip: store.get("change-skip", ""), // týden, kdy malou změnu přeskočil (pondělí jako text)
+        water: store.get("water", {}),         // vypité sklenice podle dne { "2026-11-23": 5 }
         filter: "vse"
     };
 
@@ -243,6 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#weight").value = p.weight;
         $("#height").value = p.height;
         $("#activity").value = String(p.activity);
+        form.querySelectorAll('input[name="diet"]').forEach((c) => { c.checked = (p.diet || []).includes(c.value); });
     }
 
     form.addEventListener("submit", function (e) {
@@ -262,7 +264,8 @@ document.addEventListener("DOMContentLoaded", function () {
             goal: form.querySelector('input[name="goal"]:checked').value,
             gender: form.querySelector('input[name="gender"]:checked').value,
             age, weight, height,
-            activity: parseFloat($("#activity").value)
+            activity: parseFloat($("#activity").value),
+            diet: [...form.querySelectorAll('input[name="diet"]:checked')].map((c) => c.value)
         };
         store.set("profile", state.profile);
         renderProfileResults();
@@ -277,11 +280,30 @@ document.addEventListener("DOMContentLoaded", function () {
         return Math.min(2.5, Math.max(0.5, Math.round(raw * 2) / 2));
     }
 
+    // Jídelníček z profilu: vegetariánsky, bez lepku, bez mléka.
+    // Recept bez údaje (záložní data bez internetu) radši vynecháme, než abychom nabídli něco nevhodného.
+    function sediNaJidelnicek(r) {
+        const diet = (state.profile && state.profile.diet) || [];
+        if (diet.includes("vege") && r.vege !== true) return false;
+        if (diet.includes("bezlepku") && (!Array.isArray(r.alergeny) || r.alergeny.includes("lepek"))) return false;
+        if (diet.includes("bezmleka") && (!Array.isArray(r.alergeny) || r.alergeny.includes("mleko"))) return false;
+        return true;
+    }
+
+    // Orientační cíle: pití podle EFSA (ženy ~1,6 l, muži ~2 l z nápojů), bílkoviny g/kg podle cíle
+    function waterTarget(p) {
+        return (p.gender === "male" ? 8 : 7) + (p.activity >= 1.725 ? 1 : 0);
+    }
+    function proteinTarget(p) {
+        const naKilo = { hubnout: 1.4, udrzet: 1.0, nabrat: 1.8 }[p.goal] || 1.0;
+        return Math.round(p.weight * naKilo);
+    }
+
     // Recepty vhodné pro dané jídlo, seřazené od nejlépe sedícího
     function candidatesFor(mealId, targetKcal) {
         return RECEPTY
             // recepty bez kcal (ještě je doplníme) do plánu dne nepatří – nedá se spočítat porce
-            .filter((r) => r.kcal && r.jidlo.includes(mealId))
+            .filter((r) => r.kcal && r.jidlo.includes(mealId) && sediNaJidelnicek(r))
             .map((r) => {
                 const porce = portionFor(r, targetKcal);
                 return { recipe: r, porce, diff: Math.abs(r.kcal * porce - targetKcal) + Math.abs(porce - 1) * 60 };
@@ -510,17 +532,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const plan = currentDayPlan();
         let sum = 0;
+        let bilkoviny = 0, bezUdaje = false;
 
         $("#day-meals").innerHTML = plan.map(({ meal, mealTarget, pick }) => {
             if (!pick) {
                 return `<article class="card meal">
                     <header class="meal-head"><h2>${meal.nazev}</h2><span class="meal-kcal">~ ${fmt(mealTarget)} kcal</span></header>
-                    <p class="empty-text">Pro tohle jídlo zatím nemáš žádný recept.</p>
+                    <p class="empty-text">${(state.profile.diet || []).length
+                        ? "S tvým jídelníčkem (Profil) sem zatím žádný recept nesedí. Nové recepty přibývají – nebo si omezení v Profilu uprav."
+                        : "Pro tohle jídlo zatím nemáš žádný recept."}</p>
                 </article>`;
             }
             const r = pick.recipe;
             const kcal = r.kcal * pick.porce;
             sum += kcal;
+            if (typeof r.bilkoviny === "number") bilkoviny += r.bilkoviny * pick.porce; else bezUdaje = true;
             const porceText = pick.porce === 1 ? "1 porce" : `${String(pick.porce).replace(".", ",")} porce`;
             return `<article class="card meal">
                 <header class="meal-head">
@@ -528,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span class="meal-kcal">cíl ~ ${fmt(mealTarget)} kcal</span>
                 </header>
                 <a class="meal-recipe" href="${esc(r.odkaz)}">${esc(r.nazev)}</a>
-                <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal · ${r.cas} min</p>
+                <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal${typeof r.bilkoviny === "number" ? ` · 💪 ${fmt(r.bilkoviny * pick.porce)} g bílkovin` : ""} · ${r.cas} min</p>
                 <div class="meal-actions">
                     ${(() => {
                         const uvareno = maRazitko(`r-${dnes()}-${meal.id}`);
@@ -541,6 +567,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("");
 
         $("#day-sum").textContent = fmt(sum);
+        $("#day-protein").textContent = bezUdaje || !plan.some((p) => p.pick)
+            ? ""
+            : `💪 Bílkoviny ~${fmt(bilkoviny)} z ${fmt(proteinTarget(state.profile))} g (orientačně)`;
+        renderWater();
+    }
+
+    function renderWater() {
+        if (!state.profile) return;
+        const cil = waterTarget(state.profile);
+        const vypito = state.water[dnes()] || 0;
+        $("#water-count").textContent = `${vypito} z ${cil} sklenic${vypito >= cil ? " ✓" : ""}`;
+        $("#water-glasses").innerHTML = Array.from({ length: Math.max(cil, vypito) }, (_, i) =>
+            `<span class="glass${i < vypito ? " is-full" : ""}"></span>`).join("");
     }
 
     /* ============ SPOLEČNÁ KARTA RECEPTU ============ */
@@ -556,7 +595,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <button type="button" class="fav-btn${state.fav.includes(r.id) ? " is-fav" : ""}" data-action="fav" data-id="${r.id}"
                     aria-pressed="${state.fav.includes(r.id)}" aria-label="${state.fav.includes(r.id) ? "Odebrat z oblíbených" : "Přidat do oblíbených"}: ${esc(r.nazev)}">
                     <svg aria-hidden="true"><use href="#i-oblibene"/></svg></button></h2>
-            <p class="recipe-meta">${r.cas} min · ${tags}</p>
+            <p class="recipe-meta">${r.cas} min${typeof r.bilkoviny === "number" && r.bilkoviny > 0 ? ` · 💪 ${r.bilkoviny} g bílkovin` : ""}${r.vege ? " · 🥕 vege" : ""} · ${tags}</p>
             ${extra || ""}
             <div class="recipe-actions">
                 <a class="btn btn--ghost btn--small" href="${esc(r.odkaz)}">Otevřít recept</a>
@@ -671,7 +710,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderRecipes() {
         const q = $("#recipe-search").value.trim();
         const list = RECEPTY.filter((r) =>
-            (state.filter === "vse" || r.kategorie === state.filter || (state.filter === "oblibene" && state.fav.includes(r.id))) && (!q || sediNaDotaz(r, q))
+            (state.filter === "vse" || r.kategorie === state.filter || (state.filter === "oblibene" && state.fav.includes(r.id)) || (state.filter === "vege" && r.vege === true)) && (!q || sediNaDotaz(r, q))
         );
         if (list.length) {
             $("#recipe-list").innerHTML = list.map((r) => recipeCard(r)).join("");
@@ -809,6 +848,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             renderDay();
             renderCookbook();
+        }
+
+        if (action === "water-plus" || action === "water-minus") {
+            const den = dnes();
+            const pred = state.water[den] || 0;
+            const ted = action === "water-plus" ? Math.min(pred + 1, 20) : Math.max(pred - 1, 0);
+            // staré dny nepotřebujeme – drží se jen dnešek, ať úložiště neroste
+            state.water = { [den]: ted };
+            store.set("water", state.water);
+            renderWater();
+            if (action === "water-plus" && state.profile && ted === waterTarget(state.profile)) toast("Dnešní pití splněné! 💧");
         }
 
         if (action === "change-done") {
