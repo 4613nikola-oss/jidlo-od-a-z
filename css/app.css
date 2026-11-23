@@ -830,3 +830,16 @@ body {
 .water-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .water-note { font-size: .8rem; color: var(--text-light); margin: 10px 0 0; }
 @media (prefers-reduced-motion: reduce) { .glass { transition: none; } }
+
+/* ===== Účet (23. 11.) ===== */
+.account { margin-top: 20px; }
+.login-form label { display: block; font-weight: 600; margin-bottom: 6px; }
+.login-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.login-row input { flex: 1 1 14rem; min-height: 48px; font: inherit; padding: 10px 14px; border: 2px solid var(--ink); border-radius: 12px; background: #fbf4e2; }
+.login-sent { background: #d3e3c9; border: 2px dashed var(--ink); border-radius: 12px; padding: 12px 14px; font-weight: 600; }
+.sync-status { font-size: .9rem; color: var(--text-light); }
+.account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.account-delete { color: var(--error, #b3261e); }
+.privacy { margin-top: 14px; font-size: .92rem; }
+.privacy summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+.privacy p { margin: 0 0 8px; }

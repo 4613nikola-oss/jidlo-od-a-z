@@ -31,8 +31,23 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         set(key, value) {
             try { localStorage.setItem("jidloaz-" + key, JSON.stringify(value)); } catch (e) { warnStorage(); }
+            // změna dat, která patří do účtu → za chvíli se odešle (viz ÚČET níže)
+            if (SYNC_KEYS.includes(key)) {
+                try { localStorage.setItem("jidloaz-zmeneno", new Date().toISOString()); } catch (e) { /* nic */ }
+                if (cloud.user) naplanujUlozeni();
+            }
         }
     };
+
+    /* ============ ÚČET (Supabase, EU) – nepovinný ============ */
+    // Veřejná adresa a veřejný (publishable) klíč projektu – smí být v kódu.
+    // Data chrání pravidla v databázi (Row Level Security): každý vidí jen svůj řádek.
+    const SUPABASE_URL = "https://eohgscmupoxeedwsbakd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_0s7suU4_pLplPbkUHviBZg_RZ3kI_g2";
+    const SUPABASE_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm";
+    // Co se ukládá do účtu (pití po dnech ne – stačí v telefonu)
+    const SYNC_KEYS = ["profile", "day", "fridge", "shop", "fav", "view", "swaps", "stamps", "change-skip"];
+    const cloud = { sb: null, user: null, timer: null };
 
     // Kontrola hned při spuštění, ať se to člověk dozví dřív, než něco vyplní
     try {
@@ -969,6 +984,188 @@ document.addEventListener("DOMContentLoaded", function () {
         fillForm(state.profile);
         renderProfileResults();
     }
+    /* ---- ÚČET: přihlášení odkazem z e-mailu, ukládání a načítání dat ---- */
+
+    // Data, která patří do účtu, jako jeden objekt
+    function snapshot() {
+        const out = {};
+        SYNC_KEYS.forEach((k) => {
+            const v = store.get(k, undefined);
+            if (v !== undefined) out[k] = v;
+        });
+        return out;
+    }
+    const maData = (d) => !!(d && (d.profile || (d.stamps && d.stamps.length) || (d.fav && d.fav.length) || (d.shop && d.shop.length) || (d.fridge && d.fridge.length)));
+    const stejne = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+    // Zapíše data z účtu do zařízení a appku znovu načte (stav se čte při startu)
+    function pouzijData(data) {
+        try {
+            SYNC_KEYS.forEach((k) => {
+                if (k in data) localStorage.setItem("jidloaz-" + k, JSON.stringify(data[k]));
+                else localStorage.removeItem("jidloaz-" + k);
+            });
+            localStorage.setItem("jidloaz-zmeneno", new Date().toISOString());
+        } catch (e) { warnStorage(); return; }
+        location.reload();
+    }
+
+    async function supabase() {
+        if (cloud.sb) return cloud.sb;
+        const { createClient } = await import(SUPABASE_LIB);
+        cloud.sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            // implicit: odkaz z e-mailu funguje, i když ho otevřeš v jiném prohlížeči než ten, kde jsi ho žádal/a
+            auth: { flowType: "implicit", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+        return cloud.sb;
+    }
+
+    function syncText(text) { $("#sync-status").textContent = text; }
+
+    function naplanujUlozeni() {
+        clearTimeout(cloud.timer);
+        syncText("Ukládám…");
+        cloud.timer = setTimeout(ulozDoUctu, 1500);
+    }
+
+    async function ulozDoUctu() {
+        if (!cloud.user) return;
+        const { error } = await cloud.sb.from("uzivatelska_data")
+            .upsert({ user_id: cloud.user.id, data: snapshot(), upraveno: new Date().toISOString() });
+        if (error) { syncText("Uložení se nepovedlo – zkusím to při další změně. Data v zařízení zůstávají."); return; }
+        syncText("Uloženo v účtu ✓ " + new Date().toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" }));
+    }
+
+    // Po přihlášení: porovná data v zařízení a v účtu. Novější vyhrává, při prvním přihlášení se zeptá.
+    async function srovnejData(prvniPrihlaseni) {
+        const { data: row, error } = await cloud.sb.from("uzivatelska_data")
+            .select("data, upraveno").eq("user_id", cloud.user.id).maybeSingle();
+        if (error) { syncText("Účet se teď nepodařilo načíst. Appka jede dál z dat v zařízení."); return; }
+        const mistni = snapshot();
+        if (!row) {
+            // nový účet: vezmeme, co je v zařízení
+            await ulozDoUctu();
+            if (maData(mistni)) toast("Data z tohoto zařízení jsou uložená v účtu ☁️");
+            return;
+        }
+        if (stejne(row.data, mistni)) { syncText("Uloženo v účtu ✓"); return; }
+        if (!maData(mistni)) { pouzijData(row.data); return; }
+        if (prvniPrihlaseni && maData(row.data)) {
+            const zUctu = confirm("Tvůj účet už má uložená data a v tomhle zařízení jsou jiná.\n\nOK = použít data z účtu (doporučeno)\nZrušit = nahradit data v účtu těmi z tohoto zařízení");
+            if (zUctu) pouzijData(row.data); else await ulozDoUctu();
+            return;
+        }
+        // běžné otevření appky: novější vyhrává
+        let mistniCas = "";
+        try { mistniCas = localStorage.getItem("jidloaz-zmeneno") || ""; } catch (e) { /* nic */ }
+        if (mistniCas && new Date(mistniCas) > new Date(row.upraveno)) await ulozDoUctu();
+        else pouzijData(row.data);
+    }
+
+    function renderAccount() {
+        $("#account-out").hidden = !!cloud.user;
+        $("#account-in").hidden = !cloud.user;
+        if (cloud.user) $("#account-email").textContent = cloud.user.email || "";
+    }
+
+    async function spustUcet() {
+        const sb = await supabase();
+        let prvni = location.hash.includes("access_token");
+        sb.auth.onAuthStateChange((event, session) => {
+            const predtim = cloud.user;
+            cloud.user = session ? session.user : null;
+            renderAccount();
+            if (cloud.user && !predtim) {
+                // nevolat Supabase přímo uvnitř posluchače (doporučení knihovny) – až po dokončení
+                setTimeout(() => {
+                    srovnejData(prvni || event === "SIGNED_IN");
+                    prvni = false;
+                }, 0);
+                if (location.hash.includes("access_token")) history.replaceState(null, "", location.pathname + location.search);
+            }
+        });
+    }
+
+    $("#login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const input = $("#login-email");
+        const email = input.value.trim();
+        const chyba = $("#login-error");
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            chyba.textContent = "Zkontroluj e-mail, něco v něm chybí.";
+            input.setAttribute("aria-invalid", "true");
+            input.focus();
+            return;
+        }
+        chyba.textContent = "";
+        input.setAttribute("aria-invalid", "false");
+        const tlacitko = e.target.querySelector("button");
+        tlacitko.disabled = true;
+        try {
+            const sb = await supabase();
+            if (!cloud.posloucha) { cloud.posloucha = true; await spustUcet(); }
+            const { error } = await sb.auth.signInWithOtp({
+                email,
+                options: { emailRedirectTo: location.origin + location.pathname }
+            });
+            if (error) throw error;
+            $("#login-form").hidden = true;
+            const hotovo = $("#login-sent");
+            hotovo.textContent = `Hotovo! Poslala jsem odkaz na ${email}. Otevři e-mail a klikni na odkaz (koukni i do spamu).`;
+            hotovo.hidden = false;
+        } catch (err) {
+            chyba.textContent = /rate|limit|security purposes/i.test(String(err && err.message))
+                ? "E-mailů bylo poslední dobou moc. Zkus to prosím za chvíli znovu."
+                : "Odkaz se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
+        } finally {
+            tlacitko.disabled = false;
+        }
+    });
+
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-action^='account-']");
+        if (!btn || !cloud.sb) return;
+        const action = btn.dataset.action;
+
+        if (action === "account-download") {
+            const obsah = JSON.stringify({ email: cloud.user && cloud.user.email, stazeno: new Date().toISOString(), data: snapshot() }, null, 2);
+            const odkaz = document.createElement("a");
+            odkaz.href = URL.createObjectURL(new Blob([obsah], { type: "application/json" }));
+            odkaz.download = "jidlo-od-a-z-moje-data.json";
+            document.body.appendChild(odkaz);
+            odkaz.click();
+            odkaz.remove();
+        }
+
+        // po odhlášení / smazání zase ukázat formulář na přihlášení
+        const znovuFormular = () => { $("#login-form").hidden = false; $("#login-sent").hidden = true; };
+
+        if (action === "account-logout") {
+            await cloud.sb.auth.signOut();
+            znovuFormular();
+            toast("Odhlášeno. Data v tomhle zařízení zůstávají.");
+        }
+
+        if (action === "account-delete") {
+            if (!confirm("Opravdu smazat účet?\n\nSmaže se účet i všechna data v něm a nejde to vrátit. Data v tomhle zařízení zůstanou.")) return;
+            const { error } = await cloud.sb.rpc("smazat_ucet");
+            if (error) { toast("Smazání se nepovedlo, zkus to prosím znovu."); return; }
+            await cloud.sb.auth.signOut();
+            znovuFormular();
+            toast("Účet je smazaný.");
+        }
+    });
+
+    // Knihovnu Supabase načteme jen tomu, kdo je přihlášený nebo se právě vrací z odkazu v e-mailu
+    const maRelaci = (() => {
+        try { return !!localStorage.getItem("sb-eohgscmupoxeedwsbakd-auth-token"); } catch (e) { return false; }
+    })();
+    if (maRelaci || location.hash.includes("access_token")) {
+        cloud.posloucha = true;
+        spustUcet().catch(() => syncText("Účet se teď nepodařilo načíst. Appka jede dál z dat v zařízení."));
+    }
+    renderAccount();
+
     renderFridge();
     renderRecipes();
     renderShop();

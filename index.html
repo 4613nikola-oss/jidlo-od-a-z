@@ -253,6 +253,44 @@
                 <ul class="stamps" id="stamps" aria-label="Získaná razítka"></ul>
                 <p class="stamps-legend">🍳 uvařený recept · 📅 splněný den · 🗓️ splněný týden (5 dní ze 7) · 🌱 malá změna</p>
             </section>
+
+            <!-- Účet (nepovinný): uloží data do Supabase (EU), aby byla na všech zařízeních. Bez účtu appka funguje dál. -->
+            <section class="card account" id="account" aria-labelledby="account-title">
+                <h2 class="card-title" id="account-title">☁️ Účet</h2>
+
+                <div id="account-out">
+                    <p>Appka funguje i bez účtu. S účtem máš profil, oblíbené, razítka i nákup <strong>na všech zařízeních</strong>.</p>
+                    <form id="login-form" class="login-form" novalidate>
+                        <label for="login-email">Tvůj e-mail</label>
+                        <div class="login-row">
+                            <input type="email" id="login-email" autocomplete="email" inputmode="email" placeholder="jmeno@email.cz" required>
+                            <button type="submit" class="btn btn--primary">Poslat odkaz</button>
+                        </div>
+                        <p class="field-hint">Žádné heslo – pošlu ti e-mail s odkazem, kliknutím se přihlásíš.</p>
+                        <p class="field-error" id="login-error" role="alert"></p>
+                    </form>
+                    <p class="login-sent" id="login-sent" hidden role="status"></p>
+                </div>
+
+                <div id="account-in" hidden>
+                    <p>Přihlášení: <strong id="account-email"></strong></p>
+                    <p class="sync-status" id="sync-status" role="status"></p>
+                    <div class="account-actions">
+                        <button type="button" class="btn btn--ghost btn--small" data-action="account-download">Stáhnout moje data</button>
+                        <button type="button" class="btn btn--ghost btn--small" data-action="account-logout">Odhlásit</button>
+                        <button type="button" class="btn btn--ghost btn--small account-delete" data-action="account-delete">Smazat účet</button>
+                    </div>
+                </div>
+
+                <details class="privacy">
+                    <summary>Ochrana soukromí (koncept)</summary>
+                    <p><strong>Bez účtu</strong> zůstávají všechna data jen v tomhle prohlížeči. Nikam se neposílají.</p>
+                    <p><strong>S účtem</strong> se ukládá: e-mail, profil (věk, váha, výška, pohlaví, pohyb, cíl, jídelníček), avatar, oblíbené recepty, razítka, nákupní seznam a lednička. Pití po dnech se neukládá.</p>
+                    <p><strong>Kde:</strong> u služby Supabase, na serverech v EU. Data slouží jen k tomu, aby ti appka fungovala na všech zařízeních. Neprodáváme je ani nesdílíme, žádná reklama.</p>
+                    <p><strong>Tvoje práva:</strong> data si kdykoli stáhneš tlačítkem „Stáhnout moje data“ a tlačítkem „Smazat účet“ smažeš účet i všechna data v něm.</p>
+                    <p class="field-hint">Koncept – před spuštěním ho ještě zkontrolujeme.</p>
+                </details>
+            </section>
         </section>
 
         <!-- 2) MŮJ DEN -->

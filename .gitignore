@@ -18,6 +18,8 @@ soukrome/
 *.rar
 *.7z
 *.sql
+# výjimka: struktura databáze účtů (bez dat a bez hesel)
+!supabase/ucty.sql
 *.db
 *.bak
 
