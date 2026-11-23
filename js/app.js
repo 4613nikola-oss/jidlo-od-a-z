@@ -466,6 +466,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const maRazitko = (klic) => state.stamps.some((s) => s.klic === klic);
+    // Razítka a kuchařka jsou odměna za účet. Kdo je už má z dřívějška, nic mu nezmizí.
+    const muzeRazitka = () => !!cloud.user || state.stamps.length > 0;
+    function pozviKUctu(text) {
+        openTab("profil");
+        toast(text);
+        setTimeout(() => {
+            $("#account").scrollIntoView({ behavior: "smooth", block: "start" });
+            $("#login-email").focus({ preventScroll: true });
+        }, 300);
+    }
     function pridejRazitko(typ, klic, popis) {
         if (maRazitko(klic)) return false;
         state.stamps.push({ typ, klic, datum: dnes(), popis });
@@ -499,11 +509,16 @@ document.addEventListener("DOMContentLoaded", function () {
     // Tečka se mění podle počtu razítek: 5 = vaří, 15 = slaví, 30 = dort
     function renderCookbook() {
         const n = state.stamps.length;
-        $("#cookbook-count").textContent = razitekText(n);
+        const zamceno = !muzeRazitka();
+        $("#cookbook-count").textContent = zamceno ? "🔒 s účtem" : razitekText(n);
+        $("#stamps").hidden = zamceno;
+        $(".stamps-legend").hidden = zamceno;
+        $("#cookbook-login").hidden = !zamceno;
         const img = $("#cookbook-img");
         const svg = $("#cookbook-svg");
         let obrazek = null, symbol = "#t-nova", text;
-        if (n === 0) text = "Uvař první recept z Můj den a dostaneš první razítko!";
+        if (zamceno) text = "S účtem tu sbíráš razítka za uvařená jídla. A já se za ně proměňuju!";
+        else if (n === 0) text = "Uvař první recept z Můj den a dostaneš první razítko!";
         else if (n < 5) text = `Už ${razitekText(n)}! Ještě ${5 - n} a začnu vařit s tebou.`;
         else if (n < 15) { obrazek = "img/tecka-vari.svg"; text = `${razitekText(n)}! Ještě ${15 - n} a budu slavit.`; }
         else if (n < 30) { obrazek = "img/tecka-slavi.svg"; text = `${razitekText(n)}! Ještě ${30 - n} a proměním se v dort.`; }
@@ -525,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderChange() {
         const card = $("#change-card");
         const tyden = tydenKey();
-        card.hidden = !state.profile || state.changeSkip === tyden;
+        card.hidden = !state.profile || state.changeSkip === tyden || !muzeRazitka();
         if (card.hidden) return;
         $("#change-text").textContent = zmenaTydne();
         $("#change-actions").innerHTML = maRazitko("z-" + tyden)
@@ -848,7 +863,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (action === "go-day") openTab("den");
         if (action === "go-profil") openTab("profil");
 
-        if (action === "cooked" && state.profile) {
+        if (action === "cooked" && state.profile && !muzeRazitka()) {
+            pozviKUctu("Razítka do kuchařky sbíráš s účtem – stačí e-mail, žádné heslo 🍳");
+        } else if (action === "cooked" && state.profile) {
             const klic = `r-${dnes()}-${btn.dataset.meal}`;
             if (maRazitko(klic)) {
                 odeberRazitko(klic);
@@ -1075,6 +1092,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const predtim = cloud.user;
             cloud.user = session ? session.user : null;
             renderAccount();
+            // přihlášení/odhlášení odemyká nebo zamyká razítka
+            if (!!predtim !== !!cloud.user) { renderDay(); renderCookbook(); }
             if (cloud.user && !predtim) {
                 // nevolat Supabase přímo uvnitř posluchače (doporučení knihovny) – až po dokončení
                 setTimeout(() => {
