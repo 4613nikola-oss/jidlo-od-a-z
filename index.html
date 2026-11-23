@@ -228,6 +228,21 @@
                     <ul id="r-articles" class="article-list"></ul>
                 </div>
             </section>
+
+            <!-- Moje kuchařka: razítka za uvařené recepty, splněné dny, týdny a malé změny. Nic se nemaže. -->
+            <section class="card cookbook" aria-labelledby="cookbook-title">
+                <div class="cookbook-head">
+                    <h2 class="card-title" id="cookbook-title">📖 Moje kuchařka</h2>
+                    <span class="cookbook-count" id="cookbook-count">0 razítek</span>
+                </div>
+                <div class="cookbook-tecka">
+                    <img id="cookbook-img" src="" alt="" width="96" height="96" hidden>
+                    <svg id="cookbook-svg" class="cookbook-svg" aria-hidden="true"><use href="#t-nova"/></svg>
+                    <p class="app-bubble cookbook-bubble" id="cookbook-bubble"></p>
+                </div>
+                <ul class="stamps" id="stamps" aria-label="Získaná razítka"></ul>
+                <p class="stamps-legend">🍳 uvařený recept · 📅 splněný den · 🗓️ splněný týden (5 dní ze 7) · 🌱 malá změna</p>
+            </section>
         </section>
 
         <!-- 2) MŮJ DEN -->
@@ -270,6 +285,12 @@
 
             <div id="day-content" hidden>
                 <p class="panel-lead">Tvůj cíl je <strong><span id="day-target">0</span> kcal</strong>. Tady je návrh, jak ho rozdělit. Recept vyměníš tlačítkem „Jiný recept“.</p>
+                <!-- 1 malá změna týdně: jeden drobný úkol, splnit = razítko, přeskočit bez výčitek -->
+                <section id="change-card" class="card change-card" hidden aria-labelledby="change-title">
+                    <p class="change-label" id="change-title">🌱 Malá změna tohoto týdne</p>
+                    <p class="change-text" id="change-text"></p>
+                    <div class="change-actions" id="change-actions"></div>
+                </section>
                 <div id="day-meals" class="meal-list"></div>
                 <div class="card day-total">
                     <span>Celkem za den</span>

@@ -102,6 +102,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fav: store.get("fav", []),             // oblíbené recepty (id)
         view: store.get("view", "day"),        // Můj den: den / týden / měsíc
         swaps: store.get("swaps", {}),         // „Jiný recept“ v týdnu a měsíci (klíč = jídlo + den nebo 3denní blok)
+        stamps: store.get("stamps", []),       // razítka do kuchařky { typ, klic, datum, popis }
+        changeSkip: store.get("change-skip", ""), // týden, kdy malou změnu přeskočil (pondělí jako text)
         filter: "vse"
     };
 
@@ -389,8 +391,115 @@ document.addEventListener("DOMContentLoaded", function () {
         renderDay();
     });
 
+    /* ============ RAZÍTKA A MOJE KUCHAŘKA ============ */
+    // Chválíme, nehlídáme: žádné série, které se přeruší, nic se nemaže.
+    // Jediná výjimka: „Uvařeno“ jde ještě týž den vrátit (kdyby se člověk překlikl).
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const dateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const dnes = () => dateKey(new Date());
+    const tydenKey = () => dateKey(mondayOf(new Date()));
+
+    const RAZITKA = {
+        recept: { ikona: "🍳", nazev: "Uvařený recept" },
+        den:    { ikona: "📅", nazev: "Splněný den" },
+        tyden:  { ikona: "🗓️", nazev: "Splněný týden" },
+        zmena:  { ikona: "🌱", nazev: "Malá změna" }
+    };
+
+    // 1 malá změna týdně – střídají se dokola
+    const ZMENY = [
+        "Ke každému jídlu si dej sklenici vody.",
+        "Přidej si každý den jednu zeleninu navíc.",
+        "Aspoň jednu večeři sněz bez telefonu.",
+        "Jednou za týden zkus recept, který je pro tebe nový.",
+        "Ke snídani si přidej něco s bílkovinou – jogurt, vejce, tvaroh.",
+        "Po obědě se projdi aspoň 10 minut.",
+        "Nakup podle seznamu z appky – a nic navíc.",
+        "Uvař si oběd dopředu na 2–3 dny.",
+        "Sladké si dej klidně – ale v klidu, u stolu, s chutí.",
+        "Měj po ruce zdravou svačinu, ať tě hlad nepřekvapí.",
+        "Jez pomaleji – polož příbor mezi sousty.",
+        "Jednou týdně si dej rybu nebo luštěniny."
+    ];
+    function zmenaTydne() {
+        // počet týdnů od pevného pondělí → každý týden jiný úkol, pro všechny stejný
+        const tydny = Math.round((mondayOf(new Date()) - new Date(2026, 0, 5)) / (7 * 864e5));
+        return ZMENY[((tydny % ZMENY.length) + ZMENY.length) % ZMENY.length];
+    }
+
+    const maRazitko = (klic) => state.stamps.some((s) => s.klic === klic);
+    function pridejRazitko(typ, klic, popis) {
+        if (maRazitko(klic)) return false;
+        state.stamps.push({ typ, klic, datum: dnes(), popis });
+        store.set("stamps", state.stamps);
+        return true;
+    }
+    function odeberRazitko(klic) {
+        state.stamps = state.stamps.filter((s) => s.klic !== klic);
+        store.set("stamps", state.stamps);
+    }
+
+    // Den je splněný, když jsou uvařená všechna jídla z plánu; týden, když je splněných aspoň 5 dní ze 7
+    function zkontrolujDenATyden() {
+        const jidla = currentDayPlan().filter((p) => p.pick);
+        const denKlic = "d-" + dnes();
+        const denSplnen = jidla.length > 0 && jidla.every((p) => maRazitko(`r-${dnes()}-${p.meal.id}`));
+        let novy = null;
+        if (denSplnen && pridejRazitko("den", denKlic, "Splněný den")) novy = "den";
+        if (!denSplnen && maRazitko(denKlic)) odeberRazitko(denKlic);
+
+        const pondeli = tydenKey();
+        const dnuVTydnu = state.stamps.filter((s) => s.typ === "den" && s.klic.slice(2) >= pondeli).length;
+        const tydenKlic = "t-" + pondeli;
+        if (dnuVTydnu >= 5 && pridejRazitko("tyden", tydenKlic, "Splněný týden")) novy = "tyden";
+        if (dnuVTydnu < 5 && maRazitko(tydenKlic)) odeberRazitko(tydenKlic);
+        return novy;
+    }
+
+    const razitekText = (n) => `${n} ${n === 1 ? "razítko" : n >= 2 && n <= 4 ? "razítka" : "razítek"}`;
+
+    // Tečka se mění podle počtu razítek: 5 = vaří, 15 = slaví, 30 = dort
+    function renderCookbook() {
+        const n = state.stamps.length;
+        $("#cookbook-count").textContent = razitekText(n);
+        const img = $("#cookbook-img");
+        const svg = $("#cookbook-svg");
+        let obrazek = null, symbol = "#t-nova", text;
+        if (n === 0) text = "Uvař první recept z Můj den a dostaneš první razítko!";
+        else if (n < 5) text = `Už ${razitekText(n)}! Ještě ${5 - n} a začnu vařit s tebou.`;
+        else if (n < 15) { obrazek = "img/tecka-vari.svg"; text = `${razitekText(n)}! Ještě ${15 - n} a budu slavit.`; }
+        else if (n < 30) { obrazek = "img/tecka-slavi.svg"; text = `${razitekText(n)}! Ještě ${30 - n} a proměním se v dort.`; }
+        else { symbol = "#t-nova-dort"; text = `${razitekText(n)}! Jsi kuchařská hvězda.`; }
+        img.hidden = !obrazek;
+        svg.style.display = obrazek ? "none" : "";
+        if (obrazek) img.src = obrazek;
+        svg.querySelector("use").setAttribute("href", symbol);
+        $("#cookbook-bubble").textContent = text;
+
+        $("#stamps").innerHTML = state.stamps.map((s) => {
+            const r = RAZITKA[s.typ] || RAZITKA.recept;
+            const datum = s.datum.split("-").reverse().map(Number).slice(0, 2).join(". ") + ".";
+            const popis = `${r.nazev}${s.popis && s.typ === "recept" ? ": " + s.popis : ""}, ${datum}`;
+            return `<li class="stamp stamp--${s.typ}" title="${esc(popis)}"><span aria-hidden="true">${r.ikona}</span><span class="sr-only">${esc(popis)}</span></li>`;
+        }).join("");
+    }
+
+    function renderChange() {
+        const card = $("#change-card");
+        const tyden = tydenKey();
+        card.hidden = !state.profile || state.changeSkip === tyden;
+        if (card.hidden) return;
+        $("#change-text").textContent = zmenaTydne();
+        $("#change-actions").innerHTML = maRazitko("z-" + tyden)
+            ? `<p class="change-done">✓ Splněno – razítko 🌱 máš v kuchařce.</p>`
+            : `<button type="button" class="btn btn--primary btn--small" data-action="change-done">Splněno ✓</button>
+               <button type="button" class="btn btn--ghost btn--small" data-action="change-skip">Tento týden ne</button>`;
+    }
+
     function renderDay() {
         const hasProfile = !!state.profile;
+        renderChange();
         $("#day-empty").hidden = hasProfile;
         $("#day-content").hidden = !hasProfile || state.view !== "day";
         renderView();
@@ -421,6 +530,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <a class="meal-recipe" href="${esc(r.odkaz)}">${esc(r.nazev)}</a>
                 <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal · ${r.cas} min</p>
                 <div class="meal-actions">
+                    ${(() => {
+                        const uvareno = maRazitko(`r-${dnes()}-${meal.id}`);
+                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}">${uvareno ? "Uvařeno 🍳" : "✓ Uvařeno"}</button>`;
+                    })()}
                     <button type="button" class="btn btn--ghost btn--small" data-action="swap" data-meal="${meal.id}">Jiný recept</button>
                     <button type="button" class="btn btn--ghost btn--small" data-action="shop-recipe" data-id="${r.id}">Na nákup</button>
                 </div>
@@ -681,7 +794,39 @@ document.addEventListener("DOMContentLoaded", function () {
         if (action === "go-day") openTab("den");
         if (action === "go-profil") openTab("profil");
 
+        if (action === "cooked" && state.profile) {
+            const klic = `r-${dnes()}-${btn.dataset.meal}`;
+            if (maRazitko(klic)) {
+                odeberRazitko(klic);
+                zkontrolujDenATyden();
+                toast("Vráceno – razítko jsem vzala zpátky");
+            } else {
+                pridejRazitko("recept", klic, btn.dataset.name);
+                const novy = zkontrolujDenATyden();
+                toast(novy === "tyden" ? "Týden splněný! 🗓️ Velké razítko do kuchařky"
+                    : novy === "den" ? "Celý den splněný! 📅 Razítko navíc"
+                    : "Razítko do kuchařky! 🍳");
+            }
+            renderDay();
+            renderCookbook();
+        }
+
+        if (action === "change-done") {
+            pridejRazitko("zmena", "z-" + tydenKey(), zmenaTydne());
+            toast("Paráda! 🌱 Razítko za malou změnu");
+            renderChange();
+            renderCookbook();
+        }
+
+        if (action === "change-skip") {
+            state.changeSkip = tydenKey();
+            store.set("change-skip", state.changeSkip);
+            toast("V pohodě, příští týden bude jiná");
+            renderChange();
+        }
+
         if (action === "swap") {
+            // vyměněné jídlo už není to uvařené – razítko za původní recept zůstává
             state.day[btn.dataset.meal] = (state.day[btn.dataset.meal] || 0) + 1;
             store.set("day", state.day);
             renderDay();
@@ -777,6 +922,7 @@ document.addEventListener("DOMContentLoaded", function () {
     renderFridge();
     renderRecipes();
     renderShop();
+    renderCookbook();
 
     const lastTab = store.get("tab", "profil");
     if (document.getElementById("panel-" + lastTab)) openTab(lastTab);

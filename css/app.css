@@ -778,3 +778,32 @@ body {
 
 /* srdíčko musí být nad roztaženým odkazem karty, jinak klepnutí otevře recept */
 .fav-btn { position: relative; z-index: 2; }
+
+/* ===== Motivace (23. 11.): Uvařeno, malá změna týdne, Moje kuchařka s razítky ===== */
+.cooked-btn { background: #fbf4e2; color: var(--ink); }
+.cooked-btn.is-on { background: var(--primary); color: #fff; }
+.change-card { background-color: #d3e3c9; background-image: radial-gradient(rgba(61, 82, 51, 0.16) 22%, transparent 24%); background-size: 12px 12px; margin-bottom: 16px; }
+.change-label { margin: 0 0 4px; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #a24e33; }
+.change-text { margin: 0 0 12px; font-family: "Caveat", cursive; font-size: 1.5rem; line-height: 1.25; color: var(--ink); }
+.change-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.change-done { margin: 0; font-weight: 700; }
+
+.cookbook { background-color: var(--card-med); margin-top: 20px; }
+.cookbook-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cookbook-count { font-weight: 800; background: var(--ink); color: #e9b949; padding: 2px 10px; border-radius: 999px; font-size: .9rem; }
+.cookbook-tecka { display: flex; align-items: flex-end; gap: 10px; margin: 8px 0 12px; }
+.cookbook-tecka img, .cookbook-svg { width: 96px; height: 96px; flex: none; }
+.cookbook-bubble { order: -1; font-size: 1.05rem; }
+.stamps { list-style: none; padding: 0; margin: 0 0 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 8px; }
+.stamp {
+    display: grid; place-items: center; aspect-ratio: 1; font-size: 1.35rem; border: 2px dashed #a24e33; border-radius: 50%;
+    background: #fff8e6; transform: rotate(-8deg); animation: razitko .35s cubic-bezier(.3, 1.6, .6, 1);
+}
+.stamp:nth-child(3n) { transform: rotate(6deg); }
+.stamp:nth-child(4n+1) { transform: rotate(-3deg); }
+.stamp--den { border-color: var(--primary); }
+.stamp--tyden { border: 3px solid var(--ink); background: #e9b949; }
+.stamp--zmena { border-color: #5e7769; background: #e3ebdd; }
+@keyframes razitko { from { opacity: 0; transform: scale(1.8) rotate(-20deg); } }
+.stamps-legend { font-size: .85rem; color: var(--text-light); margin: 0; }
+@media (prefers-reduced-motion: reduce) { .stamp { animation: none; } }

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><title>Tečka – slaví</title><defs><pattern id="raster" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.7" fill="#c69a4c" opacity=".65"/></pattern>
+<clipPath id="tc"><circle cx="100" cy="112" r="64"/></clipPath></defs>
+<style>
+@media (prefers-reduced-motion: no-preference) {
+.hop{animation:hop 3.2s ease-in-out infinite;transform-origin:100px 186px}
+.lis{animation:lis 2.8s ease-in-out infinite}
+.oko{animation:mrk 5s infinite}
+.bub{animation:bub 2.6s ease-in-out infinite}
+.bub2{animation-delay:.7s}
+.kon{animation:kon 1.6s ease-in-out infinite}
+.kon2{animation-delay:.8s}
+.lzice{animation:lzice 1.8s ease-in-out infinite;transform-origin:170px 168px}
+}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1,1)}45%{transform:translateY(-5px) scale(.99,1.01)}55%{transform:translateY(-5px)}}
+@keyframes lis{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(6deg)}}
+@keyframes mrk{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.1)}96%{transform:scaleY(1)}}
+@keyframes bub{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-7px);opacity:.55}}
+@keyframes kon{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.3;transform:translateY(3px)}}
+@keyframes lzice{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(10deg)}}
+</style><ellipse cx="100" cy="190" rx="44" ry="6" fill="#1f1d1a" opacity=".15"/><g class="hop"><path d="M38 120c-18-4-26 10-18 22" fill="none" stroke="#1f1d1a" stroke-width="6.0" stroke-linecap="round"/>
+<path d="M162 110c16-16 28-8 28 4" fill="none" stroke="#1f1d1a" stroke-width="6.0" stroke-linecap="round"/>
+<circle cx="100" cy="112" r="64" fill="#f4e2b6"/>
+<g clip-path="url(#tc)"><circle cx="100" cy="112" r="64" fill="url(#raster)"/><circle cx="88" cy="99" r="60" fill="#f4e2b6"/></g>
+<circle cx="100" cy="112" r="64" fill="none" stroke="#1f1d1a" stroke-width="5.1"/><g class="lis" style="transform-origin:100px 48px"><path d="M100 48c-1-8 1-15 4-21" fill="none" stroke="#1f1d1a" stroke-width="5.1" stroke-linecap="round"/>
+<path d="M104 30c10-14 26-15 34-10-7 14-24 16-34 10z" fill="#5e7769" stroke="#1f1d1a" stroke-width="3.4" stroke-linejoin="round"/>
+<path d="M102 34c-9-10-21-10-28-5 6 11 19 12 28 5z" fill="#e0b04a" stroke="#1f1d1a" stroke-width="3.4" stroke-linejoin="round"/></g><path d="M72 108c4-8 12-8 16 0M112 108c4-8 12-8 16 0" fill="none" stroke="#1f1d1a" stroke-width="5.1" stroke-linecap="round"/><path d="M84 128c9 13 23 13 32 0z" fill="#a24e33" stroke="#1f1d1a" stroke-width="3.7" stroke-linejoin="round"/><circle cx="68" cy="124" r="7" fill="#e9a6a0" opacity=".8"/><circle cx="132" cy="124" r="7" fill="#e9a6a0" opacity=".8"/>
+<g class="kon" fill="#e0b04a" stroke="#1f1d1a" stroke-width="2.0"><circle cx="30" cy="60" r="6"/><circle cx="172" cy="66" r="5"/><circle cx="160" cy="28" r="4"/></g>
+<g class="kon kon2" fill="#a24e33" stroke="#1f1d1a" stroke-width="2.0"><circle cx="44" cy="28" r="4"/><circle cx="182" cy="140" r="4"/></g>
+<g class="kon" stroke="#1f1d1a" stroke-width="3.4" stroke-linecap="round"><path d="M18 96l-8-4M180 40l8-6M24 156l-8 4"/></g></g></svg>
