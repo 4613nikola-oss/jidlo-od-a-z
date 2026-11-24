@@ -1049,10 +1049,9 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 /* Procenta v kroužku kolem ikonky */
 .me-ring {
     --pct: 0; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
-    background: conic-gradient(#e9b949 calc(var(--pct) * 1%), #ece4d2 0); border: 2px solid var(--ink);
+    background: conic-gradient(var(--ring-color, #e9b949) calc(var(--pct) * 1%), #ece4d2 0); border: 2px solid var(--ink);
 }
-.me-ring.is-done { background: conic-gradient(#3f8f4f calc(var(--pct) * 1%), #ece4d2 0); }
-.me-ring-in { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #fffaf0; border: 2px solid var(--ink); }
+.me-ring-in { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--ring-in, #fffaf0); border: 2px solid var(--ink); transition: background .3s; }
 .me-ring-in svg { width: 26px; height: 26px; color: var(--primary); }
 .me-stats li > .me-pct { margin-top: -4px; }
 @media (max-width: 420px) { .me-ring { grid-row: span 4; } }

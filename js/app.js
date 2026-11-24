@@ -277,6 +277,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const ring = $(`#me-${klic}-ring`);
             ring.style.setProperty("--pct", pct);
             ring.classList.toggle("is-done", pct >= 100);
+            // barva podle splnění: málo = terakota, půlka = med, skoro = světle zelená, hotovo = zelená
+            const [barva, vnitrek] = pct >= 100 ? ["#3f8f4f", "#e3efdc"] : pct >= 67 ? ["#8fb27a", "#eef4e8"] : pct >= 34 ? ["#e9b949", "#fdf3d8"] : ["#c96a4a", "#fbe8e0"];
+            ring.style.setProperty("--ring-color", barva);
+            ring.style.setProperty("--ring-in", vnitrek);
             $(`#me-${klic}-pct`).textContent = pct + " %";
             $(`#me-${klic}-tip`).textContent = tip;
         };
