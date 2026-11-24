@@ -1133,9 +1133,16 @@ document.addEventListener("DOMContentLoaded", function () {
             hotovo.textContent = `Hotovo! Poslala jsem odkaz na ${email}. Otevři e-mail a klikni na odkaz (koukni i do spamu).`;
             hotovo.hidden = false;
         } catch (err) {
-            chyba.textContent = /rate|limit|security purposes/i.test(String(err && err.message))
-                ? "E-mailů bylo poslední dobou moc. Zkus to prosím za chvíli znovu."
-                : "Odkaz se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
+            const kod = String((err && (err.code || err.message)) || "");
+            if (/email_address_invalid|invalid/i.test(kod)) {
+                chyba.textContent = "Tenhle e-mail nejde použít. Zkontroluj, jestli je správně – třeba jmeno.prijmeni@seznam.cz.";
+                input.setAttribute("aria-invalid", "true");
+                input.focus();
+            } else if (/rate|limit|security purposes/i.test(kod)) {
+                chyba.textContent = "E-mailů bylo poslední dobou moc. Zkus to prosím za chvíli znovu.";
+            } else {
+                chyba.textContent = "Odkaz se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
+            }
         } finally {
             tlacitko.disabled = false;
         }
