@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <header class="meal-head"><h2>${den.nazevDne} <span class="week-date">${kratkeDatum(den.datum)}</span></h2><span class="meal-kcal">~ ${fmt(daySum(den))} kcal</span></header>
                 <ul class="week-meals">${den.jidla.map((j) => j.pick
                     ? `<li><span class="week-meal">${j.meal.nazev}</span> <a href="${esc(j.pick.recipe.odkaz)}">${esc(j.pick.recipe.nazev)}</a>
-                        <button type="button" class="swap-btn" data-action="swap-plan" data-key="${j.key}" aria-label="Jiný recept: ${j.meal.nazev}, ${den.nazevDne}" title="Jiný recept">🔄</button></li>`
+                        <button type="button" class="swap-btn" data-action="swap-plan" data-key="${j.key}" data-tip="Jiný recept" aria-label="Jiný recept: ${j.meal.nazev}, ${den.nazevDne}"><svg aria-hidden="true"><use href="#i-vymena"/></svg></button></li>`
                     : `<li><span class="week-meal">${j.meal.nazev}</span> <em>zatím bez receptu</em></li>`).join("")}</ul>
             </article>`).join("");
     }

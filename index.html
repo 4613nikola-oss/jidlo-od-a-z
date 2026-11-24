@@ -26,6 +26,8 @@
     <symbol id="i-lednicka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="12" height="18.5" rx="2"/><path d="M5 9.5h12M8 6v1.5M8 12.5v3"/></g><use href="#listek"/></symbol>
     <symbol id="i-nakup" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h14l-1.3 12H5.3z"/><path d="M8 8.5V7a3 3 0 0 1 6 0v1.5"/></g><use href="#listek"/></symbol>
     <symbol id="i-profil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="9" r="4"/><path d="M3.5 21c1.4-4 4.2-6 7.5-6s6.1 2 7.5 6"/></g><use href="#listek"/></symbol>
+    <!-- výměna receptu: dvě šipky do kruhu, tenká linka jako ostatní ikonky -->
+    <symbol id="i-vymena" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 8.5A7.5 7.5 0 0 0 5.4 7.2"/><path d="M5 3.5v4h4"/><path d="M5 15.5a7.5 7.5 0 0 0 13.6 1.3"/><path d="M19 20.5v-4h-4"/></g></symbol>
     <symbol id="i-den" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="16" height="16" rx="2"/><path d="M3 10h16M7.5 3v4M14.5 3v4"/><circle cx="11" cy="15.5" r="1.6" fill="#a24e33" stroke="none"/></g><use href="#listek"/></symbol>
     <symbol id="i-recepty" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H17v-5"/><path d="M8 7.5h5M8 11h5"/></g><use href="#listek"/></symbol>
     <symbol id="i-oblibene" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 11 7.6 4.2 4.2 0 0 1 18.5 10c0 5.4-7.5 10-7.5 10z"/></g><use href="#listek"/></symbol>
@@ -372,14 +374,14 @@
 
             <!-- MŮJ MĚSÍC: 4 týdny za sebou, nákup vždy po týdnech (čerstvé věci nevydrží měsíc) -->
             <div id="month-content" hidden>
-                <p class="panel-lead">Plán na 4 týdny dopředu. Nakupuj vždycky jen na jeden týden, ať se nic nezkazí. Jídlo vyměníš tlačítkem 🔄.</p>
+                <p class="panel-lead">Plán na 4 týdny dopředu. Nakupuj vždycky jen na jeden týden, ať se nic nezkazí. Jídlo vyměníš kulatým tlačítkem se šipkami.</p>
                 <p class="month-note" id="month-note" hidden>Receptů je zatím málo, takže se některá jídla opakují. Jak přibydou nové recepty na webu, měsíc bude pestřejší.</p>
                 <div id="month-weeks" class="month-list"></div>
             </div>
 
             <!-- MŮJ TÝDEN: obědy a večeře se opakují po 3 dnech (vaříš dopředu jeden základ) -->
             <div id="week-content" hidden>
-                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají. Jídlo vyměníš tlačítkem 🔄.</p>
+                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají. Jídlo vyměníš kulatým tlačítkem se šipkami.</p>
                 <div id="week-days" class="week-list"></div>
                 <button type="button" class="btn btn--primary btn--full" data-action="shop-week">Celý týden na nákup</button>
             </div>

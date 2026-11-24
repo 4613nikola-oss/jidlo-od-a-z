@@ -754,6 +754,17 @@ body {
 .week-date { font-family: inherit; font-size: .85rem; font-weight: 600; color: var(--text-light); }
 .swap-btn { flex: none; width: 44px; height: 44px; border: 2px solid var(--ink); border-radius: 50%; background: #fbf4e2; cursor: pointer; font-size: 1.1rem; line-height: 1; }
 .swap-btn:hover { background: #fff; }
+.swap-btn { position: relative; display: grid; place-items: center; color: var(--primary); }
+.swap-btn svg { width: 22px; height: 22px; }
+.swap-btn:hover svg { transform: rotate(180deg); transition: transform .35s; }
+/* popisek po najetí myší nebo při ovládání klávesnicí */
+.swap-btn[data-tip]::after {
+    content: attr(data-tip); position: absolute; right: calc(100% + 8px); top: 50%; transform: translateY(-50%);
+    white-space: nowrap; background: var(--ink); color: #fff; font-size: .8rem; font-weight: 700; padding: 4px 9px; border-radius: 6px;
+    opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.swap-btn:hover::after, .swap-btn:focus-visible::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .swap-btn:hover svg { transform: none; } }
 .swap-btn:focus-visible { outline: 3px solid var(--sage); outline-offset: 2px; }
 .month-list { display: grid; gap: 14px; }
 .month-week summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 4px 0; min-height: 44px; }
