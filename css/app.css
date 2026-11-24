@@ -942,7 +942,24 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .cookbook-count.is-locked { background: #7a2335; color: #fff; display: inline-flex; align-items: center; gap: 5px; }
 .cookbook-count.is-locked .inline-icon { color: #fff; }
 
-/* Razítka: ikonka uvnitř razítka */
+/* Nadpisy karet: ikonka vedle textu s mezerou (ne nalepená) */
+.card-title { display: flex; align-items: center; gap: 10px; }
+.card-title .title-icon { flex: none; color: var(--primary); }
+
+/* Tužka na avataru → výběr avatara pod hlavičkou karty */
+.me-avatar-wrap { position: relative; }
+.me-edit {
+    position: absolute; right: -8px; bottom: -6px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer;
+    background: #e9b949; color: var(--ink); border: 2px solid var(--ink); border-radius: 50%; box-shadow: 2px 2px 0 var(--ink); transform: rotate(4deg);
+}
+.me-edit svg { width: 18px; height: 18px; }
+.me-edit:hover { background: #fff; }
+.me-edit:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.me-avatar-panel { margin: 0 0 14px; padding: 12px; background: #fffaf0; border: 2px dashed var(--ink); border-radius: 12px; }
+.me-avatar-panel .field { margin: 0; border: 0; padding: 0; }
+
+/* Razítka: ikonka uvnitř razítka; za recept ilustrace suroviny (větší, barevná) */
+.stamp--recept svg { width: 30px; height: 30px; }
 .stamp svg { width: 24px; height: 24px; color: var(--primary); }
 .stamp--tyden svg { color: var(--ink); }
 
@@ -1006,6 +1023,47 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .me-stats-note { margin: 10px 0 0; font-size: .78rem; color: var(--text-light); }
 @media (max-width: 420px) { .me-stats { grid-template-columns: 1fr; } .me-stats li { grid-template-columns: auto 1fr; justify-items: start; text-align: left; } }
 @media (prefers-reduced-motion: reduce) { .me-bar i { transition: none; } }
+
+/* ===== Rozklikávací sekce v Profilu (Moje údaje, Tvoje čísla, Kuchařka, Účet) ===== */
+.sekce > .sekce-summary {
+    list-style: none; display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 48px;
+    font-family: "Playfair Display", serif; font-size: 1.3rem; font-weight: 700; color: var(--primary);
+}
+.sekce > .sekce-summary::-webkit-details-marker { display: none; }
+.sekce > .sekce-summary .title-icon { width: 30px; height: 30px; flex: none; }
+.sekce-hint { font-family: inherit; font-size: .8rem; font-weight: 600; color: var(--text-light); }
+.sekce > .sekce-summary::after {
+    content: "▾"; margin-left: auto; flex: none; display: grid; place-items: center; width: 34px; height: 34px;
+    font-family: inherit; font-size: 1rem; color: var(--ink); background: #fffaf0; border: 2px solid var(--ink); border-radius: 50%; transition: transform .2s;
+}
+.sekce[open] > .sekce-summary::after { transform: rotate(180deg); }
+.sekce[open] > .sekce-summary { margin-bottom: 14px; }
+.sekce > .sekce-summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; border-radius: 8px; }
+@media (max-width: 480px) { .sekce-hint { display: none; } }
+
+/* Počet razítek: zelený štítek místo černého */
+.cookbook-count { background: var(--primary); color: #fff; border: 2px solid var(--ink); }
+.cookbook-head .cookbook-count { margin-left: auto; font-family: inherit; }
+.cookbook-head::after { margin-left: 8px !important; }
+
+/* Procenta v kroužku kolem ikonky */
+.me-ring {
+    --pct: 0; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
+    background: conic-gradient(#e9b949 calc(var(--pct) * 1%), #ece4d2 0); border: 2px solid var(--ink);
+}
+.me-ring.is-done { background: conic-gradient(#3f8f4f calc(var(--pct) * 1%), #ece4d2 0); }
+.me-ring-in { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #fffaf0; border: 2px solid var(--ink); }
+.me-ring-in svg { width: 26px; height: 26px; color: var(--primary); }
+.me-stats li > .me-pct { margin-top: -4px; }
+@media (max-width: 420px) { .me-ring { grid-row: span 4; } }
+
+/* Odhlásit: vínově (odchod), smazání účtu zůstává plně červené */
+.btn--logout { background: #fff; color: #7a2335; border-color: #7a2335 !important; }
+.btn--logout:hover { background: #7a2335; color: #fff; }
+
+/* Můj den: dort vedle nadpisu a větší */
+.day-head { justify-content: flex-start; gap: 18px; }
+.day-head .morph { width: 120px; height: 120px; }
 
 /* Správa účtu jako jasné rozklikávací tlačítko */
 .account-manage summary {

@@ -249,6 +249,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // u nadpisu ikonka není potřeba, když je hned pod ním karta s avatarem
         $("#profil-titul-ikona").style.display = p ? "none" : "";
         $("#tab-kcal").textContent = p ? fmt(calculate(p).target) + " kcal" : "";
+        // výběr avatara: bez profilu je ve formuláři, s profilem pod tužkou v kartě Můj profil
+        const avatarPole = $("#avatar-fieldset");
+        const cil = p ? $("#me-avatar-panel") : $("#profile-form");
+        if (avatarPole.parentElement !== cil) {
+            if (p) cil.appendChild(avatarPole); else cil.prepend(avatarPole);
+        }
         if (!p) return;
         $("#me-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
         const cile = { hubnout: ["Fit", "chci zhubnout"], udrzet: ["Normal", "chci udržet formu"], nabrat: ["Svaly", "chci nabrat"] };
@@ -267,10 +273,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const pct = cil ? Math.min(100, Math.round((hotovo / cil) * 100)) : 0;
             $(`#me-${klic}-done`).textContent = fmt(hotovo);
             $(`#me-${klic}`).textContent = `z ${fmt(cil)} ${jednotka}`;
-            $(`#me-${klic}-bar`).style.width = pct + "%";
+            // procenta v kroužku kolem ikonky
+            const ring = $(`#me-${klic}-ring`);
+            ring.style.setProperty("--pct", pct);
+            ring.classList.toggle("is-done", pct >= 100);
             $(`#me-${klic}-pct`).textContent = pct + " %";
             $(`#me-${klic}-tip`).textContent = tip;
-            $(`#me-${klic}-bar`).parentElement.classList.toggle("is-done", pct >= 100);
         };
         const dalsi = zbyva[0];
         dlazdice("kcal", kcal, cilKcal, "kcal",
@@ -296,10 +304,36 @@ document.addEventListener("DOMContentLoaded", function () {
         state.profile.avatar = e.target.value;
         store.set("profile", state.profile);
         renderProfileChip();
+        // vybráno → výběr pod tužkou se zavře
+        const panel = $("#me-avatar-panel");
+        if (!panel.hidden) {
+            panel.hidden = true;
+            $("[data-action='avatar-edit']").setAttribute("aria-expanded", "false");
+            toast("Avatar změněn");
+        }
+    });
+
+    // odkaz na #account (třeba „Bez účtu – přihlásit se“) sekci Účet rozbalí
+    document.addEventListener("click", (e) => {
+        if (e.target.closest('a[href="#account"]')) $("#account").open = true;
+    });
+
+    // s vyplněným profilem jsou údaje sbalené (ať se nemusí listovat), bez profilu rozbalené
+    $("#sekce-udaje").open = !state.profile;
+
+    // tužka u avatara: rozbalí / zabalí výběr avatarů
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action='avatar-edit']");
+        if (!btn) return;
+        const panel = $("#me-avatar-panel");
+        panel.hidden = !panel.hidden;
+        btn.setAttribute("aria-expanded", String(!panel.hidden));
+        if (!panel.hidden) panel.querySelector("input:checked, input")?.focus();
     });
 
     function fillForm(p) {
-        const av = form.querySelector(`input[name="avatar"][value="${p.avatar || "t-nova"}"]`);
+        // výběr avatara může být přesunutý do karty Můj profil, proto hledat v celé stránce
+        const av = document.querySelector(`input[name="avatar"][value="${p.avatar || "t-nova"}"]`);
         if (av) av.checked = true;
         form.querySelector(`input[name="goal"][value="${p.goal}"]`).checked = true;
         form.querySelector(`input[name="gender"][value="${p.gender}"]`).checked = true;
@@ -322,8 +356,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // spočítáno → údaje se sbalí a otevřou se Tvoje čísla
+        setTimeout(() => { $("#sekce-udaje").open = false; $("#profile-results").open = true; }, 0);
         state.profile = {
-            avatar: (form.querySelector('input[name="avatar"]:checked') || {}).value || "t-nova",
+            avatar: (document.querySelector('input[name="avatar"]:checked') || {}).value || "t-nova",
             goal: form.querySelector('input[name="goal"]:checked').value,
             gender: form.querySelector('input[name="gender"]:checked').value,
             age, weight, height,
@@ -531,6 +567,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return ZMENY[((tydny % ZMENY.length) + ZMENY.length) % ZMENY.length];
     }
 
+    // Razítko za uvařený recept = ilustrace jeho hlavní suroviny (pořadí = co je „nejhlavnější“)
+    const SUROVINY_ILUSTRACE = [
+        ["losos", "s-ryba"], ["kuřecí maso", "s-kure"], ["vejce", "s-vejce"], ["avokádo", "s-avokado"], ["brokolice", "s-brokolice"],
+        ["jahody", "s-jahoda"], ["maliny", "s-jahoda"], ["borůvky", "s-jahoda"], ["jablko", "s-jablko"], ["banán", "s-banan"],
+        ["mrkev", "s-mrkev"], ["batáty", "s-mrkev"], ["rajčata", "s-rajce"], ["cizrna", "s-fazole"], ["fazole", "s-fazole"], ["čočka", "s-fazole"], ["tofu", "s-fazole"],
+        ["feta", "s-syr"], ["mozzarella", "s-syr"], ["sýr", "s-syr"], ["tvaroh", "s-mleko"], ["jogurt", "s-mleko"], ["mléko", "s-mleko"], ["rostlinné mléko", "s-mleko"],
+        ["okurka", "s-okurka"], ["cuketa", "s-okurka"], ["quinoa", "s-zrni"], ["rýže", "s-zrni"], ["ovesné vločky", "s-zrni"], ["pohanka", "s-zrni"], ["chia semínka", "s-zrni"],
+        ["kváskový chléb", "s-chleb"], ["tortilla", "s-chleb"], ["datle", "s-orech"], ["ořechy", "s-orech"], ["arašídové máslo", "s-orech"],
+        ["špenát", "s-listy"], ["salát", "s-listy"], ["máta", "s-listy"], ["citron", "s-citron"], ["limetka", "s-citron"], ["zázvor", "s-citron"]
+    ];
+    function surovinaRazitka(recept) {
+        const s = (recept && recept.suroviny) || [];
+        return (SUROVINY_ILUSTRACE.find(([nazev]) => s.includes(nazev)) || [null, "s-zrni"])[1];
+    }
+    // starší razítka bez suroviny: dohledat recept podle názvu
+    const ilustraceRazitka = (razitko) => razitko.surovina
+        || surovinaRazitka(RECEPTY.find((r) => r.nazev === razitko.popis));
+
     const maRazitko = (klic) => state.stamps.some((s) => s.klic === klic);
     // snědená jídla dnes (počítá se z nich, kolik % dne máš splněno)
     const jeSnedeno = (mealId) => (state.snedeno[dnes()] || []).includes(mealId);
@@ -545,15 +599,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const muzeRazitka = () => !!cloud.user || state.stamps.length > 0;
     function pozviKUctu(text) {
         openTab("profil");
+        $("#account").open = true;
         toast(text);
         setTimeout(() => {
             $("#account").scrollIntoView({ behavior: "smooth", block: "start" });
             $("#login-email").focus({ preventScroll: true });
         }, 300);
     }
-    function pridejRazitko(typ, klic, popis) {
+    function pridejRazitko(typ, klic, popis, surovina) {
         if (maRazitko(klic)) return false;
-        state.stamps.push({ typ, klic, datum: dnes(), popis });
+        state.stamps.push(surovina ? { typ, klic, datum: dnes(), popis, surovina } : { typ, klic, datum: dnes(), popis });
         store.set("stamps", state.stamps);
         return true;
     }
@@ -608,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const r = RAZITKA[s.typ] || RAZITKA.recept;
             const datum = s.datum.split("-").reverse().map(Number).slice(0, 2).join(". ") + ".";
             const popis = `${r.nazev}${s.popis && s.typ === "recept" ? ": " + s.popis : ""}, ${datum}`;
-            return `<li class="stamp stamp--${s.typ}" title="${esc(popis)}"><svg aria-hidden="true"><use href="#${r.ikona}"/></svg><span class="sr-only">${esc(popis)}</span></li>`;
+            return `<li class="stamp stamp--${s.typ}" title="${esc(popis)}"><svg aria-hidden="true"><use href="#${s.typ === "recept" ? ilustraceRazitka(s) : r.ikona}"/></svg><span class="sr-only">${esc(popis)}</span></li>`;
         }).join("");
     }
 
@@ -670,7 +725,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="meal-actions">
                     ${(() => {
                         const uvareno = jeSnedeno(meal.id);
-                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}"><svg class="inline-icon" aria-hidden="true"><use href="#i-vari"/></svg> ${uvareno ? "Uvařeno ✓" : "Mám uvařeno"}</button>`;
+                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-id="${esc(r.id)}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}"><svg class="inline-icon" aria-hidden="true"><use href="#i-vari"/></svg> ${uvareno ? "Uvařeno ✓" : "Mám uvařeno"}</button>`;
                     })()}
                     <button type="button" class="btn btn--ghost btn--small" data-action="swap" data-meal="${meal.id}">Jiný recept</button>
                     <button type="button" class="btn btn--ghost btn--small" data-action="shop-recipe" data-id="${r.id}">Na nákup</button>
@@ -998,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 prepniSnedeno(mealId, true);
                 if (muzeRazitka()) {
-                    pridejRazitko("recept", klic, btn.dataset.name);
+                    pridejRazitko("recept", klic, btn.dataset.name, surovinaRazitka(RECEPTY.find((r) => r.id === btn.dataset.id)));
                     const novy = zkontrolujDenATyden();
                     toast(novy === "tyden" ? "Týden splněný! Velké razítko do kuchařky"
                         : novy === "den" ? "Celý den splněný! Razítko navíc"

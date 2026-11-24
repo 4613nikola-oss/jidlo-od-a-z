@@ -10,7 +10,7 @@
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <!-- ?v= = číslo verze: po každé úpravě ho změň, ať si prohlížeč stáhne nové soubory místo staré kopie -->
-    <link rel="stylesheet" href="css/app.css?v=2026-11-24f">
+    <link rel="stylesheet" href="css/app.css?v=2026-11-24h">
 </head>
 <body>
     <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
@@ -37,6 +37,27 @@
     <symbol id="i-zmena" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-8.5"/><path d="M12 13c0-4-3-6.5-7.5-6.5 0 4 3 6.5 7.5 6.5z"/><path d="M12 11c0-3.6 2.6-6.2 7-6.2 0 3.6-2.6 6.2-7 6.2z" fill="#5e7769" fill-opacity=".35"/></g></symbol>
     <symbol id="i-bezmleka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M8 21V9.5L9.8 6.5h4.4L16 9.5V21z"/><path d="M10 6.5V3h4v3.5M8 13.5h8"/></g><path d="M3.5 20.5 20.5 3.5" stroke="#a24e33" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-zamek" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 15v2.5"/></g></symbol>
+    <!-- ILUSTRACE SUROVIN (razítka v Moje kuchařce): tenká linka jako Tečka, jemné barvy -->
+    <symbol id="s-vejce" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="6.3" ry="8" fill="#fff8e6" stroke="#1f1d1a" stroke-width="1.6"/><path d="M9 10.5c.5-1.6 1.4-2.7 2.4-3.2" fill="none" stroke="#1f1d1a" stroke-width="1.2" stroke-linecap="round" opacity=".5"/></symbol>
+    <symbol id="s-jablko" viewBox="0 0 24 24"><path d="M12 8c-2.5-1.8-7-1-7 4.2 0 4.4 3 8.3 5 8.3 1 0 1.3-.5 2-.5s1 .5 2 .5c2 0 5-3.9 5-8.3C19 7 14.5 6.2 12 8z" fill="#e9a6a0" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 8c0-2 .6-3.4 2-4.4" fill="none" stroke="#1f1d1a" stroke-width="1.6" stroke-linecap="round"/><path d="M13.8 4.6c1.6-1.4 3.6-1.4 4.6-.6-.8 1.8-2.8 2.6-4.6.6z" fill="#5e7769" stroke="#1f1d1a" stroke-width=".9"/></symbol>
+    <symbol id="s-banan" viewBox="0 0 24 24"><path d="M5 6.5c1.5 7 6.5 11 14 10.5-.5 2-3.5 3.5-7 3-5.5-.8-8.5-6-7-13.5z" fill="#f3d98f" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 6.5 4.2 4.5" stroke="#1f1d1a" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="s-mrkev" viewBox="0 0 24 24"><path d="M15.5 8.5 5 19.5c-.6.6-.1 1.1.5.6L16.5 9.6c1.2-1.4 1.2-3-.2-4.2-1.4-1.2-3-1-4.2.3z" fill="#f2a65a" stroke="#1f1d1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M16.5 6.2c1-2 2.6-3 4-2.6M17.4 7.4c2-.6 3.4 0 3.9 1.3M15.4 5.4c-.2-2 .6-3.4 1.9-3.6" fill="none" stroke="#5e7769" stroke-width="1.6" stroke-linecap="round"/><path d="M10 13.5l1.5 1M8 16l1.2.8" stroke="#1f1d1a" stroke-width="1" stroke-linecap="round" opacity=".5"/></symbol>
+    <symbol id="s-rajce" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.2" fill="#e07a5f" stroke="#1f1d1a" stroke-width="1.6"/><path d="M12 7.2 10 5l2 1 2-1.6-.5 2.4 2.5-.3-2 1.6M12 7.2V4.5" fill="#5e7769" stroke="#1f1d1a" stroke-width="1.1" stroke-linejoin="round"/><path d="M8.5 12c.4-1.4 1.3-2.3 2.4-2.7" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></symbol>
+    <symbol id="s-syr" viewBox="0 0 24 24"><path d="M3 16.5 19 9.5c1.5.8 2 2.3 2 3.5v4.5H3z" fill="#f3d98f" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="9" cy="15" r="1.2" fill="#e6c08f" stroke="#1f1d1a" stroke-width=".9"/><circle cx="15" cy="14" r="1.6" fill="#e6c08f" stroke="#1f1d1a" stroke-width=".9"/></symbol>
+    <symbol id="s-mleko" viewBox="0 0 24 24"><path d="M9 3h6v3l2 3v12H7V9l2-3z" fill="#fff" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 13h10v4H7z" fill="#cfe0f0"/><path d="M7 13h10M9 6h6" stroke="#1f1d1a" stroke-width="1.2"/></symbol>
+    <symbol id="s-chleb" viewBox="0 0 24 24"><path d="M3.5 12c0-3.6 3.8-6 8.5-6s8.5 2.4 8.5 6v6.5h-17z" fill="#e6c08f" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 10.5l1.5 2M12 9.5l1.5 2M16 10.5l1.5 2" stroke="#1f1d1a" stroke-width="1.2" stroke-linecap="round"/></symbol>
+    <symbol id="s-ryba" viewBox="0 0 24 24"><path d="M3 12c3-4.5 8-5.5 12-3l4.5-3v12L15 15c-4 2.5-9 1.5-12-3z" fill="#f2c2b0" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7.5" cy="11.3" r="1" fill="#1f1d1a"/><path d="M11 9.5c1 1.6 1 3.4 0 5" fill="none" stroke="#1f1d1a" stroke-width="1.1" stroke-linecap="round"/></symbol>
+    <symbol id="s-kure" viewBox="0 0 24 24"><path d="M14.5 3.5c3.5 0 6 2.6 6 6 0 3.8-3.2 6-6.5 6l-4 4c.6 1.4-1.4 2.6-2.4 1.6-1-.2-1.4-1.2-.8-1.9-.9.2-1.9-.6-1.6-1.6.3-1.2 2-1.4 2.6-.5l4-4c-.2-4 2-9.6 2.7-9.6z" fill="#e6c08f" stroke="#1f1d1a" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="s-avokado" viewBox="0 0 24 24"><path d="M12 2.8c3.4 0 4.6 4.4 6 8.2 1.4 4-1 9.8-6 9.8s-7.4-5.8-6-9.8c1.4-3.8 2.6-8.2 6-8.2z" fill="#a9c58f" stroke="#1f1d1a" stroke-width="1.6"/><path d="M12 6c2.2 0 3.2 3 4 5.6.9 2.8-.8 6.8-4 6.8s-4.9-4-4-6.8C8.8 9 9.8 6 12 6z" fill="#e8efc4"/><circle cx="12" cy="14" r="2.6" fill="#a0785a" stroke="#1f1d1a" stroke-width="1.2"/></symbol>
+    <symbol id="s-jahoda" viewBox="0 0 24 24"><path d="M12 21c-4-2-7-6-7-10 0-2.5 2-3.6 3.8-3 1.3.4 2.2.6 3.2.6s1.9-.2 3.2-.6c1.8-.6 3.8.5 3.8 3 0 4-3 8-7 10z" fill="#e07a5f" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 7.3 7 5l3 .8L12 3.5l2 2.3 3-.8-1.5 2.3" fill="#5e7769" stroke="#1f1d1a" stroke-width="1" stroke-linejoin="round"/><g fill="#fff3c4"><circle cx="9" cy="11" r=".7"/><circle cx="12" cy="12.5" r=".7"/><circle cx="15" cy="11" r=".7"/><circle cx="10.5" cy="15.5" r=".7"/><circle cx="13.5" cy="15.5" r=".7"/></g></symbol>
+    <symbol id="s-brokolice" viewBox="0 0 24 24"><path d="M10 13.5 9 21h6l-1-7.5" fill="#cfe0c3" stroke="#1f1d1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 14a3.5 3.5 0 0 1-.4-6.9A4.5 4.5 0 0 1 14.5 5a4 4 0 0 1 3.6 8.9 3 3 0 0 1-2 .6H7z" fill="#8fb27a" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="s-citron" viewBox="0 0 24 24"><path d="M4 12c0-4 3.6-7 8-7 3 0 4.6 1 6 0 .6 1.8.4 2.6 1.2 3.8C20 10 20 11 20 12c0 4-3.6 7-8 7-3 0-4.6-1-6 0-.6-1.8-.4-2.6-1.2-3.8C4 14 4 13 4 12z" fill="#f3d98f" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 10c.8-1.4 2.2-2.2 3.8-2.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round" opacity=".8"/></symbol>
+    <symbol id="s-listy" viewBox="0 0 24 24"><path d="M12 21C5 19 3.5 12 5 5c6 .5 9 5 7 16z" fill="#8fb27a" stroke="#1f1d1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 21c7-2 8.5-9 7-16-6 .5-9 5-7 16z" fill="#a9c58f" stroke="#1f1d1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 21 7 9M12 21l5-12" stroke="#1f1d1a" stroke-width="1" stroke-linecap="round" opacity=".55"/></symbol>
+    <symbol id="s-fazole" viewBox="0 0 24 24"><path d="M5 9.5c0-3 3-4.5 5.5-3.5 1.4.6 2.6.2 3.8-.6 2.6-1.6 5.7.3 5.7 3.6 0 5-4.4 10-9 10S5 14 5 9.5z" fill="#b5654a" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 9c.4-1 1.2-1.5 2.2-1.4" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></symbol>
+    <symbol id="s-orech" viewBox="0 0 24 24"><path d="M12 3c4.5 0 7 3.5 7 8.5S16 21 12 21s-7-4.5-7-9.5S7.5 3 12 3z" fill="#c9a06a" stroke="#1f1d1a" stroke-width="1.6"/><path d="M12 3v18M8.5 8c1.2 1 2.3 1 3.5 0M15.5 13c-1.2-1-2.3-1-3.5 0M8.5 15c1.2 1 2.3 1 3.5 0" fill="none" stroke="#1f1d1a" stroke-width="1.1" stroke-linecap="round"/></symbol>
+    <symbol id="s-zrni" viewBox="0 0 24 24"><path d="M3 12h18a9 9 0 0 1-18 0z" fill="#f6e7bf" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"/><g fill="#e6c08f" stroke="#1f1d1a" stroke-width=".8"><ellipse cx="8" cy="10.3" rx="1.4" ry="1"/><ellipse cx="11.5" cy="9.6" rx="1.4" ry="1"/><ellipse cx="15" cy="10.3" rx="1.4" ry="1"/><ellipse cx="13.3" cy="8.4" rx="1.4" ry="1"/><ellipse cx="9.8" cy="8.4" rx="1.4" ry="1"/></g></symbol>
+    <symbol id="s-okurka" viewBox="0 0 24 24"><path d="M4.5 17.5C3 16 3.5 13 6 10.5l5-5c2.5-2.5 5.5-3 7-1.5s1 4.5-1.5 7l-5 5c-2.5 2.5-5.5 3-7 1.5z" fill="#8fb27a" stroke="#1f1d1a" stroke-width="1.6"/><g fill="#e8efc4"><circle cx="9" cy="12" r=".7"/><circle cx="12" cy="9" r=".7"/><circle cx="14.5" cy="7" r=".7"/><circle cx="7.5" cy="15" r=".7"/></g></symbol>
+    <symbol id="i-tuzka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4.5L16 4.5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M14 6.5l3 3M4 20l4.5-1.5"/></g></symbol>
     <symbol id="i-den" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="16" height="16" rx="2"/><path d="M3 10h16M7.5 3v4M14.5 3v4"/><circle cx="11" cy="15.5" r="1.6" fill="#a24e33" stroke="none"/></g><use href="#listek"/></symbol>
     <symbol id="i-recepty" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H17v-5"/><path d="M8 7.5h5M8 11h5"/></g><use href="#listek"/></symbol>
     <symbol id="i-oblibene" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 11 7.6 4.2 4.2 0 0 1 18.5 10c0 5.4-7.5 10-7.5 10z"/></g><use href="#listek"/></symbol>
@@ -132,7 +153,13 @@
             <!-- Můj profil: avatar, dnešní cíl a stav účtu (ukáže se, jakmile je profil spočítaný) -->
             <section class="card me-card" id="me-card" aria-label="Můj profil" hidden>
                 <div class="me-head">
-                    <span class="me-avatar-wrap"><svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg></span>
+                    <span class="me-avatar-wrap">
+                        <svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg>
+                        <!-- tužka: změnit avatara (výběr se rozbalí pod hlavičkou karty) -->
+                        <button type="button" class="me-edit" data-action="avatar-edit" aria-expanded="false" aria-controls="me-avatar-panel" aria-label="Změnit avatara">
+                            <svg aria-hidden="true"><use href="#i-tuzka"/></svg>
+                        </button>
+                    </span>
                     <div class="me-text">
                         <b class="me-title">Můj profil</b>
                         <span class="me-goal" id="me-goal"></span>
@@ -140,26 +167,24 @@
                     </div>
                 </div>
                 <!-- tři hlavní čísla dne jako dlaždice -->
+                <div class="me-avatar-panel" id="me-avatar-panel" hidden></div>
                 <p class="me-stats-title">Dnes zatím</p>
                 <ul class="me-stats">
                     <li>
-                        <svg aria-hidden="true"><use href="#i-kcal"/></svg>
+                        <span class="me-ring" id="me-kcal-ring" aria-hidden="true"><span class="me-ring-in"><svg><use href="#i-kcal"/></svg></span></span>
                         <b id="me-kcal-done">0</b><span id="me-kcal"></span>
-                        <span class="me-bar" aria-hidden="true"><i id="me-kcal-bar"></i></span>
                         <em class="me-pct" id="me-kcal-pct"></em>
                         <small class="me-tip" id="me-kcal-tip"></small>
                     </li>
                     <li>
-                        <svg aria-hidden="true"><use href="#i-bilkoviny"/></svg>
+                        <span class="me-ring" id="me-protein-ring" aria-hidden="true"><span class="me-ring-in"><svg><use href="#i-bilkoviny"/></svg></span></span>
                         <b id="me-protein-done">0</b><span id="me-protein"></span>
-                        <span class="me-bar" aria-hidden="true"><i id="me-protein-bar"></i></span>
                         <em class="me-pct" id="me-protein-pct"></em>
                         <small class="me-tip" id="me-protein-tip"></small>
                     </li>
                     <li>
-                        <svg aria-hidden="true"><use href="#i-voda"/></svg>
+                        <span class="me-ring" id="me-water-ring" aria-hidden="true"><span class="me-ring-in"><svg><use href="#i-voda"/></svg></span></span>
                         <b id="me-water-done">0</b><span id="me-water"></span>
-                        <span class="me-bar" aria-hidden="true"><i id="me-water-bar"></i></span>
                         <em class="me-pct" id="me-water-pct"></em>
                         <small class="me-tip" id="me-water-tip"></small>
                     </li>
@@ -180,8 +205,11 @@
                 <button type="button" class="btn btn--primary" data-action="guide-done">Jdeme na to</button>
             </section>
 
-            <form id="profile-form" class="card" novalidate>
-                <fieldset class="field">
+            <!-- rozklikávací sekce: s vyplněným profilem jsou údaje sbalené, ať se nemusí listovat -->
+            <details class="card sekce" id="sekce-udaje" open>
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-profil"/></svg><span>Moje údaje</span><small class="sekce-hint">věk, váha, cíl, jídelníček</small></summary>
+            <form id="profile-form" novalidate>
+                <fieldset class="field" id="avatar-fieldset">
                     <legend>Kdo budeš v appce?</legend>
                     <div class="avatar-pick" id="avatar-pick">
                         <label><input type="radio" name="avatar" value="t-nova" checked><svg aria-hidden="true"><use href="#t-nova"/></svg><span>Tečka</span></label>
@@ -253,9 +281,10 @@
 
                 <button type="submit" class="btn btn--primary btn--full">Spočítat</button>
             </form>
+            </details>
 
-            <section id="profile-results" class="card results" hidden aria-live="polite">
-                <h2 class="card-title">Tvoje čísla</h2>
+            <details id="profile-results" class="card results sekce" hidden aria-live="polite">
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-kcal"/></svg><span>Tvoje čísla</span><small class="sekce-hint">metabolismus, výdej, cíl</small></summary>
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-label">Bazální metabolismus</span>
@@ -280,14 +309,14 @@
                     <h3>Mohlo by tě zajímat</h3>
                     <ul id="r-articles" class="article-list"></ul>
                 </div>
-            </section>
+            </details>
 
             <!-- Moje kuchařka: razítka za uvařené recepty, splněné dny, týdny a malé změny. Nic se nemaže. -->
-            <section class="card cookbook" aria-labelledby="cookbook-title">
-                <div class="cookbook-head">
-                    <h2 class="card-title" id="cookbook-title"><svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg>Moje kuchařka</h2>
+            <details class="card cookbook sekce" id="sekce-kucharka" open>
+                <summary class="sekce-summary cookbook-head">
+                    <svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg><span id="cookbook-title">Moje kuchařka</span>
                     <span class="cookbook-count" id="cookbook-count">0 razítek</span>
-                </div>
+                </summary>
                 <div class="cookbook-tecka">
                     <img id="cookbook-img" src="" alt="" width="96" height="96" hidden>
                     <svg id="cookbook-svg" class="cookbook-svg" aria-hidden="true"><use href="#t-nova"/></svg>
@@ -334,7 +363,7 @@
                     </ul>
                     <button type="button" class="btn btn--primary btn--small" data-action="go-day">Jít do Můj den →</button>
                 </div>
-            </section>
+            </details>
 
             <!-- Okno při přihlášení na novém zařízení: která data použít -->
             <dialog id="data-dialog" class="card data-dialog" aria-labelledby="data-dialog-title">
@@ -348,8 +377,8 @@
             </dialog>
 
             <!-- Účet (nepovinný): uloží data do Supabase (EU), aby byla na všech zařízeních. Bez účtu appka funguje dál. -->
-            <section class="card account" id="account" aria-labelledby="account-title">
-                <h2 class="card-title" id="account-title"><svg class="title-icon" aria-hidden="true"><use href="#i-ucet"/></svg>Účet</h2>
+            <details class="card account sekce" id="account">
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-ucet"/></svg><span id="account-title">Účet</span><small class="sekce-hint" id="account-hint">přihlášení, data na všech zařízeních</small></summary>
 
                 <div id="account-out">
                     <p class="account-lead">Appka funguje i bez účtu. <strong>S účtem navíc:</strong></p>
@@ -388,7 +417,7 @@
                     <p>Přihlášení: <strong id="account-email"></strong></p>
                     <p class="sync-status" id="sync-status" role="status"></p>
                     <div class="account-actions">
-                        <button type="button" class="btn btn--ghost btn--small" data-action="account-logout">Odhlásit</button>
+                        <button type="button" class="btn btn--small btn--logout" data-action="account-logout">Odhlásit</button>
                     </div>
 
                     <!-- méně častá a nevratná věc schovaná zvlášť, ať se nedá překliknout -->
@@ -438,7 +467,7 @@
                     </div>
                     <a class="btn btn--ghost btn--small privacy-more" href="https://4613nikola-oss.github.io/nikys-kitchen-web/cs/soukromi/" data-web-link="cs/soukromi/" target="_blank" rel="noopener">Celý text Ochrany soukromí ↗</a>
                 </details>
-            </section>
+            </details>
         </section>
 
         <!-- 2) MŮJ DEN -->
@@ -605,7 +634,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <script src="js/data.js?v=2026-11-24f"></script>
-    <script src="js/app.js?v=2026-11-24f"></script>
+    <script src="js/data.js?v=2026-11-24h"></script>
+    <script src="js/app.js?v=2026-11-24h"></script>
 </body>
 </html>
