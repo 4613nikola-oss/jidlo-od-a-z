@@ -133,6 +133,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "čaj": 39, "česnek": 15, "čočka": 39, "ředkvičky": 25, "špenát": 39
     };
     const cena = (text) => CENY[text.toLowerCase()] || 30; // vlastní položka: odhad 30 Kč
+    // Vyhledávání v e-shopech (za adresu se přidá název suroviny)
+    const ROHLIK_HLEDAT = "https://www.rohlik.cz/hledat?q=";
+    const KOSIK_HLEDAT = "https://www.kosik.cz/vyhledavani?search=";
     const DNY = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"];
 
     /* ============ ZÁLOŽKY ============ */
@@ -247,9 +250,17 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#tab-kcal").textContent = p ? fmt(calculate(p).target) + " kcal" : "";
         if (!p) return;
         $("#me-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
-        $("#me-kcal").textContent = "Dnes: " + fmt(calculate(p).target) + " kcal";
+        const cile = { hubnout: ["Fit", "chci zhubnout"], udrzet: ["Normal", "chci udržet formu"], nabrat: ["Svaly", "chci nabrat"] };
+        const [cilNazev, cilPopis] = cile[p.goal] || cile.udrzet;
+        const goal = $("#me-goal");
+        goal.innerHTML = `<span class="goal-pill goal-pill--${p.goal}">${cilNazev}</span> ${cilPopis}`;
+        $("#me-kcal").textContent = fmt(calculate(p).target);
+        $("#me-protein").textContent = fmt(proteinTarget(p));
+        $("#me-water").textContent = waterTarget(p);
         const status = $("#me-status");
-        status.innerHTML = cloud.user ? `<svg class="inline-icon" aria-hidden="true"><use href="#i-ucet"/></svg> Přihlášeno – ukládá se do účtu` : `<svg class="inline-icon" aria-hidden="true"><use href="#i-zarizeni"/></svg> Bez účtu – data jen v tomhle zařízení · Přihlásit`;
+        status.innerHTML = cloud.user
+            ? `<span class="online-dot" aria-hidden="true"></span> Přihlášeno – ukládá se do účtu`
+            : `<span class="offline-dot" aria-hidden="true"></span> Bez účtu – přihlásit se`;
         status.classList.toggle("is-online", !!cloud.user);
     }
 
@@ -826,23 +837,61 @@ document.addEventListener("DOMContentLoaded", function () {
         return added;
     }
 
+    // Oddělení v obchodě – seznam se podle nich seskupí (v obchodě nemusíš běhat sem a tam)
+    const ODDELENI = [
+        ["Ovoce a zelenina", ["avokádo", "banán", "batáty", "borůvky", "brambory", "brokolice", "cibule", "citron", "cuketa", "česnek", "jablko", "jahody", "kiwi", "limetka", "maliny", "máta", "mrkev", "okurka", "paprika", "pažitka", "petrželka", "rajčata", "ředkvičky", "salát", "špenát", "zázvor"]],
+        ["Mléčné a vejce", ["feta", "jogurt", "mléko", "mozzarella", "rostlinné mléko", "sýr", "tvaroh", "vejce"]],
+        ["Maso a ryby", ["kuřecí maso", "losos"]],
+        ["Pečivo a obiloviny", ["kváskový chléb", "ovesné vločky", "pohanka", "quinoa", "rýže", "tortilla"]],
+        ["Luštěniny, konzervy, tofu", ["cizrna", "čočka", "fazole", "kokosové mléko", "kukuřice", "tofu"]],
+        ["Trvanlivé a koření", ["arašídové máslo", "chia semínka", "čaj", "datle", "dýňová semínka", "javorový sirup", "kakao", "káva", "med", "olej", "olivový olej", "ořechy", "piniové oříšky", "tahini"]]
+    ];
+    const oddeleniPolozky = (text) => {
+        const t = text.toLowerCase();
+        const o = ODDELENI.find(([, polozky]) => polozky.includes(t));
+        return o ? o[0] : "Ostatní";
+    };
+    // seznam seskupený podle oddělení (pořadí oddělení jako v obchodě)
+    function nakupPoOddelenich() {
+        const poradi = [...ODDELENI.map(([n]) => n), "Ostatní"];
+        const skupiny = {};
+        state.shop.forEach((item, i) => (skupiny[oddeleniPolozky(item.text)] ||= []).push({ item, i }));
+        return poradi.filter((n) => skupiny[n]).map((n) => [n, skupiny[n]]);
+    }
+
     function renderShop() {
         const list = $("#shop-list");
-        list.innerHTML = state.shop.map((item, i) => `
-            <li class="shop-item${item.done ? " is-done" : ""}">
-                <label>
-                    <input type="checkbox" data-index="${i}" ${item.done ? "checked" : ""}>
-                    <svg class="check-box" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6"/><path d="M6.5 12.5l4 4 7-8.5"/></svg>
-                    <span class="check-text">${esc(item.text)}</span>
-                </label>
-                <span class="shop-links">
-                    <a href="https://www.rohlik.cz/hledat?q=${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--r" aria-label="Najít ${esc(item.text)} na Rohlíku">R</a>
-                    <a href="https://www.kosik.cz/vyhledavani?search=${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--k" aria-label="Najít ${esc(item.text)} na Košíku">K</a>
-                </span>
-                <button type="button" class="icon-btn" data-action="shop-remove" data-index="${i}" aria-label="Odebrat ${esc(item.text)}">×</button>
+        list.innerHTML = nakupPoOddelenich().map(([nazev, polozky]) => `
+            <li class="shop-group">
+                <h3 class="shop-group-title">${esc(nazev)}</h3>
+                <ul class="shop-group-list">${polozky.map(({ item, i }) => `
+                    <li class="shop-item${item.done ? " is-done" : ""}">
+                        <label>
+                            <input type="checkbox" data-index="${i}" ${item.done ? "checked" : ""}>
+                            <svg class="check-box" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6"/><path d="M6.5 12.5l4 4 7-8.5"/></svg>
+                            <span class="check-text">${esc(item.text)}</span>
+                        </label>
+                        <span class="shop-links">
+                            <a href="${ROHLIK_HLEDAT}${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--r" title="Najít na Rohlíku" aria-label="Najít ${esc(item.text)} na Rohlíku">Rohlík</a>
+                            <a href="${KOSIK_HLEDAT}${encodeURIComponent(item.text)}" target="_blank" rel="noopener" class="shop-link shop-link--k" title="Najít na Košíku" aria-label="Najít ${esc(item.text)} na Košíku">Košík</a>
+                        </span>
+                        <button type="button" class="icon-btn" data-action="shop-remove" data-index="${i}" aria-label="Odebrat ${esc(item.text)}">×</button>
+                    </li>`).join("")}
+                </ul>
             </li>`).join("");
 
         updateShopMeta();
+    }
+
+    // Seznam jako text (kopírovat, stáhnout) – po odděleních, jen nekoupené
+    function nakupJakoText() {
+        return nakupPoOddelenich()
+            .map(([nazev, polozky]) => {
+                const zbyva = polozky.filter(({ item }) => !item.done);
+                return zbyva.length ? `${nazev.toUpperCase()}\n` + zbyva.map(({ item }) => `☐ ${item.text}`).join("\n") : "";
+            })
+            .filter(Boolean)
+            .join("\n\n");
     }
 
     // počítadlo na záložce a tlačítko „Smazat koupené“ (bez překreslení seznamu)
@@ -997,7 +1046,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // „Kup hotové“ bez vypisování: celý seznam do schránky nebo poslat dál
-        const seznamText = () => state.shop.filter((i) => !i.done).map((i) => "• " + i.text).join("\n");
+        const seznamText = nakupJakoText;
+        if (action === "shop-download") {
+            const text = "Nákupní seznam – Jídlo od A–Z\n" + new Date().toLocaleDateString("cs-CZ") + "\n\n" + seznamText() + "\n";
+            const odkaz = document.createElement("a");
+            odkaz.href = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+            odkaz.download = "nakupni-seznam.txt";
+            document.body.appendChild(odkaz);
+            odkaz.click();
+            odkaz.remove();
+        }
+        if (action === "shop-print") {
+            // tiskne se jen seznam (viz @media print v app.css)
+            document.body.classList.add("tisk-nakupu");
+            window.print();
+            setTimeout(() => document.body.classList.remove("tisk-nakupu"), 500);
+        }
         if (action === "shop-copy") {
             navigator.clipboard?.writeText(seznamText()).then(() => toast("Seznam je zkopírovaný"), () => toast("Kopírování se nepovedlo"));
         }

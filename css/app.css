@@ -870,22 +870,44 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .btn--danger { background: #b3261e; color: #fff; }
 .btn--danger:hover { background: #8e1d17; }
 
-/* Karta Můj profil nahoře v Profilu (místo štítku v hlavičce) */
-.me-card { display: flex; align-items: center; gap: 14px; margin: 6px 0 18px; background-color: var(--card-med); }
-.me-avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; background: var(--primary-soft); border: 2px solid var(--ink); }
-.me-text { display: grid; gap: 2px; }
-.me-title { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--primary); }
-.me-kcal { font-weight: 800; }
-.me-status { font-size: .9rem; color: var(--text-light); text-decoration: underline; }
-.me-status.is-online { color: var(--primary); font-weight: 700; text-decoration: none; }
-
-/* ===== Důležité informace nahoře: nápadný rámeček, čitelné písmo, tučná klíčová slova ===== */
-.panel-lead {
-    font-family: inherit; font-size: 1rem; line-height: 1.5; color: var(--ink);
-    background: #fffaf0; border: 2px solid var(--ink); border-left: 8px solid var(--primary); border-radius: 12px;
-    padding: 12px 14px; margin: 0 0 16px;
+/* Karta Můj profil: avatar, cíl, stav účtu a tři dlaždice (kcal, bílkoviny, pití) */
+.me-card {
+    margin: 6px 0 18px; background-color: var(--card-med);
+    background-image: radial-gradient(rgba(162, 78, 51, 0.12) 22%, transparent 24%); background-size: 12px 12px;
 }
-.panel-lead strong { color: var(--primary); }
+.me-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.me-avatar-wrap { flex: none; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: #fff; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); transform: rotate(-4deg); }
+.me-avatar { width: 70px; height: 70px; }
+.me-text { display: grid; gap: 5px; justify-items: start; }
+.me-title { font-family: "Playfair Display", serif; font-size: 1.35rem; color: var(--primary); line-height: 1.1; }
+.me-goal { font-size: .9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.goal-pill { font-size: .8rem; font-weight: 800; border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 9px; }
+.goal-pill--hubnout { background: #a24e33; color: #fff; }
+.goal-pill--udrzet { background: #4d6357; color: #fff; }
+.goal-pill--nabrat { background: #e9b949; color: var(--ink); }
+.me-status { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 700; color: var(--ink); background: #fff; border: 1.5px solid var(--ink); border-radius: 999px; padding: 2px 10px; text-decoration: none; }
+.me-status.is-online { color: var(--primary); }
+.online-dot, .offline-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.online-dot { background: #3f8f4f; box-shadow: 0 0 0 3px rgba(63, 143, 79, .25); }
+.offline-dot { background: #9a938a; }
+.me-stats { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.me-stats li { display: grid; justify-items: center; text-align: center; gap: 2px; background: #fffaf0; border: 2px solid var(--ink); border-radius: 12px; padding: 10px 6px; box-shadow: 3px 3px 0 var(--ink); }
+.me-stats svg { width: 26px; height: 26px; color: var(--primary); }
+.me-stats b { font-size: 1.35rem; line-height: 1.1; color: var(--ink); }
+.me-stats span { font-size: .75rem; font-weight: 600; color: var(--text-light); }
+
+/* ===== Důležité informace nahoře: výrazně žluté, výstražný trojúhelník, čitelné písmo ===== */
+.panel-lead {
+    font-family: inherit; font-size: 1rem; line-height: 1.5; color: var(--ink); font-weight: 500;
+    background-color: #ffd23f; border: 3px solid var(--ink); border-radius: 12px; box-shadow: 4px 4px 0 var(--ink);
+    padding: 12px 14px 12px 56px; margin: 0 0 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5 23 21H1z' fill='%231f1d1a'/%3E%3Cpath d='M12 6.2 19.8 19.4H4.2z' fill='%23ffd23f'/%3E%3Cpath d='M12 9.5v5' stroke='%231f1d1a' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='17' r='1.35' fill='%231f1d1a'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-size: 30px 30px; background-position: 14px 12px;
+}
+.panel-lead strong { color: var(--ink); font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px; }
+/* seznamy s vlastní ikonkou u každého bodu: trojúhelník jen jednou nahoře */
+.panel-lead.info-list { padding-left: 56px; }
+.info-list svg { color: var(--ink) !important; }
 .info-list { list-style: none; display: grid; gap: 8px; }
 .info-list li { display: flex; align-items: center; gap: 10px; }
 .info-list svg { width: 26px; height: 26px; flex: none; color: var(--primary); }
@@ -952,6 +974,25 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .account-perks svg { width: 26px; height: 26px; flex: none; color: var(--primary); }
 .field-error:empty { display: none; }
 .privacy summary { gap: 6px; }
+
+/* ===== Nákup: oddělení, Rohlík/Košík čitelně, tisk ===== */
+.shop-list { list-style: none; padding: 0; }
+.shop-group { margin-bottom: 14px; }
+.shop-group-title { margin: 0 0 6px; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #fff; background: var(--primary); display: inline-block; padding: 3px 12px; border-radius: 999px; }
+.shop-group-list { list-style: none; padding: 0; margin: 0; }
+.shop-link { width: auto; height: auto; min-height: 30px; padding: 2px 9px; border-radius: 999px; font-size: .75rem; display: inline-grid; }
+.shop-online { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 0; font-size: .9rem; background: #fffaf0; border: 1.5px dashed var(--ink); border-radius: 10px; padding: 8px 10px; }
+.shop-online .shop-link { display: inline-block; min-height: 0; padding: 0 7px; vertical-align: 1px; }
+.shop-buttons .btn { display: inline-flex; align-items: center; gap: 5px; }
+@media print {
+    body.tisk-nakupu * { visibility: hidden; }
+    body.tisk-nakupu #panel-nakup, body.tisk-nakupu #panel-nakup .panel-title,
+    body.tisk-nakupu #shop-list, body.tisk-nakupu #shop-list * { visibility: visible; }
+    body.tisk-nakupu #panel-nakup { position: absolute; left: 0; top: 0; width: 100%; }
+    body.tisk-nakupu .shop-links, body.tisk-nakupu .icon-btn, body.tisk-nakupu .app-comic, body.tisk-nakupu .shop-add, body.tisk-nakupu #shop-tools { display: none !important; }
+    body.tisk-nakupu .shop-group-title { color: #000; background: none; border-bottom: 2px solid #000; border-radius: 0; padding: 0; }
+    body.tisk-nakupu { background: #fff; }
+}
 
 /* Ochrana soukromí v dlaždicích */
 .privacy summary { background: #fffaf0; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 12px; color: var(--ink); }

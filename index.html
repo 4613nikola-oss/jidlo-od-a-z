@@ -10,7 +10,7 @@
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <!-- ?v= = číslo verze: po každé úpravě ho změň, ať si prohlížeč stáhne nové soubory místo staré kopie -->
-    <link rel="stylesheet" href="css/app.css?v=2026-11-24c">
+    <link rel="stylesheet" href="css/app.css?v=2026-11-24d">
 </head>
 <body>
     <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
@@ -131,12 +131,20 @@
             <h1 class="panel-title"><svg class="title-icon" id="profil-titul-ikona" aria-hidden="true"><use href="#i-profil"/></svg>Kolik energie potřebuješ?</h1>
             <!-- Můj profil: avatar, dnešní cíl a stav účtu (ukáže se, jakmile je profil spočítaný) -->
             <section class="card me-card" id="me-card" aria-label="Můj profil" hidden>
-                <svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg>
-                <div class="me-text">
-                    <b class="me-title">Můj profil</b>
-                    <span class="me-kcal" id="me-kcal"></span>
-                    <a class="me-status" id="me-status" href="#account"></a>
+                <div class="me-head">
+                    <span class="me-avatar-wrap"><svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg></span>
+                    <div class="me-text">
+                        <b class="me-title">Můj profil</b>
+                        <span class="me-goal" id="me-goal"></span>
+                        <a class="me-status" id="me-status" href="#account"></a>
+                    </div>
                 </div>
+                <!-- tři hlavní čísla dne jako dlaždice -->
+                <ul class="me-stats">
+                    <li><svg aria-hidden="true"><use href="#i-kcal"/></svg><b id="me-kcal"></b><span>kcal denně</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-bilkoviny"/></svg><b id="me-protein"></b><span>g bílkovin</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-voda"/></svg><b id="me-water"></b><span>sklenic vody</span></li>
+                </ul>
             </section>
             <div class="app-comic" id="profil-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
             <p class="panel-lead">Vyplň pár údajů a appka ti spočítá <strong>denní příjem podle tvého cíle</strong>. Bez účtu zůstávají údaje <strong>jen v tvém prohlížeči</strong>.</p>
@@ -555,11 +563,15 @@
             <!-- Odhad ceny a „kup hotové“: kopírovat, sdílet, u položek odkazy na Rohlík a Košík -->
             <div id="shop-tools" class="card shop-tools" hidden>
                 <p class="shop-price">Odhad nákupu: <strong>asi <span id="shop-price">0</span> Kč</strong></p>
-                <p class="shop-note">Orientačně podle běžných cen v obchodech, skutečná cena se liší. U každé položky ji najdeš na Rohlíku (R) nebo Košíku (K).</p>
+                <p class="shop-note">Orientačně podle běžných cen v obchodech, skutečná cena se liší.</p>
                 <div class="shop-buttons">
-                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-copy">Zkopírovat seznam</button>
+                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-print"><svg class="inline-icon" aria-hidden="true"><use href="#i-recepty"/></svg> Vytisknout</button>
+                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-download"><svg class="inline-icon" aria-hidden="true"><use href="#i-stahnout"/></svg> Stáhnout</button>
+                    <button type="button" class="btn btn--ghost btn--small" data-action="shop-copy">Zkopírovat</button>
                     <button type="button" class="btn btn--ghost btn--small" data-action="shop-share">Sdílet</button>
                 </div>
+                <!-- co dělají tlačítka Rohlík / Košík u položek -->
+                <p class="shop-online"><svg class="inline-icon" aria-hidden="true"><use href="#i-kosik"/></svg> <span><strong>Nechceš do obchodu?</strong> U každé položky klikni na <span class="shop-link shop-link--r">Rohlík</span> nebo <span class="shop-link shop-link--k">Košík</span> – otevře se e-shop s vyhledanou surovinou a objednáš si ji domů.</span></p>
             </div>
 
             <ul id="shop-list" class="shop-list"></ul>
@@ -573,7 +585,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <script src="js/data.js?v=2026-11-24c"></script>
-    <script src="js/app.js?v=2026-11-24c"></script>
+    <script src="js/data.js?v=2026-11-24d"></script>
+    <script src="js/app.js?v=2026-11-24d"></script>
 </body>
 </html>
