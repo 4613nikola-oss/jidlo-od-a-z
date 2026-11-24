@@ -257,6 +257,17 @@
                 <p class="stamps-legend">🍳 uvařený recept · 📅 splněný den · 🗓️ splněný týden (5 dní ze 7) · 🌱 malá změna</p>
             </section>
 
+            <!-- Okno při přihlášení na novém zařízení: která data použít -->
+            <dialog id="data-dialog" class="card data-dialog" aria-labelledby="data-dialog-title">
+                <h2 class="card-title" id="data-dialog-title">Která data chceš používat?</h2>
+                <p>V účtu už máš uložená data a v tomhle zařízení jsou jiná. Vyber, která platí:</p>
+                <div class="data-dialog-actions">
+                    <button type="button" class="btn btn--primary" id="data-from-account">☁️ Data z účtu <small>(doporučeno)</small></button>
+                    <button type="button" class="btn btn--ghost" id="data-from-device">📱 Data z tohoto zařízení</button>
+                </div>
+                <p class="field-hint">Ta druhá se přepíšou.</p>
+            </dialog>
+
             <!-- Účet (nepovinný): uloží data do Supabase (EU), aby byla na všech zařízeních. Bez účtu appka funguje dál. -->
             <section class="card account" id="account" aria-labelledby="account-title">
                 <h2 class="card-title" id="account-title">☁️ Účet</h2>

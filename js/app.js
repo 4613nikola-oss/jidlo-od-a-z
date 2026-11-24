@@ -1045,12 +1045,32 @@ document.addEventListener("DOMContentLoaded", function () {
         cloud.timer = setTimeout(ulozDoUctu, 1500);
     }
 
+    // Zapamatuje si, ke kterému účtu tohle zařízení patří – pak se při přihlášení nemusí ptát
+    function oznacZarizeni() {
+        try { localStorage.setItem("jidloaz-ucet", cloud.user.id); } catch (e) { /* nic */ }
+    }
+    const jeMojeZarizeni = () => { try { return localStorage.getItem("jidloaz-ucet") === cloud.user.id; } catch (e) { return false; } };
+
     async function ulozDoUctu() {
         if (!cloud.user) return;
         const { error } = await cloud.sb.from("uzivatelska_data")
             .upsert({ user_id: cloud.user.id, data: snapshot(), upraveno: new Date().toISOString() });
         if (error) { syncText("Uložení se nepovedlo – zkusím to při další změně. Data v zařízení zůstávají."); return; }
+        oznacZarizeni();
         syncText("Uloženo v účtu ✓ " + new Date().toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" }));
+    }
+
+    // Vlastní okno místo confirm() prohlížeče: dvě jasná tlačítka. Vrátí "ucet" nebo "zarizeni".
+    function zeptejSeNaData() {
+        return new Promise((hotovo) => {
+            const dlg = $("#data-dialog");
+            const vyber = (volba) => { dlg.close(); hotovo(volba); };
+            $("#data-from-account").onclick = () => vyber("ucet");
+            $("#data-from-device").onclick = () => vyber("zarizeni");
+            dlg.oncancel = (e) => { e.preventDefault(); }; // Esc nic nerozhodne – musí se vybrat
+            dlg.showModal();
+            $("#data-from-account").focus();
+        });
     }
 
     // Po přihlášení: porovná data v zařízení a v účtu. Novější vyhrává, při prvním přihlášení se zeptá.
@@ -1065,11 +1085,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (maData(mistni)) toast("Data z tohoto zařízení jsou uložená v účtu ☁️");
             return;
         }
-        if (stejne(row.data, mistni)) { syncText("Uloženo v účtu ✓"); return; }
-        if (!maData(mistni)) { pouzijData(row.data); return; }
-        if (prvniPrihlaseni && maData(row.data)) {
-            const zUctu = confirm("Tvůj účet už má uložená data a v tomhle zařízení jsou jiná.\n\nOK = použít data z účtu (doporučeno)\nZrušit = nahradit data v účtu těmi z tohoto zařízení");
-            if (zUctu) pouzijData(row.data); else await ulozDoUctu();
+        if (stejne(row.data, mistni)) { oznacZarizeni(); syncText("Uloženo v účtu ✓"); return; }
+        if (!maData(mistni)) { oznacZarizeni(); pouzijData(row.data); return; }
+        // ptát se jen na „cizím“ zařízení (poprvé s tímhle účtem); na svém rozhodne novější
+        if (prvniPrihlaseni && maData(row.data) && !jeMojeZarizeni()) {
+            const volba = await zeptejSeNaData();
+            oznacZarizeni();
+            if (volba === "ucet") pouzijData(row.data);
+            else { await ulozDoUctu(); toast("Data z tohoto zařízení jsou uložená v účtu ☁️"); }
             return;
         }
         // běžné otevření appky: novější vyhrává
@@ -1235,6 +1258,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!confirm("Opravdu smazat účet?\n\nSmaže se účet i všechna data v něm a nejde to vrátit. Data v tomhle zařízení zůstanou.")) return;
             const { error } = await cloud.sb.rpc("smazat_ucet");
             if (error) { toast("Smazání se nepovedlo, zkus to prosím znovu."); return; }
+            try { localStorage.removeItem("jidloaz-ucet"); } catch (e2) { /* nic */ }
             await cloud.sb.auth.signOut();
             znovuFormular();
             toast("Účet je smazaný.");
