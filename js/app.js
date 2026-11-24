@@ -1140,6 +1140,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.focus();
             } else if (/rate|limit|security purposes/i.test(kod)) {
                 chyba.textContent = "E-mailů bylo poslední dobou moc. Zkus to prosím za chvíli znovu.";
+            } else if (err && err.status >= 500) {
+                chyba.textContent = "E-mail se teď nepodařilo odeslat – chyba je u nás, ne u tebe. Zkus to prosím později.";
             } else {
                 chyba.textContent = "Odkaz se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
             }
