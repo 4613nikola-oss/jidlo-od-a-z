@@ -376,12 +376,38 @@
 
                 <details class="privacy">
                     <summary><svg class="inline-icon" aria-hidden="true"><use href="#i-zamek"/></svg> Ochrana soukromí – co ukládáme a proč</summary>
-                    <p><strong>Bez účtu</strong> zůstávají všechna data jen v tomhle prohlížeči. Nikam se neposílají.</p>
-                    <p><strong>S účtem</strong> se ukládá: e-mail, profil (věk, váha, výška, pohlaví, pohyb, cíl, jídelníček), avatar, oblíbené recepty, razítka, nákupní seznam a lednička. Pití po dnech se neukládá.</p>
-                    <p><strong>Kde:</strong> u služby Supabase, na serverech v EU. Data slouží jen k tomu, aby ti appka fungovala na všech zařízeních. Neprodáváme je ani nesdílíme, žádná reklama.</p>
-                    <p><strong>Tvoje práva:</strong> data si kdykoli stáhneš tlačítkem „Stáhnout moje data“ a tlačítkem „Smazat účet“ smažeš účet i všechna data v něm.</p>
-                    <p><strong>Souhlas:</strong> váha, výška a jídelníček o tobě něco prozrazují, proto je v účtu ukládáme jen s tvým souhlasem – dáváš ho založením účtu. Odvoláš ho smazáním účtu.</p>
-                    <p><a href="https://4613nikola-oss.github.io/nikys-kitchen-web/cs/soukromi/" data-web-link="cs/soukromi/">Celý text Ochrany soukromí →</a></p>
+                    <!-- krátce v dlaždicích; celý text je na webu -->
+                    <div class="privacy-tiles">
+                        <div class="privacy-tile">
+                            <svg aria-hidden="true"><use href="#i-zarizeni"/></svg>
+                            <h3>Bez účtu</h3>
+                            <p>Všechno zůstává <strong>jen v tomhle prohlížeči</strong>. Nikam se to neposílá.</p>
+                        </div>
+                        <div class="privacy-tile">
+                            <svg aria-hidden="true"><use href="#i-ucet"/></svg>
+                            <h3>Co ukládáme s účtem</h3>
+                            <ul class="privacy-chips">
+                                <li>e-mail</li><li>profil</li><li>avatar</li><li>oblíbené</li><li>razítka</li><li>nákup</li><li>lednička</li>
+                            </ul>
+                            <p class="privacy-small">Profil = věk, váha, výška, pohlaví, pohyb, cíl a jídelníček. Pití se neukládá.</p>
+                        </div>
+                        <div class="privacy-tile">
+                            <svg aria-hidden="true"><use href="#i-zamek"/></svg>
+                            <h3>Kde a komu</h3>
+                            <p>Supabase, <strong>servery v EU</strong>. Jen aby appka fungovala všude. <strong>Žádná reklama</strong>, nic neprodáváme.</p>
+                        </div>
+                        <div class="privacy-tile">
+                            <svg aria-hidden="true"><use href="#i-stahnout"/></svg>
+                            <h3>Tvoje práva</h3>
+                            <p>Data si kdykoli <strong>stáhneš</strong> nebo <strong>smažeš</strong> – ve Správě účtu.</p>
+                        </div>
+                        <div class="privacy-tile privacy-tile--wide">
+                            <svg aria-hidden="true"><use href="#i-oblibene"/></svg>
+                            <h3>Souhlas</h3>
+                            <p>Váha a jídelníček o tobě něco prozrazují, proto je ukládáme <strong>jen s tvým souhlasem</strong> – dáváš ho založením účtu, odvoláš smazáním.</p>
+                        </div>
+                    </div>
+                    <a class="btn btn--ghost btn--small privacy-more" href="https://4613nikola-oss.github.io/nikys-kitchen-web/cs/soukromi/" data-web-link="cs/soukromi/" target="_blank" rel="noopener">Celý text Ochrany soukromí ↗</a>
                 </details>
             </section>
         </section>

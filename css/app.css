@@ -953,6 +953,21 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .field-error:empty { display: none; }
 .privacy summary { gap: 6px; }
 
+/* Ochrana soukromí v dlaždicích */
+.privacy summary { background: #fffaf0; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 12px; color: var(--ink); }
+.privacy[open] summary { margin-bottom: 12px; }
+.privacy-tiles { display: grid; gap: 10px; }
+@media (min-width: 560px) { .privacy-tiles { grid-template-columns: 1fr 1fr; } .privacy-tile--wide { grid-column: 1 / -1; } }
+.privacy-tile { background: #fffaf0; border: 2px solid var(--ink); border-radius: 12px; padding: 12px; box-shadow: 3px 3px 0 var(--ink); }
+.privacy-tile svg { width: 28px; height: 28px; color: var(--primary); }
+.privacy-tile h3 { margin: 4px 0 4px; font-size: 1rem; }
+.privacy-tile p { margin: 0; font-size: .9rem; }
+.privacy-tile strong { color: var(--primary); }
+.privacy-chips { list-style: none; padding: 0; margin: 4px 0 6px; display: flex; flex-wrap: wrap; gap: 5px; }
+.privacy-chips li { font-size: .78rem; font-weight: 700; background: #d3e3c9; border-radius: 999px; padding: 2px 9px; }
+.privacy-small { font-size: .8rem !important; color: var(--text-light); }
+.privacy-more { margin-top: 12px; display: inline-flex; }
+
 /* Záložka Profil a nadpis s avatarem a dnešními kcal */
 .tab-icon.is-avatar, .title-icon.is-avatar { border-radius: 50%; background: var(--primary-soft); border: 1.5px solid var(--ink); }
 .tab-icon.is-avatar { width: 30px; height: 30px; }
