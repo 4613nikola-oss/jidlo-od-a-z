@@ -1031,7 +1031,9 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 }
 .sekce > .sekce-summary::-webkit-details-marker { display: none; }
 .sekce > .sekce-summary .title-icon { width: 30px; height: 30px; flex: none; }
-.sekce-hint { font-family: inherit; font-size: .8rem; font-weight: 600; color: var(--text-light); }
+.sekce-hint { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: .8rem; font-weight: 600; color: var(--text-light); }
+.sekce-nazev { display: grid; gap: 2px; line-height: 1.15; }
+.sekce-nazev .sekce-hint { display: block; }
 .sekce > .sekce-summary::after {
     content: "▾"; margin-left: auto; flex: none; display: grid; place-items: center; width: 34px; height: 34px;
     font-family: inherit; font-size: 1rem; color: var(--ink); background: #fffaf0; border: 2px solid var(--ink); border-radius: 50%; transition: transform .2s;
