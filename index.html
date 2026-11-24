@@ -10,7 +10,7 @@
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <!-- ?v= = číslo verze: po každé úpravě ho změň, ať si prohlížeč stáhne nové soubory místo staré kopie -->
-    <link rel="stylesheet" href="css/app.css?v=2026-11-24d">
+    <link rel="stylesheet" href="css/app.css?v=2026-11-24e">
 </head>
 <body>
     <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
@@ -140,11 +140,31 @@
                     </div>
                 </div>
                 <!-- tři hlavní čísla dne jako dlaždice -->
+                <p class="me-stats-title">Dnes zatím</p>
                 <ul class="me-stats">
-                    <li><svg aria-hidden="true"><use href="#i-kcal"/></svg><b id="me-kcal"></b><span>kcal denně</span></li>
-                    <li><svg aria-hidden="true"><use href="#i-bilkoviny"/></svg><b id="me-protein"></b><span>g bílkovin</span></li>
-                    <li><svg aria-hidden="true"><use href="#i-voda"/></svg><b id="me-water"></b><span>sklenic vody</span></li>
+                    <li>
+                        <svg aria-hidden="true"><use href="#i-kcal"/></svg>
+                        <b id="me-kcal-done">0</b><span id="me-kcal"></span>
+                        <span class="me-bar" aria-hidden="true"><i id="me-kcal-bar"></i></span>
+                        <em class="me-pct" id="me-kcal-pct"></em>
+                        <small class="me-tip" id="me-kcal-tip"></small>
+                    </li>
+                    <li>
+                        <svg aria-hidden="true"><use href="#i-bilkoviny"/></svg>
+                        <b id="me-protein-done">0</b><span id="me-protein"></span>
+                        <span class="me-bar" aria-hidden="true"><i id="me-protein-bar"></i></span>
+                        <em class="me-pct" id="me-protein-pct"></em>
+                        <small class="me-tip" id="me-protein-tip"></small>
+                    </li>
+                    <li>
+                        <svg aria-hidden="true"><use href="#i-voda"/></svg>
+                        <b id="me-water-done">0</b><span id="me-water"></span>
+                        <span class="me-bar" aria-hidden="true"><i id="me-water-bar"></i></span>
+                        <em class="me-pct" id="me-water-pct"></em>
+                        <small class="me-tip" id="me-water-tip"></small>
+                    </li>
                 </ul>
+                <p class="me-stats-note">Počítá se z jídel, u kterých v Můj den klikneš na „Mám uvařeno“, a ze sklenic vody.</p>
             </section>
             <div class="app-comic" id="profil-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
             <p class="panel-lead">Vyplň pár údajů a appka ti spočítá <strong>denní příjem podle tvého cíle</strong>. Bez účtu zůstávají údaje <strong>jen v tvém prohlížeči</strong>.</p>
@@ -373,7 +393,7 @@
 
                     <!-- méně častá a nevratná věc schovaná zvlášť, ať se nedá překliknout -->
                     <details class="account-manage">
-                        <summary>Správa účtu</summary>
+                        <summary><svg class="inline-icon" aria-hidden="true"><use href="#i-nastaveni"/></svg> Správa účtu – stáhnout data, smazat účet</summary>
                         <p>Kopie všeho, co máš v účtu uložené (soubor JSON).</p>
                         <button type="button" class="btn btn--ghost btn--small" data-action="account-download">Stáhnout moje data</button>
                         <div class="danger-zone">
@@ -585,7 +605,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <script src="js/data.js?v=2026-11-24d"></script>
-    <script src="js/app.js?v=2026-11-24d"></script>
+    <script src="js/data.js?v=2026-11-24e"></script>
+    <script src="js/app.js?v=2026-11-24e"></script>
 </body>
 </html>

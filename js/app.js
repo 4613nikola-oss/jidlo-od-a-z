@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const SUPABASE_KEY = "sb_publishable_0s7suU4_pLplPbkUHviBZg_RZ3kI_g2";
     const SUPABASE_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm";
     // Co se ukládá do účtu (pití po dnech ne – stačí v telefonu)
-    const SYNC_KEYS = ["profile", "day", "fridge", "shop", "fav", "view", "swaps", "stamps", "change-skip"];
+    const SYNC_KEYS = ["profile", "day", "fridge", "shop", "fav", "view", "swaps", "stamps", "change-skip", "snedeno"];
     const cloud = { sb: null, user: null, timer: null };
 
     // Kontrola hned při spuštění, ať se to člověk dozví dřív, než něco vyplní
@@ -120,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
         stamps: store.get("stamps", []),       // razítka do kuchařky { typ, klic, datum, popis }
         changeSkip: store.get("change-skip", ""), // týden, kdy malou změnu přeskočil (pondělí jako text)
         water: store.get("water", {}),         // vypité sklenice podle dne { "2026-11-23": 5 }
+        snedeno: store.get("snedeno", {}),     // snědená jídla dne { "2026-11-24": ["snidane", "obed"] } – jen dnešek
         filter: "vse"
     };
 
@@ -242,11 +243,11 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#profil-comic").hidden = !!p;
         // záložka Profil a nadpis: tvůj avatar místo obecného panáčka, v záložce i dnešní kcal
         const ikona = p ? "#" + (p.avatar || "t-nova") : "#i-profil";
-        ["#tab-profil-ikona", "#profil-titul-ikona"].forEach((sel) => {
-            const svg = $(sel);
-            svg.querySelector("use").setAttribute("href", ikona);
-            svg.classList.toggle("is-avatar", !!p);
-        });
+        const tabIkona = $("#tab-profil-ikona");
+        tabIkona.querySelector("use").setAttribute("href", ikona);
+        tabIkona.classList.toggle("is-avatar", !!p);
+        // u nadpisu ikonka není potřeba, když je hned pod ním karta s avatarem
+        $("#profil-titul-ikona").style.display = p ? "none" : "";
         $("#tab-kcal").textContent = p ? fmt(calculate(p).target) + " kcal" : "";
         if (!p) return;
         $("#me-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
@@ -254,9 +255,34 @@ document.addEventListener("DOMContentLoaded", function () {
         const [cilNazev, cilPopis] = cile[p.goal] || cile.udrzet;
         const goal = $("#me-goal");
         goal.innerHTML = `<span class="goal-pill goal-pill--${p.goal}">${cilNazev}</span> ${cilPopis}`;
-        $("#me-kcal").textContent = fmt(calculate(p).target);
-        $("#me-protein").textContent = fmt(proteinTarget(p));
-        $("#me-water").textContent = waterTarget(p);
+        // Dnes zatím: kolik je snědeno / vypito, kolik % to je a co dál
+        const cilKcal = calculate(p).target, cilB = proteinTarget(p), cilVoda = waterTarget(p);
+        const plan = currentDayPlan().filter((x) => x.pick);
+        const snedena = plan.filter((x) => jeSnedeno(x.meal.id));
+        const zbyva = plan.filter((x) => !jeSnedeno(x.meal.id));
+        const kcal = snedena.reduce((a, x) => a + x.pick.recipe.kcal * x.pick.porce, 0);
+        const bilk = snedena.reduce((a, x) => a + (x.pick.recipe.bilkoviny || 0) * x.pick.porce, 0);
+        const voda = state.water[dnes()] || 0;
+        const dlazdice = (klic, hotovo, cil, jednotka, tip) => {
+            const pct = cil ? Math.min(100, Math.round((hotovo / cil) * 100)) : 0;
+            $(`#me-${klic}-done`).textContent = fmt(hotovo);
+            $(`#me-${klic}`).textContent = `z ${fmt(cil)} ${jednotka}`;
+            $(`#me-${klic}-bar`).style.width = pct + "%";
+            $(`#me-${klic}-pct`).textContent = pct + " %";
+            $(`#me-${klic}-tip`).textContent = tip;
+            $(`#me-${klic}-bar`).parentElement.classList.toggle("is-done", pct >= 100);
+        };
+        const dalsi = zbyva[0];
+        dlazdice("kcal", kcal, cilKcal, "kcal",
+            dalsi ? `Další: ${dalsi.meal.nazev.toLowerCase()} – ${dalsi.pick.recipe.nazev}` : "Dnešní plán je splněný!");
+        const nejvicB = zbyva.filter((x) => x.pick.recipe.bilkoviny).sort((a, b) => b.pick.recipe.bilkoviny - a.pick.recipe.bilkoviny)[0];
+        dlazdice("protein", bilk, cilB, "g bílkovin",
+            bilk >= cilB ? "Bílkoviny máš splněné!"
+                : nejvicB ? `Nejvíc jich má ${nejvicB.pick.recipe.nazev} (${fmt(nejvicB.pick.recipe.bilkoviny * nejvicB.pick.porce)} g)`
+                : `Zbývá ${fmt(cilB - bilk)} g – třeba tvaroh, jogurt nebo vejce`);
+        const zbyvaVoda = cilVoda - voda;
+        dlazdice("water", voda, cilVoda, "sklenic",
+            zbyvaVoda <= 0 ? "Pití splněné!" : `Zbývá ${zbyvaVoda} ${zbyvaVoda === 1 ? "sklenice" : zbyvaVoda < 5 ? "sklenice" : "sklenic"} – klikni v Můj den`);
         const status = $("#me-status");
         status.innerHTML = cloud.user
             ? `<span class="online-dot" aria-hidden="true"></span> Přihlášeno – ukládá se do účtu`
@@ -506,6 +532,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const maRazitko = (klic) => state.stamps.some((s) => s.klic === klic);
+    // snědená jídla dnes (počítá se z nich, kolik % dne máš splněno)
+    const jeSnedeno = (mealId) => (state.snedeno[dnes()] || []).includes(mealId);
+    function prepniSnedeno(mealId, ano) {
+        const den = dnes();
+        const dnesni = new Set(state.snedeno[den] || []);
+        if (ano) dnesni.add(mealId); else dnesni.delete(mealId);
+        state.snedeno = { [den]: [...dnesni] }; // starší dny nepotřebujeme
+        store.set("snedeno", state.snedeno);
+    }
     // Razítka a kuchařka jsou odměna za účet. Kdo je už má z dřívějška, nic mu nezmizí.
     const muzeRazitka = () => !!cloud.user || state.stamps.length > 0;
     function pozviKUctu(text) {
@@ -634,7 +669,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal${typeof r.bilkoviny === "number" ? ` · ${fmt(r.bilkoviny * pick.porce)} g bílkovin` : ""} · ${r.cas} min</p>
                 <div class="meal-actions">
                     ${(() => {
-                        const uvareno = maRazitko(`r-${dnes()}-${meal.id}`);
+                        const uvareno = jeSnedeno(meal.id);
                         return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}"><svg class="inline-icon" aria-hidden="true"><use href="#i-vari"/></svg> ${uvareno ? "Uvařeno ✓" : "Mám uvařeno"}</button>`;
                     })()}
                     <button type="button" class="btn btn--ghost btn--small" data-action="swap" data-meal="${meal.id}">Jiný recept</button>
@@ -951,23 +986,30 @@ document.addEventListener("DOMContentLoaded", function () {
         if (action === "go-day") openTab("den");
         if (action === "go-profil") openTab("profil");
 
-        if (action === "cooked" && state.profile && !muzeRazitka()) {
-            pozviKUctu("Razítka do kuchařky sbíráš s účtem – stačí e-mail, žádné heslo");
-        } else if (action === "cooked" && state.profile) {
-            const klic = `r-${dnes()}-${btn.dataset.meal}`;
-            if (maRazitko(klic)) {
-                odeberRazitko(klic);
-                zkontrolujDenATyden();
-                toast("Vráceno – razítko jsem vzala zpátky");
+        // „Mám uvařeno“: zapíše jídlo jako snědené (kvůli procentům dne – pro všechny),
+        // razítko do kuchařky přibude jen s účtem
+        if (action === "cooked" && state.profile) {
+            const mealId = btn.dataset.meal;
+            const klic = `r-${dnes()}-${mealId}`;
+            if (jeSnedeno(mealId)) {
+                prepniSnedeno(mealId, false);
+                if (maRazitko(klic)) { odeberRazitko(klic); zkontrolujDenATyden(); }
+                toast("Vráceno");
             } else {
-                pridejRazitko("recept", klic, btn.dataset.name);
-                const novy = zkontrolujDenATyden();
-                toast(novy === "tyden" ? "Týden splněný! Velké razítko do kuchařky"
-                    : novy === "den" ? "Celý den splněný! Razítko navíc"
-                    : "Razítko do kuchařky!");
+                prepniSnedeno(mealId, true);
+                if (muzeRazitka()) {
+                    pridejRazitko("recept", klic, btn.dataset.name);
+                    const novy = zkontrolujDenATyden();
+                    toast(novy === "tyden" ? "Týden splněný! Velké razítko do kuchařky"
+                        : novy === "den" ? "Celý den splněný! Razítko navíc"
+                        : "Zapsáno a razítko do kuchařky!");
+                } else {
+                    toast("Zapsáno. S účtem bys za to dostal/a i razítko do kuchařky.");
+                }
             }
             renderDay();
             renderCookbook();
+            renderProfileChip();
         }
 
         if (action === "water-plus" || action === "water-minus" || action === "water-set") {
@@ -979,6 +1021,7 @@ document.addEventListener("DOMContentLoaded", function () {
             state.water = { [den]: ted };
             store.set("water", state.water);
             renderWater();
+            renderProfileChip();
             if (ted > pred && state.profile && ted >= waterTarget(state.profile) && pred < waterTarget(state.profile)) toast("Dnešní pití splněné!");
         }
 

@@ -896,18 +896,18 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .me-stats b { font-size: 1.35rem; line-height: 1.1; color: var(--ink); }
 .me-stats span { font-size: .75rem; font-weight: 600; color: var(--text-light); }
 
-/* ===== Důležité informace nahoře: výrazně žluté, výstražný trojúhelník, čitelné písmo ===== */
+/* ===== Důležité informace nahoře – stejně jako alergeny v receptech na webu:
+   jemně žluté pozadí, oranžová linka, oranžový trojúhelník (přívětivé, ale nepřehlédnutelné) ===== */
 .panel-lead {
     font-family: inherit; font-size: 1rem; line-height: 1.5; color: var(--ink); font-weight: 500;
-    background-color: #ffd23f; border: 3px solid var(--ink); border-radius: 12px; box-shadow: 4px 4px 0 var(--ink);
-    padding: 12px 14px 12px 56px; margin: 0 0 18px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5 23 21H1z' fill='%231f1d1a'/%3E%3Cpath d='M12 6.2 19.8 19.4H4.2z' fill='%23ffd23f'/%3E%3Cpath d='M12 9.5v5' stroke='%231f1d1a' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='17' r='1.35' fill='%231f1d1a'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-size: 30px 30px; background-position: 14px 12px;
+    background-color: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; box-shadow: none;
+    padding: 12px 14px 12px 50px; margin: 0 0 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3 22 20H2z' fill='%23f59e0b' stroke='%232c2c2c' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M12 9v5' stroke='%232c2c2c' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='17' r='1.2' fill='%232c2c2c'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-size: 24px 24px; background-position: 14px 13px;
 }
-.panel-lead strong { color: var(--ink); font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px; }
-/* seznamy s vlastní ikonkou u každého bodu: trojúhelník jen jednou nahoře */
-.panel-lead.info-list { padding-left: 56px; }
-.info-list svg { color: var(--ink) !important; }
+.panel-lead strong { color: var(--ink); font-weight: 800; text-decoration: none; }
+.panel-lead.info-list { padding-left: 50px; }
+.info-list svg { color: #8a5a00 !important; }
 .info-list { list-style: none; display: grid; gap: 8px; }
 .info-list li { display: flex; align-items: center; gap: 10px; }
 .info-list svg { width: 26px; height: 26px; flex: none; color: var(--primary); }
@@ -993,6 +993,29 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
     body.tisk-nakupu .shop-group-title { color: #000; background: none; border-bottom: 2px solid #000; border-radius: 0; padding: 0; }
     body.tisk-nakupu { background: #fff; }
 }
+
+/* Dnes zatím: ukazatel splnění a doporučení v dlaždicích profilu */
+.me-stats-title { margin: 0 0 6px; font-weight: 800; font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+.me-stats li { align-content: start; }
+.me-stats b { font-size: 1.5rem; }
+.me-bar { display: block; width: 100%; height: 9px; margin-top: 6px; background: #ece4d2; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.me-bar i { display: block; height: 100%; width: 0; background: #e9b949; transition: width .4s ease-out; }
+.me-bar.is-done i { background: #3f8f4f; }
+.me-pct { font-style: normal; font-weight: 800; font-size: .85rem; }
+.me-tip { font-size: .72rem; line-height: 1.3; color: var(--ink); }
+.me-stats-note { margin: 10px 0 0; font-size: .78rem; color: var(--text-light); }
+@media (max-width: 420px) { .me-stats { grid-template-columns: 1fr; } .me-stats li { grid-template-columns: auto 1fr; justify-items: start; text-align: left; } }
+@media (prefers-reduced-motion: reduce) { .me-bar i { transition: none; } }
+
+/* Správa účtu jako jasné rozklikávací tlačítko */
+.account-manage summary {
+    list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer;
+    background: #fffaf0; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 12px; color: var(--ink); font-weight: 700;
+}
+.account-manage summary::-webkit-details-marker { display: none; }
+.account-manage summary::after { content: "▾"; margin-left: auto; font-size: 1.1rem; transition: transform .2s; }
+.account-manage[open] summary::after { transform: rotate(180deg); }
+.account-manage[open] summary { margin-bottom: 10px; }
 
 /* Ochrana soukromí v dlaždicích */
 .privacy summary { background: #fffaf0; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 12px; color: var(--ink); }
