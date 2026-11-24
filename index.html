@@ -97,11 +97,6 @@
     <header class="app-header">
         <a href="https://4613nikola-oss.github.io/nikys-kitchen-web/cs/" class="app-logo" data-web-link="cs/" title="Zpět na web Niky's Kitchen">← Niky's Kitchen</a>
         <span class="app-name">Jídlo od A–Z</span>
-        <!-- profil: avatar a dnešní cíl (ukáže se po výpočtu) -->
-        <button type="button" class="profile-chip" id="profile-chip" data-action="go-profil" hidden>
-            <svg aria-hidden="true"><use id="profile-chip-avatar" href="#t-nova"/></svg>
-            <span><b>Můj profil</b><small id="profile-chip-kcal"></small></span>
-        </button>
     </header>
 
     <!-- UPOZORNĚNÍ: prohlížeč nepovolil ukládání (anonymní okno, plné úložiště) -->
@@ -123,8 +118,17 @@
         <!-- 1) PROFIL A KALKULAČKA -->
         <section class="panel" id="panel-profil">
             <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-profil"/></svg>Kolik energie potřebuješ?</h1>
-            <div class="app-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
-            <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Údaje zůstávají jen v tvém prohlížeči.</p>
+            <!-- Můj profil: avatar, dnešní cíl a stav účtu (ukáže se, jakmile je profil spočítaný) -->
+            <section class="card me-card" id="me-card" aria-label="Můj profil" hidden>
+                <svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg>
+                <div class="me-text">
+                    <b class="me-title">Můj profil</b>
+                    <span class="me-kcal" id="me-kcal"></span>
+                    <a class="me-status" id="me-status" href="#account"></a>
+                </div>
+            </section>
+            <div class="app-comic" id="profil-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
+            <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Bez účtu zůstávají údaje jen v tvém prohlížeči.</p>
 
             <!-- Průvodce prvním spuštěním: 3 kroky, zmizí po „Jdeme na to“ -->
             <section id="guide" class="card guide" hidden aria-labelledby="guide-title">
@@ -254,7 +258,18 @@
                     <a class="btn btn--primary btn--small" href="#account">Přihlásit se a sbírat razítka</a>
                 </p>
                 <ul class="stamps" id="stamps" aria-label="Získaná razítka"></ul>
-                <p class="stamps-legend">🍳 uvařený recept · 📅 splněný den · 🗓️ splněný týden (5 dní ze 7) · 🌱 malá změna</p>
+                <!-- Jak sbírat razítka – aby bylo jasné, kde a za co -->
+                <div class="stamps-howto">
+                    <h3>Jak sbírat razítka</h3>
+                    <ol>
+                        <li><span aria-hidden="true">🍳</span> V <strong>Můj den</strong> u jídla klikni na <strong>„🍳 Mám uvařeno“</strong> – razítko za recept.</li>
+                        <li><span aria-hidden="true">📅</span> Uvaříš všechna jídla dne – razítko navíc.</li>
+                        <li><span aria-hidden="true">🗓️</span> Splníš aspoň 5 dní v týdnu – velké razítko.</li>
+                        <li><span aria-hidden="true">🌱</span> Splníš <strong>malou změnu týdne</strong> (zelená karta v Můj den) – razítko.</li>
+                    </ol>
+                    <p class="stamps-goals">Tečka se proměňuje: 5 razítek = vaří, 15 = slaví, 30 = dort.</p>
+                    <button type="button" class="btn btn--primary btn--small" data-action="go-day">Jít do Můj den →</button>
+                </div>
             </section>
 
             <!-- Okno při přihlášení na novém zařízení: která data použít -->
@@ -304,10 +319,19 @@
                     <p>Přihlášení: <strong id="account-email"></strong></p>
                     <p class="sync-status" id="sync-status" role="status"></p>
                     <div class="account-actions">
-                        <button type="button" class="btn btn--ghost btn--small" data-action="account-download">Stáhnout moje data</button>
                         <button type="button" class="btn btn--ghost btn--small" data-action="account-logout">Odhlásit</button>
-                        <button type="button" class="btn btn--ghost btn--small account-delete" data-action="account-delete">Smazat účet</button>
                     </div>
+
+                    <!-- méně častá a nevratná věc schovaná zvlášť, ať se nedá překliknout -->
+                    <details class="account-manage">
+                        <summary>Správa účtu</summary>
+                        <p>Kopie všeho, co máš v účtu uložené (soubor JSON).</p>
+                        <button type="button" class="btn btn--ghost btn--small" data-action="account-download">Stáhnout moje data</button>
+                        <div class="danger-zone">
+                            <p><strong>Smazat účet</strong> – smaže účet i všechna data v něm a nejde to vrátit. Data v tomhle zařízení zůstanou.</p>
+                            <button type="button" class="btn btn--small btn--danger" data-action="account-delete">Smazat účet…</button>
+                        </div>
+                    </details>
                 </div>
 
                 <details class="privacy">
@@ -368,6 +392,7 @@
                     <p class="change-text" id="change-text"></p>
                     <div class="change-actions" id="change-actions"></div>
                 </section>
+                <p class="stamp-hint" id="stamp-hint"></p>
                 <div id="day-meals" class="meal-list"></div>
                 <div class="card day-total">
                     <span>Celkem za den</span>

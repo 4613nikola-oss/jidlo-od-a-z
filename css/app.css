@@ -846,7 +846,29 @@ body {
 .login-again { font-size: .9rem; margin: 8px 0 0; }
 .link-btn { background: none; border: 0; padding: 8px 2px; font: inherit; color: var(--primary); text-decoration: underline; cursor: pointer; min-height: 44px; }
 .account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.account-delete { color: var(--error, #b3261e); }
+/* Účet: méně častá a nevratná věc zvlášť, ať se nedá překliknout */
+.account-manage { margin-top: 16px; border-top: 1px dashed rgba(31, 29, 26, .35); padding-top: 6px; }
+.account-manage summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; color: var(--text-light); }
+.account-manage p { font-size: .9rem; margin: 4px 0 8px; }
+.danger-zone { margin-top: 18px; padding: 12px 14px; border: 2px solid #b3261e; border-radius: 12px; background: #fbeae8; }
+.btn--danger { background: #b3261e; color: #fff; }
+.btn--danger:hover { background: #8e1d17; }
+
+/* Karta Můj profil nahoře v Profilu (místo štítku v hlavičce) */
+.me-card { display: flex; align-items: center; gap: 14px; margin: 6px 0 18px; background-color: var(--card-med); }
+.me-avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; background: var(--primary-soft); border: 2px solid var(--ink); }
+.me-text { display: grid; gap: 2px; }
+.me-title { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--primary); }
+.me-kcal { font-weight: 800; }
+.me-status { font-size: .9rem; color: var(--text-light); text-decoration: underline; }
+.me-status.is-online { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+/* Razítka: jak na to */
+.stamps-howto { margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(31, 29, 26, .35); }
+.stamps-howto h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.stamps-howto ol { list-style: none; padding: 0; margin: 0 0 8px; display: grid; gap: 6px; font-size: .95rem; }
+.stamps-goals { font-size: .9rem; color: var(--text-light); margin: 0 0 10px; }
+.stamp-hint { font-size: .95rem; font-weight: 600; margin: 0 0 10px; }
 .privacy { margin-top: 14px; font-size: .92rem; }
 .privacy summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
 .privacy p { margin: 0 0 8px; }

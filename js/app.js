@@ -232,14 +232,17 @@ document.addEventListener("DOMContentLoaded", function () {
         renderProfileChip();
     }
 
-    // Štítek v hlavičce: zvolený avatar a dnešní cíl
+    // Karta „Můj profil“ nahoře v Profilu: zvolený avatar, dnešní cíl a jestli se ukládá do účtu
     function renderProfileChip() {
-        const chip = $("#profile-chip");
         const p = state.profile;
-        chip.hidden = !p;
+        $("#me-card").hidden = !p;
+        $("#profil-comic").hidden = !!p;
         if (!p) return;
-        $("#profile-chip-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
-        $("#profile-chip-kcal").textContent = "Dnes: " + fmt(calculate(p).target) + " kcal";
+        $("#me-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
+        $("#me-kcal").textContent = "Dnes: " + fmt(calculate(p).target) + " kcal";
+        const status = $("#me-status");
+        status.textContent = cloud.user ? "☁️ Přihlášeno – ukládá se do účtu" : "📱 Bez účtu – data jen v tomhle zařízení · Přihlásit";
+        status.classList.toggle("is-online", !!cloud.user);
     }
 
     // Avatar se uloží hned po kliknutí (když už je profil spočítaný)
@@ -512,7 +515,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const zamceno = !muzeRazitka();
         $("#cookbook-count").textContent = zamceno ? "🔒 s účtem" : razitekText(n);
         $("#stamps").hidden = zamceno;
-        $(".stamps-legend").hidden = zamceno;
         $("#cookbook-login").hidden = !zamceno;
         const img = $("#cookbook-img");
         const svg = $("#cookbook-svg");
@@ -563,6 +565,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const plan = currentDayPlan();
         let sum = 0;
         let bilkoviny = 0, bezUdaje = false;
+        // nápověda k razítkům přímo nad jídly
+        $("#stamp-hint").textContent = muzeRazitka()
+            ? "🍳 Uvařeno? Klikni u jídla na „Mám uvařeno“ a dostaneš razítko do Moje kuchařky (v Profilu)."
+            : "🍳 S účtem dostaneš za každé uvařené jídlo razítko do Moje kuchařky (v Profilu).";
 
         $("#day-meals").innerHTML = plan.map(({ meal, mealTarget, pick }) => {
             if (!pick) {
@@ -588,7 +594,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="meal-actions">
                     ${(() => {
                         const uvareno = maRazitko(`r-${dnes()}-${meal.id}`);
-                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}">${uvareno ? "Uvařeno 🍳" : "✓ Uvařeno"}</button>`;
+                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}">${uvareno ? "✓ Uvařeno" : "🍳 Mám uvařeno"}</button>`;
                     })()}
                     <button type="button" class="btn btn--ghost btn--small" data-action="swap" data-meal="${meal.id}">Jiný recept</button>
                     <button type="button" class="btn btn--ghost btn--small" data-action="shop-recipe" data-id="${r.id}">Na nákup</button>
@@ -1106,6 +1112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#account-out").hidden = !!cloud.user;
         $("#account-in").hidden = !cloud.user;
         if (cloud.user) $("#account-email").textContent = cloud.user.email || "";
+        renderProfileChip();
     }
 
     async function spustUcet() {
