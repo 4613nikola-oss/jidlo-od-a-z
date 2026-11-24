@@ -269,10 +269,24 @@
                             <input type="email" id="login-email" autocomplete="email" inputmode="email" placeholder="jmeno@email.cz" required>
                             <button type="submit" class="btn btn--primary">Poslat odkaz</button>
                         </div>
-                        <p class="field-hint">Žádné heslo – pošlu ti e-mail s odkazem, kliknutím se přihlásíš.</p>
+                        <p class="field-hint">Žádné heslo – pošlu ti e-mail s kódem, opíšeš ho sem a jsi přihlášený/á.</p>
                         <p class="field-error" id="login-error" role="alert"></p>
                     </form>
-                    <p class="login-sent" id="login-sent" hidden role="status"></p>
+
+                    <!-- 2. krok: kód z e-mailu (bez odkazu = žádná varování v poště, funguje i e-mail v mobilu + appka v počítači) -->
+                    <form id="code-form" class="login-form" novalidate hidden>
+                        <p class="login-sent" id="login-sent" role="status"></p>
+                        <label for="login-code">Kód z e-mailu</label>
+                        <div class="login-row">
+                            <input type="text" id="login-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="8" placeholder="123456" required>
+                            <button type="submit" class="btn btn--primary">Přihlásit</button>
+                        </div>
+                        <p class="field-error" id="code-error" role="alert"></p>
+                        <p class="login-again">
+                            <button type="button" class="link-btn" data-action="account-resend">Poslat kód znovu</button> ·
+                            <button type="button" class="link-btn" data-action="account-change-email">Jiný e-mail</button>
+                        </p>
+                    </form>
                 </div>
 
                 <div id="account-in" hidden>

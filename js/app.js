@@ -1121,17 +1121,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const tlacitko = e.target.querySelector("button");
         tlacitko.disabled = true;
         try {
-            const sb = await supabase();
-            if (!cloud.posloucha) { cloud.posloucha = true; await spustUcet(); }
-            const { error } = await sb.auth.signInWithOtp({
-                email,
-                options: { emailRedirectTo: location.origin + location.pathname }
-            });
-            if (error) throw error;
+            await posliKod(email);
             $("#login-form").hidden = true;
-            const hotovo = $("#login-sent");
-            hotovo.textContent = `Hotovo! Poslala jsem odkaz na ${email}. Otevři e-mail a klikni na odkaz (koukni i do spamu).`;
-            hotovo.hidden = false;
+            $("#code-form").hidden = false;
+            $("#login-code").value = "";
+            $("#code-error").textContent = "";
+            $("#login-code").focus();
         } catch (err) {
             const kod = String((err && (err.code || err.message)) || "");
             if (/email_address_invalid|invalid/i.test(kod)) {
@@ -1143,8 +1138,51 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (err && err.status >= 500) {
                 chyba.textContent = "E-mail se teď nepodařilo odeslat – chyba je u nás, ne u tebe. Zkus to prosím později.";
             } else {
-                chyba.textContent = "Odkaz se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
+                chyba.textContent = "Kód se nepovedlo poslat. Zkontroluj připojení a zkus to znovu.";
             }
+        } finally {
+            tlacitko.disabled = false;
+        }
+    });
+
+    // Pošle kód do e-mailu (bez odkazu – v poště nic nevaruje a jde to i z mobilu do počítače)
+    async function posliKod(email) {
+        const sb = await supabase();
+        if (!cloud.posloucha) { cloud.posloucha = true; await spustUcet(); }
+        const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+        if (error) throw error;
+        cloud.email = email;
+        $("#login-sent").textContent = `Poslala jsem ti kód na ${email}. Opiš ho sem (koukni i do spamu). Platí 1 hodinu.`;
+    }
+
+    $("#code-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const input = $("#login-code");
+        const kod = input.value.replace(/\s/g, "");
+        const chyba = $("#code-error");
+        if (!/^\d{6,8}$/.test(kod)) {
+            chyba.textContent = "Kód má 6 číslic – opiš ho z e-mailu.";
+            input.setAttribute("aria-invalid", "true");
+            input.focus();
+            return;
+        }
+        const tlacitko = e.target.querySelector("button[type='submit']");
+        tlacitko.disabled = true;
+        try {
+            const { error } = await cloud.sb.auth.verifyOtp({ email: cloud.email, token: kod, type: "email" });
+            if (error) throw error;
+            // přihlášení dokončí posluchač onAuthStateChange (načte/uloží data)
+            chyba.textContent = "";
+            input.setAttribute("aria-invalid", "false");
+            $("#code-form").hidden = true;
+            $("#login-form").hidden = false;
+            toast("Jsi přihlášený/á ☁️");
+        } catch (err) {
+            chyba.textContent = /expired|invalid|otp/i.test(String((err && (err.code || err.message)) || ""))
+                ? "Kód nesedí nebo už vypršel. Zkontroluj ho, případně si pošli nový."
+                : "Přihlášení se nepovedlo. Zkontroluj připojení a zkus to znovu.";
+            input.setAttribute("aria-invalid", "true");
+            input.focus();
         } finally {
             tlacitko.disabled = false;
         }
@@ -1166,7 +1204,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // po odhlášení / smazání zase ukázat formulář na přihlášení
-        const znovuFormular = () => { $("#login-form").hidden = false; $("#login-sent").hidden = true; };
+        const znovuFormular = () => { $("#login-form").hidden = false; $("#code-form").hidden = true; };
+
+        if (action === "account-change-email") {
+            znovuFormular();
+            $("#login-email").focus();
+        }
+
+        if (action === "account-resend" && cloud.email) {
+            btn.disabled = true;
+            try {
+                await posliKod(cloud.email);
+                toast("Nový kód je na cestě ✉️");
+            } catch (err) {
+                $("#code-error").textContent = /rate|limit|security purposes/i.test(String((err && (err.code || err.message)) || ""))
+                    ? "Nový kód jde poslat až za chvíli (asi za minutu)."
+                    : "Kód se nepovedlo poslat. Zkus to prosím za chvíli.";
+            } finally {
+                btn.disabled = false;
+            }
+        }
 
         if (action === "account-logout") {
             await cloud.sb.auth.signOut();

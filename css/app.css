@@ -838,6 +838,9 @@ body {
 .login-row input { flex: 1 1 14rem; min-height: 48px; font: inherit; padding: 10px 14px; border: 2px solid var(--ink); border-radius: 12px; background: #fbf4e2; }
 .login-sent { background: #d3e3c9; border: 2px dashed var(--ink); border-radius: 12px; padding: 12px 14px; font-weight: 600; }
 .sync-status { font-size: .9rem; color: var(--text-light); }
+#login-code { font-size: 1.4rem; letter-spacing: .3em; font-weight: 800; max-width: 12rem; }
+.login-again { font-size: .9rem; margin: 8px 0 0; }
+.link-btn { background: none; border: 0; padding: 8px 2px; font: inherit; color: var(--primary); text-decoration: underline; cursor: pointer; min-height: 44px; }
 .account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .account-delete { color: var(--error, #b3261e); }
 .privacy { margin-top: 14px; font-size: .92rem; }
