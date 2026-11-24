@@ -874,6 +874,10 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .stamps-howto ol { list-style: none; padding: 0; margin: 0 0 8px; display: grid; gap: 6px; font-size: .95rem; }
 .stamps-goals { font-size: .9rem; color: var(--text-light); margin: 0 0 10px; }
 .stamp-hint { font-size: .95rem; font-weight: 600; margin: 0 0 10px; }
+
+/* Souhrn dne: tmavě zelený s bílým písmem (pozdější pravidlo pro barevné karty ho přebarvilo na světlé → bílé písmo nebylo vidět) */
+.card.day-total { background-color: var(--primary); color: #fff; }
+.card.day-total .day-protein { color: #fff; }
 .privacy { margin-top: 14px; font-size: .92rem; }
 .privacy summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
 .privacy p { margin: 0 0 8px; }
