@@ -10,7 +10,7 @@
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <!-- ?v= = číslo verze: po každé úpravě ho změň, ať si prohlížeč stáhne nové soubory místo staré kopie -->
-    <link rel="stylesheet" href="css/app.css?v=2026-11-24j">
+    <link rel="stylesheet" href="css/app.css?v=2026-11-24k">
 </head>
 <body>
     <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
@@ -206,8 +206,8 @@
             </section>
 
             <!-- rozklikávací sekce: s vyplněným profilem jsou údaje sbalené, ať se nemusí listovat -->
-            <details class="card sekce" id="sekce-udaje" open>
-                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-kcal"/></svg><span class="sekce-nazev">Spočítej si příjem<small class="sekce-hint">věk, váha, cíl a jídelníček – změníš kdykoli</small></span></summary>
+            <details class="card sekce sekce--udaje" id="sekce-udaje" open>
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-kcal"/></svg><span class="sekce-nazev">Spočítej si příjem<small class="sekce-hint" id="hint-udaje">věk, váha, cíl a jídelníček – změníš kdykoli</small></span></summary>
             <form id="profile-form" novalidate>
                 <fieldset class="field" id="avatar-fieldset">
                     <legend>Kdo budeš v appce?</legend>
@@ -283,8 +283,8 @@
             </form>
             </details>
 
-            <details id="profile-results" class="card results sekce" hidden aria-live="polite">
-                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-kcal"/></svg><span>Tvoje čísla</span><small class="sekce-hint">metabolismus, výdej, cíl</small></summary>
+            <details id="profile-results" class="card results sekce sekce--cisla" hidden aria-live="polite">
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-kcal"/></svg><span class="sekce-nazev">Tvoje čísla<small class="sekce-hint" id="hint-cisla">metabolismus, výdej, cíl</small></span></summary>
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-label">Bazální metabolismus</span>
@@ -312,9 +312,9 @@
             </details>
 
             <!-- Moje kuchařka: razítka za uvařené recepty, splněné dny, týdny a malé změny. Nic se nemaže. -->
-            <details class="card cookbook sekce" id="sekce-kucharka" open>
+            <details class="card cookbook sekce sekce--kucharka" id="sekce-kucharka" open>
                 <summary class="sekce-summary cookbook-head">
-                    <svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg><span id="cookbook-title">Moje kuchařka</span>
+                    <svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg><span class="sekce-nazev" id="cookbook-title">Moje kuchařka<small class="sekce-hint" id="hint-kucharka">razítka za uvařená jídla</small></span>
                     <span class="cookbook-count" id="cookbook-count">0 razítek</span>
                 </summary>
                 <div class="cookbook-tecka">
@@ -377,8 +377,8 @@
             </dialog>
 
             <!-- Účet (nepovinný): uloží data do Supabase (EU), aby byla na všech zařízeních. Bez účtu appka funguje dál. -->
-            <details class="card account sekce" id="account">
-                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-ucet"/></svg><span id="account-title">Účet</span><small class="sekce-hint" id="account-hint">přihlášení, data na všech zařízeních</small></summary>
+            <details class="card account sekce sekce--ucet" id="account">
+                <summary class="sekce-summary"><svg class="title-icon" aria-hidden="true"><use href="#i-ucet"/></svg><span class="sekce-nazev" id="account-title">Účet<small class="sekce-hint" id="account-hint">přihlášení, data na všech zařízeních</small></span></summary>
 
                 <div id="account-out">
                     <p class="account-lead">Appka funguje i bez účtu. <strong>S účtem navíc:</strong></p>
@@ -634,7 +634,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <script src="js/data.js?v=2026-11-24j"></script>
-    <script src="js/app.js?v=2026-11-24j"></script>
+    <script src="js/data.js?v=2026-11-24k"></script>
+    <script src="js/app.js?v=2026-11-24k"></script>
 </body>
 </html>

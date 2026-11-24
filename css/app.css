@@ -1043,6 +1043,27 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .sekce > .sekce-summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; border-radius: 8px; }
 @media (max-width: 480px) { .sekce-hint { display: none; } }
 
+/* Sekce jako hravé „šuplíky“: vlastní barva, ikonka v barevném kolečku, střídavě nakřivo, nadzvednutí */
+.sekce { transition: transform .15s, box-shadow .15s; }
+.sekce:not([open]):hover { transform: translate(-2px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+.sekce > .sekce-summary .title-icon {
+    width: 50px; height: 50px; padding: 10px; border-radius: 50%; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+    background: var(--sekce-badge, #fff); color: var(--ink); transform: rotate(-6deg);
+}
+.sekce--udaje { background-color: #f4ddd6; --sekce-badge: #fff; }
+.sekce--cisla { background-color: #f6e7bf; --sekce-badge: #fff; }
+.sekce--kucharka { background-color: #e3ebdd; --sekce-badge: #fff; }
+.sekce--ucet { background-color: #dcebf2; --sekce-badge: #fff; }
+.sekce--udaje:not([open]) { transform: rotate(-0.5deg); }
+.sekce--kucharka:not([open]) { transform: rotate(0.4deg); }
+.sekce--udaje > .sekce-summary .title-icon { background: #e9a6a0; }
+.sekce--cisla > .sekce-summary .title-icon { background: #e9b949; }
+.sekce--kucharka > .sekce-summary .title-icon { background: #a9c58f; }
+.sekce--ucet > .sekce-summary .title-icon { background: #9cc8dc; }
+.sekce-nazev .sekce-hint { font-size: .85rem; color: #4a4036; }
+@media (max-width: 480px) { .sekce-nazev .sekce-hint { display: block; } }
+@media (prefers-reduced-motion: reduce) { .sekce, .sekce:not([open]) { transform: none !important; transition: none; } }
+
 /* Počet razítek: zelený štítek místo černého */
 .cookbook-count { background: var(--primary); color: #fff; border: 2px solid var(--ink); }
 .cookbook-head .cookbook-count { margin-left: auto; font-family: inherit; }

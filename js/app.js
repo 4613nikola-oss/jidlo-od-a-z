@@ -249,6 +249,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // u nadpisu ikonka není potřeba, když je hned pod ním karta s avatarem
         $("#profil-titul-ikona").style.display = p ? "none" : "";
         $("#tab-kcal").textContent = p ? fmt(calculate(p).target) + " kcal" : "";
+        // živé náhledy v nadpisech sbalených sekcí (ať je vidět, co uvnitř je, i bez rozkliknutí)
+        const cilNazvy = { hubnout: "Fit", udrzet: "Normal", nabrat: "Svaly" };
+        $("#hint-udaje").textContent = p
+            ? `${cilNazvy[p.goal] || "Normal"} · ${p.age} let · ${fmt(p.weight)} kg – klikni a uprav`
+            : "věk, váha, cíl a jídelníček – zabere minutu";
+        if (p) $("#hint-cisla").textContent = `cíl ${fmt(calculate(p).target)} kcal denně`;
+        const n = state.stamps.length;
+        $("#hint-kucharka").textContent = !muzeRazitka() ? "razítka sbíráš s účtem"
+            : n < 5 ? `ještě ${5 - n} a Tečka začne vařit`
+            : n < 15 ? `ještě ${15 - n} a Tečka bude slavit`
+            : n < 30 ? `ještě ${30 - n} a z Tečky je dort` : "Tečka je dort – paráda!";
+        $("#account-hint").textContent = cloud.user ? "Přihlášeno ✓ – data máš na všech zařízeních" : "Bez účtu – přihlas se a máš data všude";
         // výběr avatara: bez profilu je ve formuláři, s profilem pod tužkou v kartě Můj profil
         const avatarPole = $("#avatar-fieldset");
         const cil = p ? $("#me-avatar-panel") : $("#profile-form");
