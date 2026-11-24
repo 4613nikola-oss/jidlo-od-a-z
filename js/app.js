@@ -614,8 +614,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const cil = waterTarget(state.profile);
         const vypito = state.water[dnes()] || 0;
         $("#water-count").textContent = `${vypito} z ${cil} sklenic${vypito >= cil ? " ✓" : ""}`;
+        // každá sklenice je tlačítko: klik vyplní až po ni, klik na poslední plnou ji vyprázdní
         $("#water-glasses").innerHTML = Array.from({ length: Math.max(cil, vypito) }, (_, i) =>
-            `<span class="glass${i < vypito ? " is-full" : ""}"></span>`).join("");
+            `<button type="button" class="glass${i < vypito ? " is-full" : ""}" data-action="water-set" data-n="${i + 1 === vypito ? i : i + 1}"
+                aria-label="${i + 1 === vypito ? `Odebrat ${i + 1}. sklenici` : `Vypito ${i + 1} ${i === 0 ? "sklenice" : i < 4 ? "sklenice" : "sklenic"}`}"></button>`).join("");
     }
 
     /* ============ SPOLEČNÁ KARTA RECEPTU ============ */
@@ -888,15 +890,16 @@ document.addEventListener("DOMContentLoaded", function () {
             renderCookbook();
         }
 
-        if (action === "water-plus" || action === "water-minus") {
+        if (action === "water-plus" || action === "water-minus" || action === "water-set") {
             const den = dnes();
             const pred = state.water[den] || 0;
-            const ted = action === "water-plus" ? Math.min(pred + 1, 20) : Math.max(pred - 1, 0);
+            const ted = action === "water-set" ? Math.max(0, Math.min(Number(btn.dataset.n) || 0, 20))
+                : action === "water-plus" ? Math.min(pred + 1, 20) : Math.max(pred - 1, 0);
             // staré dny nepotřebujeme – drží se jen dnešek, ať úložiště neroste
             state.water = { [den]: ted };
             store.set("water", state.water);
             renderWater();
-            if (action === "water-plus" && state.profile && ted === waterTarget(state.profile)) toast("Dnešní pití splněné! 💧");
+            if (ted > pred && state.profile && ted >= waterTarget(state.profile) && pred < waterTarget(state.profile)) toast("Dnešní pití splněné! 💧");
         }
 
         if (action === "change-done") {

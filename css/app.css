@@ -827,6 +827,11 @@ body {
     background: linear-gradient(to top, #6fb3d2 0 0, transparent 0); transition: background .3s;
 }
 .glass.is-full { background: linear-gradient(to top, #6fb3d2 0 80%, transparent 80%); }
+/* sklenice jsou tlačítka: větší plocha na klik (min. 44 px) */
+button.glass { padding: 0; cursor: pointer; width: 34px; height: 44px; font: inherit; }
+button.glass:hover { background: linear-gradient(to top, #a9d3e6 0 80%, transparent 80%); }
+button.glass.is-full:hover { background: linear-gradient(to top, #4f98bb 0 80%, transparent 80%); }
+button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .water-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .water-note { font-size: .8rem; color: var(--text-light); margin: 10px 0 0; }
 @media (prefers-reduced-motion: reduce) { .glass { transition: none; } }
