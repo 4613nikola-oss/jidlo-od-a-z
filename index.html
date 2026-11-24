@@ -10,7 +10,7 @@
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Bangers&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
     <!-- ?v= = číslo verze: po každé úpravě ho změň, ať si prohlížeč stáhne nové soubory místo staré kopie -->
-    <link rel="stylesheet" href="css/app.css?v=2026-11-24k">
+    <link rel="stylesheet" href="css/app.css?v=2026-11-24l">
 </head>
 <body>
     <!-- Ikonky, avatary a nová Tečka (fáze B) – stejné jako na webu -->
@@ -472,10 +472,11 @@
 
         <!-- 2) MŮJ DEN -->
         <section class="panel" id="panel-den" hidden>
-            <div class="day-head">
-                <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-den"/></svg>Můj den</h1>
-                <!-- animace 3: Tečka se promění v dort (sladká tečka patří do plánu) -->
-                <svg class="morph" viewBox="0 0 200 200" aria-hidden="true">
+            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-den"/></svg>Můj den</h1>
+            <!-- komiksový pruh jako u ostatních záložek; Tečka se promění v dort (sladká tečka patří do plánu) -->
+            <div class="app-comic day-head" aria-hidden="false">
+                <p class="app-bubble">Plán na dnešek mám. A dort na konec? Ten patří do plánu taky.</p>
+                <svg class="morph app-comic-tecka" viewBox="0 0 200 200" aria-hidden="true">
                     <g class="morph-a"><use href="#t-nova-radost"/></g>
                     <g class="morph-b"><use href="#t-nova-dort"/></g>
                     <g class="morph-spark" fill="#bfa97f"><circle cx="30" cy="50" r="7"/><circle cx="172" cy="40" r="8"/><circle cx="182" cy="130" r="6"/><circle cx="22" cy="140" r="6"/></g>
@@ -634,7 +635,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <script src="js/data.js?v=2026-11-24k"></script>
-    <script src="js/app.js?v=2026-11-24k"></script>
+    <script src="js/data.js?v=2026-11-24l"></script>
+    <script src="js/app.js?v=2026-11-24l"></script>
 </body>
 </html>

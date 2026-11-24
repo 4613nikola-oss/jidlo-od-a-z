@@ -1083,9 +1083,9 @@ button.glass:focus-visible { outline: 3px solid var(--primary); outline-offset: 
 .btn--logout { background: #fff; color: #7a2335; border-color: #7a2335 !important; }
 .btn--logout:hover { background: #7a2335; color: #fff; }
 
-/* Můj den: dort vedle nadpisu a větší */
-.day-head { justify-content: flex-start; gap: 18px; }
-.day-head .morph { width: 120px; height: 120px; }
+/* Můj den: komiksový pruh jako u ostatních záložek (zelený), Tečka → dort vpravo */
+.app-comic.day-head { justify-content: flex-start; background-color: #d3e3c9; background-image: radial-gradient(rgba(61, 82, 51, 0.25) 22%, transparent 24%); }
+.app-comic.day-head .morph { width: 96px; height: 96px; }
 
 /* Správa účtu jako jasné rozklikávací tlačítko */
 .account-manage summary {
