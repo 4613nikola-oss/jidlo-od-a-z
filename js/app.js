@@ -237,11 +237,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const p = state.profile;
         $("#me-card").hidden = !p;
         $("#profil-comic").hidden = !!p;
+        // záložka Profil a nadpis: tvůj avatar místo obecného panáčka, v záložce i dnešní kcal
+        const ikona = p ? "#" + (p.avatar || "t-nova") : "#i-profil";
+        ["#tab-profil-ikona", "#profil-titul-ikona"].forEach((sel) => {
+            const svg = $(sel);
+            svg.querySelector("use").setAttribute("href", ikona);
+            svg.classList.toggle("is-avatar", !!p);
+        });
+        $("#tab-kcal").textContent = p ? fmt(calculate(p).target) + " kcal" : "";
         if (!p) return;
         $("#me-avatar").setAttribute("href", "#" + (p.avatar || "t-nova"));
         $("#me-kcal").textContent = "Dnes: " + fmt(calculate(p).target) + " kcal";
         const status = $("#me-status");
-        status.textContent = cloud.user ? "☁️ Přihlášeno – ukládá se do účtu" : "📱 Bez účtu – data jen v tomhle zařízení · Přihlásit";
+        status.innerHTML = cloud.user ? `<svg class="inline-icon" aria-hidden="true"><use href="#i-ucet"/></svg> Přihlášeno – ukládá se do účtu` : `<svg class="inline-icon" aria-hidden="true"><use href="#i-zarizeni"/></svg> Bez účtu – data jen v tomhle zařízení · Přihlásit`;
         status.classList.toggle("is-online", !!cloud.user);
     }
 
@@ -378,11 +386,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const daySum = (den) => den.jidla.reduce((a, j) => a + (j.pick ? j.pick.recipe.kcal * j.pick.porce : 0), 0);
 
+    // Odkaz na recept na webu: na nové kartě (appka zůstane otevřená) a web pozná, že jde z appky
+    const odkazReceptu = (r) => r.odkaz + (r.odkaz.includes("?") ? "&" : "?") + "z=appka";
+    const odkazAttr = (r) => `href="${esc(odkazReceptu(r))}" target="_blank" rel="noopener"`;
+    // Kulatá fotka receptu z webu (člověk jí i očima); bez fotky ikonka kategorie
+    const fotoReceptu = (r, cls) => r.obrazek
+        ? `<img class="${cls}" src="${esc(WEB_URL + "images/recepty/" + r.obrazek)}" alt="" loading="lazy" width="56" height="56">`
+        : `<span class="${cls} ${cls}--ikona" aria-hidden="true"><svg><use href="#i-${r.kategorie}"/></svg></span>`;
+
     function weekDaysHtml(t) {
         return weekPlan(t).map((den, d) => `<article class="card week-day${d % 2 ? " week-day--alt" : ""}">
                 <header class="meal-head"><h2>${den.nazevDne} <span class="week-date">${kratkeDatum(den.datum)}</span></h2><span class="meal-kcal">~ ${fmt(daySum(den))} kcal</span></header>
                 <ul class="week-meals">${den.jidla.map((j) => j.pick
-                    ? `<li><span class="week-meal">${j.meal.nazev}</span> <a href="${esc(j.pick.recipe.odkaz)}">${esc(j.pick.recipe.nazev)}</a>
+                    ? `<li class="week-item">${fotoReceptu(j.pick.recipe, "week-foto")}
+                        <span class="week-item-text">
+                            <span class="week-meal">${j.meal.nazev}</span>
+                            <a ${odkazAttr(j.pick.recipe)}>${esc(j.pick.recipe.nazev)}</a>
+                            <span class="mini-chips">
+                                <span class="mini-chip">~${fmt(j.pick.recipe.kcal * j.pick.porce)} kcal</span>
+                                <span class="mini-chip">${j.pick.recipe.cas} min</span>
+                                ${typeof j.pick.recipe.bilkoviny === "number" && j.pick.recipe.bilkoviny > 0 ? `<span class="mini-chip">${fmt(j.pick.recipe.bilkoviny * j.pick.porce)} g bílkovin</span>` : ""}
+                                ${j.pick.recipe.vege ? `<span class="mini-chip mini-chip--vege">vege</span>` : ""}
+                            </span>
+                        </span>
                         <button type="button" class="swap-btn" data-action="swap-plan" data-key="${j.key}" data-tip="Jiný recept" aria-label="Jiný recept: ${j.meal.nazev}, ${den.nazevDne}"><svg aria-hidden="true"><use href="#i-vymena"/></svg></button></li>`
                     : `<li><span class="week-meal">${j.meal.nazev}</span> <em>zatím bez receptu</em></li>`).join("")}</ul>
             </article>`).join("");
@@ -441,10 +467,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const tydenKey = () => dateKey(mondayOf(new Date()));
 
     const RAZITKA = {
-        recept: { ikona: "🍳", nazev: "Uvařený recept" },
-        den:    { ikona: "📅", nazev: "Splněný den" },
-        tyden:  { ikona: "🗓️", nazev: "Splněný týden" },
-        zmena:  { ikona: "🌱", nazev: "Malá změna" }
+        recept: { ikona: "i-vari", nazev: "Uvařený recept" },
+        den:    { ikona: "i-den", nazev: "Splněný den" },
+        tyden:  { ikona: "i-tyden", nazev: "Splněný týden" },
+        zmena:  { ikona: "i-zmena", nazev: "Malá změna" }
     };
 
     // 1 malá změna týdně – střídají se dokola
@@ -513,7 +539,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderCookbook() {
         const n = state.stamps.length;
         const zamceno = !muzeRazitka();
-        $("#cookbook-count").textContent = zamceno ? "🔒 s účtem" : razitekText(n);
+        $("#cookbook-count").innerHTML = zamceno ? `<svg class="inline-icon" aria-hidden="true"><use href="#i-zamek"/></svg> s účtem` : razitekText(n);
+        $("#cookbook-count").classList.toggle("is-locked", zamceno);
         $("#stamps").hidden = zamceno;
         $("#cookbook-login").hidden = !zamceno;
         const img = $("#cookbook-img");
@@ -535,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const r = RAZITKA[s.typ] || RAZITKA.recept;
             const datum = s.datum.split("-").reverse().map(Number).slice(0, 2).join(". ") + ".";
             const popis = `${r.nazev}${s.popis && s.typ === "recept" ? ": " + s.popis : ""}, ${datum}`;
-            return `<li class="stamp stamp--${s.typ}" title="${esc(popis)}"><span aria-hidden="true">${r.ikona}</span><span class="sr-only">${esc(popis)}</span></li>`;
+            return `<li class="stamp stamp--${s.typ}" title="${esc(popis)}"><svg aria-hidden="true"><use href="#${r.ikona}"/></svg><span class="sr-only">${esc(popis)}</span></li>`;
         }).join("");
     }
 
@@ -546,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (card.hidden) return;
         $("#change-text").textContent = zmenaTydne();
         $("#change-actions").innerHTML = maRazitko("z-" + tyden)
-            ? `<p class="change-done">✓ Splněno – razítko 🌱 máš v kuchařce.</p>`
+            ? `<p class="change-done">✓ Splněno – razítko máš v kuchařce.</p>`
             : `<button type="button" class="btn btn--primary btn--small" data-action="change-done">Splněno ✓</button>
                <button type="button" class="btn btn--ghost btn--small" data-action="change-skip">Tento týden ne</button>`;
     }
@@ -567,8 +594,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let bilkoviny = 0, bezUdaje = false;
         // nápověda k razítkům přímo nad jídly
         $("#stamp-hint").textContent = muzeRazitka()
-            ? "🍳 Uvařeno? Klikni u jídla na „Mám uvařeno“ a dostaneš razítko do Moje kuchařky (v Profilu)."
-            : "🍳 S účtem dostaneš za každé uvařené jídlo razítko do Moje kuchařky (v Profilu).";
+            ? "Uvařeno? Klikni u jídla na „Mám uvařeno“ a dostaneš razítko do Moje kuchařky (v Profilu)."
+            : "S účtem dostaneš za každé uvařené jídlo razítko do Moje kuchařky (v Profilu).";
 
         $("#day-meals").innerHTML = plan.map(({ meal, mealTarget, pick }) => {
             if (!pick) {
@@ -589,12 +616,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h2>${meal.nazev}</h2>
                     <span class="meal-kcal">cíl ~ ${fmt(mealTarget)} kcal</span>
                 </header>
-                <a class="meal-recipe" href="${esc(r.odkaz)}">${esc(r.nazev)}</a>
-                <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal${typeof r.bilkoviny === "number" ? ` · 💪 ${fmt(r.bilkoviny * pick.porce)} g bílkovin` : ""} · ${r.cas} min</p>
+                <div class="meal-main">
+                    ${fotoReceptu(r, "meal-foto")}
+                    <a class="meal-recipe" ${odkazAttr(r)}>${esc(r.nazev)}</a>
+                </div>
+                <p class="meal-meta">${porceText} · ${fmt(kcal)} kcal${typeof r.bilkoviny === "number" ? ` · ${fmt(r.bilkoviny * pick.porce)} g bílkovin` : ""} · ${r.cas} min</p>
                 <div class="meal-actions">
                     ${(() => {
                         const uvareno = maRazitko(`r-${dnes()}-${meal.id}`);
-                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}">${uvareno ? "✓ Uvařeno" : "🍳 Mám uvařeno"}</button>`;
+                        return `<button type="button" class="btn btn--small cooked-btn${uvareno ? " is-on" : ""}" data-action="cooked" data-meal="${meal.id}" data-name="${esc(r.nazev)}" aria-pressed="${uvareno}"><svg class="inline-icon" aria-hidden="true"><use href="#i-vari"/></svg> ${uvareno ? "Uvařeno ✓" : "Mám uvařeno"}</button>`;
                     })()}
                     <button type="button" class="btn btn--ghost btn--small" data-action="swap" data-meal="${meal.id}">Jiný recept</button>
                     <button type="button" class="btn btn--ghost btn--small" data-action="shop-recipe" data-id="${r.id}">Na nákup</button>
@@ -605,7 +635,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#day-sum").textContent = fmt(sum);
         $("#day-protein").textContent = bezUdaje || !plan.some((p) => p.pick)
             ? ""
-            : `💪 Bílkoviny ~${fmt(bilkoviny)} z ${fmt(proteinTarget(state.profile))} g (orientačně)`;
+            : `Bílkoviny ~${fmt(bilkoviny)} z ${fmt(proteinTarget(state.profile))} g (orientačně)`;
         renderWater();
     }
 
@@ -629,14 +659,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 <span class="badge badge--${r.kategorie}">${KATEGORIE[r.kategorie]}</span>
                 <span class="recipe-kcal">${r.kcal ? fmt(r.kcal) + " kcal / porce" : "kcal doplníme"}</span>
             </div>
-            <h2 class="recipe-title"><a href="${esc(r.odkaz)}">${esc(r.nazev)}</a>
+            ${r.obrazek ? `<img class="recipe-foto" src="${esc(WEB_URL + "images/recepty/" + r.obrazek)}" alt="" loading="lazy">` : ""}
+            <h2 class="recipe-title"><a ${odkazAttr(r)}>${esc(r.nazev)}</a>
                 <button type="button" class="fav-btn${state.fav.includes(r.id) ? " is-fav" : ""}" data-action="fav" data-id="${r.id}"
                     aria-pressed="${state.fav.includes(r.id)}" aria-label="${state.fav.includes(r.id) ? "Odebrat z oblíbených" : "Přidat do oblíbených"}: ${esc(r.nazev)}">
                     <svg aria-hidden="true"><use href="#i-oblibene"/></svg></button></h2>
-            <p class="recipe-meta">${r.cas} min${typeof r.bilkoviny === "number" && r.bilkoviny > 0 ? ` · 💪 ${r.bilkoviny} g bílkovin` : ""}${r.vege ? " · 🥕 vege" : ""} · ${tags}</p>
+            <p class="recipe-meta">${r.cas} min${typeof r.bilkoviny === "number" && r.bilkoviny > 0 ? ` · ${r.bilkoviny} g bílkovin` : ""}${r.vege ? " · vege" : ""} · ${tags}</p>
             ${extra || ""}
             <div class="recipe-actions">
-                <a class="btn btn--ghost btn--small" href="${esc(r.odkaz)}">Otevřít recept</a>
+                <a class="btn btn--ghost btn--small" ${odkazAttr(r)}>Otevřít recept ↗</a>
                 <button type="button" class="btn btn--ghost btn--small" data-action="shop-recipe" data-id="${r.id}">Na nákup</button>
             </div>
         </article>`;
@@ -872,7 +903,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (action === "go-profil") openTab("profil");
 
         if (action === "cooked" && state.profile && !muzeRazitka()) {
-            pozviKUctu("Razítka do kuchařky sbíráš s účtem – stačí e-mail, žádné heslo 🍳");
+            pozviKUctu("Razítka do kuchařky sbíráš s účtem – stačí e-mail, žádné heslo");
         } else if (action === "cooked" && state.profile) {
             const klic = `r-${dnes()}-${btn.dataset.meal}`;
             if (maRazitko(klic)) {
@@ -882,9 +913,9 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 pridejRazitko("recept", klic, btn.dataset.name);
                 const novy = zkontrolujDenATyden();
-                toast(novy === "tyden" ? "Týden splněný! 🗓️ Velké razítko do kuchařky"
-                    : novy === "den" ? "Celý den splněný! 📅 Razítko navíc"
-                    : "Razítko do kuchařky! 🍳");
+                toast(novy === "tyden" ? "Týden splněný! Velké razítko do kuchařky"
+                    : novy === "den" ? "Celý den splněný! Razítko navíc"
+                    : "Razítko do kuchařky!");
             }
             renderDay();
             renderCookbook();
@@ -899,12 +930,12 @@ document.addEventListener("DOMContentLoaded", function () {
             state.water = { [den]: ted };
             store.set("water", state.water);
             renderWater();
-            if (ted > pred && state.profile && ted >= waterTarget(state.profile) && pred < waterTarget(state.profile)) toast("Dnešní pití splněné! 💧");
+            if (ted > pred && state.profile && ted >= waterTarget(state.profile) && pred < waterTarget(state.profile)) toast("Dnešní pití splněné!");
         }
 
         if (action === "change-done") {
             pridejRazitko("zmena", "z-" + tydenKey(), zmenaTydne());
-            toast("Paráda! 🌱 Razítko za malou změnu");
+            toast("Paráda! Razítko za malou změnu");
             renderChange();
             renderCookbook();
         }
@@ -1091,7 +1122,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!row) {
             // nový účet: vezmeme, co je v zařízení
             await ulozDoUctu();
-            if (maData(mistni)) toast("Data z tohoto zařízení jsou uložená v účtu ☁️");
+            if (maData(mistni)) toast("Data z tohoto zařízení jsou uložená v účtu");
             return;
         }
         if (stejne(row.data, mistni)) { oznacZarizeni(); syncText("Uloženo v účtu ✓"); return; }
@@ -1101,7 +1132,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const volba = await zeptejSeNaData();
             oznacZarizeni();
             if (volba === "ucet") pouzijData(row.data);
-            else { await ulozDoUctu(); toast("Data z tohoto zařízení jsou uložená v účtu ☁️"); }
+            else { await ulozDoUctu(); toast("Data z tohoto zařízení jsou uložená v účtu"); }
             return;
         }
         // běžné otevření appky: novější vyhrává
@@ -1209,7 +1240,7 @@ document.addEventListener("DOMContentLoaded", function () {
             input.setAttribute("aria-invalid", "false");
             $("#code-form").hidden = true;
             $("#login-form").hidden = false;
-            toast("Jsi přihlášený/á ☁️");
+            toast("Jsi přihlášený/á");
         } catch (err) {
             chyba.textContent = /expired|invalid|otp/i.test(String((err && (err.code || err.message)) || ""))
                 ? "Kód nesedí nebo už vypršel. Zkontroluj ho, případně si pošli nový."
@@ -1248,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btn.disabled = true;
             try {
                 await posliKod(cloud.email);
-                toast("Nový kód je na cestě ✉️");
+                toast("Nový kód je na cestě");
             } catch (err) {
                 $("#code-error").textContent = /rate|limit|security purposes/i.test(String((err && (err.code || err.message)) || ""))
                     ? "Nový kód jde poslat až za chvíli (asi za minutu)."

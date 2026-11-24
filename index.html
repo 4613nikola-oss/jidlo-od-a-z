@@ -28,6 +28,14 @@
     <symbol id="i-profil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="9" r="4"/><path d="M3.5 21c1.4-4 4.2-6 7.5-6s6.1 2 7.5 6"/></g><use href="#listek"/></symbol>
     <!-- výměna receptu: dvě šipky do kruhu, tenká linka jako ostatní ikonky -->
     <symbol id="i-vymena" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 8.5A7.5 7.5 0 0 0 5.4 7.2"/><path d="M5 3.5v4h4"/><path d="M5 15.5a7.5 7.5 0 0 0 13.6 1.3"/><path d="M19 20.5v-4h-4"/></g></symbol>
+    <!-- další ikonky v tenké lince (místo emoji) -->
+    <symbol id="i-ucet" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .4-8 6 6 0 0 0-11.6-1.2A4.6 4.6 0 0 0 7 18.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-zarizeni" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.8 18h2.4"/></g></symbol>
+    <symbol id="i-voda" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.2 4.2 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.8-6.8 6-11z"/><path d="M9.4 14.6a2.6 2.6 0 0 0 2.6 2.6"/></g></symbol>
+    <symbol id="i-bilkoviny" viewBox="0 0 24 24"><path d="M2.5 9.5v5M5.5 7v10M18.5 7v10M21.5 9.5v5M5.5 12h13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+    <symbol id="i-zmena" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-8.5"/><path d="M12 13c0-4-3-6.5-7.5-6.5 0 4 3 6.5 7.5 6.5z"/><path d="M12 11c0-3.6 2.6-6.2 7-6.2 0 3.6-2.6 6.2-7 6.2z" fill="#5e7769" fill-opacity=".35"/></g></symbol>
+    <symbol id="i-bezmleka" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M8 21V9.5L9.8 6.5h4.4L16 9.5V21z"/><path d="M10 6.5V3h4v3.5M8 13.5h8"/></g><path d="M3.5 20.5 20.5 3.5" stroke="#a24e33" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-zamek" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 15v2.5"/></g></symbol>
     <symbol id="i-den" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="16" height="16" rx="2"/><path d="M3 10h16M7.5 3v4M14.5 3v4"/><circle cx="11" cy="15.5" r="1.6" fill="#a24e33" stroke="none"/></g><use href="#listek"/></symbol>
     <symbol id="i-recepty" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H17v-5"/><path d="M8 7.5h5M8 11h5"/></g><use href="#listek"/></symbol>
     <symbol id="i-oblibene" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 11 7.6 4.2 4.2 0 0 1 18.5 10c0 5.4-7.5 10-7.5 10z"/></g><use href="#listek"/></symbol>
@@ -108,7 +116,7 @@
 
     <!-- NAVIGACE MEZI SEKCEMI (na mobilu dole) -->
     <nav class="tabbar" aria-label="Sekce aplikace">
-        <button class="tab is-active" data-tab="profil" aria-current="page"><svg class="tab-icon" aria-hidden="true"><use href="#i-profil"/></svg> Profil</button>
+        <button class="tab is-active" data-tab="profil" aria-current="page"><svg class="tab-icon" id="tab-profil-ikona" aria-hidden="true"><use href="#i-profil"/></svg> <span class="tab-profil-text">Profil<small class="tab-kcal" id="tab-kcal"></small></span></button>
         <button class="tab" data-tab="den"><svg class="tab-icon" aria-hidden="true"><use href="#i-den"/></svg> Můj den</button>
         <button class="tab" data-tab="lednicka"><svg class="tab-icon" aria-hidden="true"><use href="#i-lednicka"/></svg> Lednička</button>
         <button class="tab" data-tab="recepty"><svg class="tab-icon" aria-hidden="true"><use href="#i-recepty"/></svg> Recepty</button>
@@ -119,7 +127,7 @@
 
         <!-- 1) PROFIL A KALKULAČKA -->
         <section class="panel" id="panel-profil">
-            <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-profil"/></svg>Kolik energie potřebuješ?</h1>
+            <h1 class="panel-title"><svg class="title-icon" id="profil-titul-ikona" aria-hidden="true"><use href="#i-profil"/></svg>Kolik energie potřebuješ?</h1>
             <!-- Můj profil: avatar, dnešní cíl a stav účtu (ukáže se, jakmile je profil spočítaný) -->
             <section class="card me-card" id="me-card" aria-label="Můj profil" hidden>
                 <svg class="me-avatar" aria-hidden="true"><use id="me-avatar" href="#t-nova"/></svg>
@@ -130,7 +138,7 @@
                 </div>
             </section>
             <div class="app-comic" id="profil-comic" aria-hidden="false"><p class="app-bubble">Počítání nech na mně. Ty si dej oběd.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova"/></svg></div>
-            <p class="panel-lead">Vyplň pár údajů a appka ti spočítá denní příjem podle tvého cíle. Bez účtu zůstávají údaje jen v tvém prohlížeči.</p>
+            <p class="panel-lead">Vyplň pár údajů a appka ti spočítá <strong>denní příjem podle tvého cíle</strong>. Bez účtu zůstávají údaje <strong>jen v tvém prohlížeči</strong>.</p>
 
             <!-- Průvodce prvním spuštěním: 3 kroky, zmizí po „Jdeme na to“ -->
             <section id="guide" class="card guide" hidden aria-labelledby="guide-title">
@@ -196,9 +204,9 @@
                 <fieldset class="field">
                     <legend>Jídelníček <span class="legend-hint">(nepovinné)</span></legend>
                     <div class="diet-row">
-                        <label><input type="checkbox" name="diet" value="vege"> 🥕 Jím vegetariánsky</label>
-                        <label><input type="checkbox" name="diet" value="bezlepku"> Bez lepku</label>
-                        <label><input type="checkbox" name="diet" value="bezmleka"> Bez mléka</label>
+                        <label><input type="checkbox" name="diet" value="vege"> <svg class="inline-icon" aria-hidden="true"><use href="#i-vege"/></svg> Jím vegetariánsky</label>
+                        <label><input type="checkbox" name="diet" value="bezlepku"> <svg class="inline-icon" aria-hidden="true"><use href="#i-bezlepku"/></svg> Bez lepku</label>
+                        <label><input type="checkbox" name="diet" value="bezmleka"> <svg class="inline-icon" aria-hidden="true"><use href="#i-bezmleka"/></svg> Bez mléka</label>
                     </div>
                     <p class="field-hint">Plán pak navrhne jen jídla, která ti sedí. Při alergii vždy zkontroluj složení receptu.</p>
                 </fieldset>
@@ -248,7 +256,7 @@
             <!-- Moje kuchařka: razítka za uvařené recepty, splněné dny, týdny a malé změny. Nic se nemaže. -->
             <section class="card cookbook" aria-labelledby="cookbook-title">
                 <div class="cookbook-head">
-                    <h2 class="card-title" id="cookbook-title">📖 Moje kuchařka</h2>
+                    <h2 class="card-title" id="cookbook-title"><svg class="title-icon" aria-hidden="true"><use href="#i-recepty"/></svg>Moje kuchařka</h2>
                     <span class="cookbook-count" id="cookbook-count">0 razítek</span>
                 </div>
                 <div class="cookbook-tecka">
@@ -262,14 +270,39 @@
                 <ul class="stamps" id="stamps" aria-label="Získaná razítka"></ul>
                 <!-- Jak sbírat razítka – aby bylo jasné, kde a za co -->
                 <div class="stamps-howto">
-                    <h3>Jak sbírat razítka</h3>
-                    <ol>
-                        <li><span aria-hidden="true">🍳</span> V <strong>Můj den</strong> u jídla klikni na <strong>„🍳 Mám uvařeno“</strong> – razítko za recept.</li>
-                        <li><span aria-hidden="true">📅</span> Uvaříš všechna jídla dne – razítko navíc.</li>
-                        <li><span aria-hidden="true">🗓️</span> Splníš aspoň 5 dní v týdnu – velké razítko.</li>
-                        <li><span aria-hidden="true">🌱</span> Splníš <strong>malou změnu týdne</strong> (zelená karta v Můj den) – razítko.</li>
+                    <h3>Jak sbírat razítka – ve 4 krocích</h3>
+                    <ol class="howto-steps">
+                        <li>
+                            <span class="howto-num" aria-hidden="true">1</span>
+                            <svg class="howto-icon" aria-hidden="true"><use href="#i-vari"/></svg>
+                            <span class="howto-text"><strong>Uvař jídlo z plánu</strong>V Můj den klikni u jídla na „Mám uvařeno“.</span>
+                            <span class="howto-odmena">+1 razítko</span>
+                        </li>
+                        <li>
+                            <span class="howto-num" aria-hidden="true">2</span>
+                            <svg class="howto-icon" aria-hidden="true"><use href="#i-den"/></svg>
+                            <span class="howto-text"><strong>Uvař celý den</strong>Všechna jídla jednoho dne.</span>
+                            <span class="howto-odmena">+1 navíc</span>
+                        </li>
+                        <li>
+                            <span class="howto-num" aria-hidden="true">3</span>
+                            <svg class="howto-icon" aria-hidden="true"><use href="#i-tyden"/></svg>
+                            <span class="howto-text"><strong>Vydrž týden</strong>Stačí 5 dní ze 7 – nikdo není dokonalý.</span>
+                            <span class="howto-odmena howto-odmena--velke">velké razítko</span>
+                        </li>
+                        <li>
+                            <span class="howto-num" aria-hidden="true">4</span>
+                            <svg class="howto-icon" aria-hidden="true"><use href="#i-zmena"/></svg>
+                            <span class="howto-text"><strong>Splň malou změnu týdne</strong>Zelená karta nahoře v Můj den.</span>
+                            <span class="howto-odmena">+1 razítko</span>
+                        </li>
                     </ol>
-                    <p class="stamps-goals">Tečka se proměňuje: 5 razítek = vaří, 15 = slaví, 30 = dort.</p>
+                    <p class="howto-goals-title">Tečka se za razítka proměňuje:</p>
+                    <ul class="howto-goals">
+                        <li><b>5</b> vaří</li>
+                        <li><b>15</b> slaví</li>
+                        <li><b>30</b> je z ní dort</li>
+                    </ul>
                     <button type="button" class="btn btn--primary btn--small" data-action="go-day">Jít do Můj den →</button>
                 </div>
             </section>
@@ -279,23 +312,28 @@
                 <h2 class="card-title" id="data-dialog-title">Která data chceš používat?</h2>
                 <p>V účtu už máš uložená data a v tomhle zařízení jsou jiná. Vyber, která platí:</p>
                 <div class="data-dialog-actions">
-                    <button type="button" class="btn btn--primary" id="data-from-account">☁️ Data z účtu <small>(doporučeno)</small></button>
-                    <button type="button" class="btn btn--ghost" id="data-from-device">📱 Data z tohoto zařízení</button>
+                    <button type="button" class="btn btn--primary" id="data-from-account"><svg class="inline-icon" aria-hidden="true"><use href="#i-ucet"/></svg> Data z účtu <small>(doporučeno)</small></button>
+                    <button type="button" class="btn btn--ghost" id="data-from-device"><svg class="inline-icon" aria-hidden="true"><use href="#i-zarizeni"/></svg> Data z tohoto zařízení</button>
                 </div>
                 <p class="field-hint">Data, která nevybereš, se nahradí. Ptám se jen jednou na každém zařízení.</p>
             </dialog>
 
             <!-- Účet (nepovinný): uloží data do Supabase (EU), aby byla na všech zařízeních. Bez účtu appka funguje dál. -->
             <section class="card account" id="account" aria-labelledby="account-title">
-                <h2 class="card-title" id="account-title">☁️ Účet</h2>
+                <h2 class="card-title" id="account-title"><svg class="title-icon" aria-hidden="true"><use href="#i-ucet"/></svg>Účet</h2>
 
                 <div id="account-out">
-                    <p>Appka funguje i bez účtu. S účtem máš profil, oblíbené, razítka i nákup <strong>na všech zařízeních</strong>.</p>
+                    <p class="account-lead">Appka funguje i bez účtu. <strong>S účtem navíc:</strong></p>
+                    <ul class="account-perks">
+                        <li><svg aria-hidden="true"><use href="#i-zarizeni"/></svg><span>Profil, plán a nákup <strong>na mobilu i v počítači</strong></span></li>
+                        <li><svg aria-hidden="true"><use href="#i-recepty"/></svg><span><strong>Moje kuchařka</strong> – sbíráš razítka a Tečka se proměňuje</span></li>
+                        <li><svg aria-hidden="true"><use href="#i-oblibene"/></svg><span>Oblíbené recepty se ti <strong>neztratí</strong></span></li>
+                    </ul>
                     <form id="login-form" class="login-form" novalidate>
                         <label for="login-email">Tvůj e-mail</label>
                         <div class="login-row">
                             <input type="email" id="login-email" autocomplete="email" inputmode="email" placeholder="jmeno@email.cz" required>
-                            <button type="submit" class="btn btn--primary">Poslat odkaz</button>
+                            <button type="submit" class="btn btn--primary">Poslat kód</button>
                         </div>
                         <p class="field-hint">Žádné heslo – pošlu ti e-mail s kódem, opíšeš ho sem a jsi přihlášený/á.</p>
                         <p class="field-error" id="login-error" role="alert"></p>
@@ -337,7 +375,7 @@
                 </div>
 
                 <details class="privacy">
-                    <summary>Ochrana soukromí</summary>
+                    <summary><svg class="inline-icon" aria-hidden="true"><use href="#i-zamek"/></svg> Ochrana soukromí – co ukládáme a proč</summary>
                     <p><strong>Bez účtu</strong> zůstávají všechna data jen v tomhle prohlížeči. Nikam se neposílají.</p>
                     <p><strong>S účtem</strong> se ukládá: e-mail, profil (věk, váha, výška, pohlaví, pohyb, cíl, jídelníček), avatar, oblíbené recepty, razítka, nákupní seznam a lednička. Pití po dnech se neukládá.</p>
                     <p><strong>Kde:</strong> u služby Supabase, na serverech v EU. Data slouží jen k tomu, aby ti appka fungovala na všech zařízeních. Neprodáváme je ani nesdílíme, žádná reklama.</p>
@@ -374,23 +412,31 @@
 
             <!-- MŮJ MĚSÍC: 4 týdny za sebou, nákup vždy po týdnech (čerstvé věci nevydrží měsíc) -->
             <div id="month-content" hidden>
-                <p class="panel-lead">Plán na 4 týdny dopředu. Nakupuj vždycky jen na jeden týden, ať se nic nezkazí. Jídlo vyměníš kulatým tlačítkem se šipkami.</p>
+                <ul class="panel-lead info-list">
+                    <li><svg aria-hidden="true"><use href="#i-tyden"/></svg><span><strong>Plán na 4 týdny dopředu</strong> – každý týden je jiný.</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-nakup"/></svg><span>Nakupuj <strong>vždycky jen na jeden týden</strong>, ať se nic nezkazí.</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-vymena"/></svg><span>Jídlo vyměníš <strong>kulatým tlačítkem se šipkami</strong>.</span></li>
+                </ul>
                 <p class="month-note" id="month-note" hidden>Receptů je zatím málo, takže se některá jídla opakují. Jak přibydou nové recepty na webu, měsíc bude pestřejší.</p>
                 <div id="month-weeks" class="month-list"></div>
             </div>
 
             <!-- MŮJ TÝDEN: obědy a večeře se opakují po 3 dnech (vaříš dopředu jeden základ) -->
             <div id="week-content" hidden>
-                <p class="panel-lead">Obědy a večeře vaříš dopředu, každý základ vystačí na 3 dny. Snídaně a svačiny se střídají. Jídlo vyměníš kulatým tlačítkem se šipkami.</p>
+                <ul class="panel-lead info-list">
+                    <li><svg aria-hidden="true"><use href="#i-vari"/></svg><span><strong>Obědy a večeře vaříš dopředu</strong> – jeden základ vystačí na 3 dny.</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-snidane"/></svg><span><strong>Snídaně a svačiny</strong> se každý den střídají.</span></li>
+                    <li><svg aria-hidden="true"><use href="#i-vymena"/></svg><span>Jídlo vyměníš <strong>kulatým tlačítkem se šipkami</strong>.</span></li>
+                </ul>
                 <div id="week-days" class="week-list"></div>
                 <button type="button" class="btn btn--primary btn--full" data-action="shop-week">Celý týden na nákup</button>
             </div>
 
             <div id="day-content" hidden>
-                <p class="panel-lead">Tvůj cíl je <strong><span id="day-target">0</span> kcal</strong>. Tady je návrh, jak ho rozdělit. Recept vyměníš tlačítkem „Jiný recept“.</p>
+                <p class="panel-lead">Tvůj cíl je <strong><span id="day-target">0</span> kcal</strong>. Tady je návrh, jak ho rozdělit. Recept vyměníš tlačítkem <strong>„Jiný recept“</strong>.</p>
                 <!-- 1 malá změna týdně: jeden drobný úkol, splnit = razítko, přeskočit bez výčitek -->
                 <section id="change-card" class="card change-card" hidden aria-labelledby="change-title">
-                    <p class="change-label" id="change-title">🌱 Malá změna tohoto týdne</p>
+                    <p class="change-label" id="change-title"><svg class="inline-icon" aria-hidden="true"><use href="#i-zmena"/></svg> Malá změna tohoto týdne</p>
                     <p class="change-text" id="change-text"></p>
                     <div class="change-actions" id="change-actions"></div>
                 </section>
@@ -405,7 +451,7 @@
                 <!-- Pitný režim: sklenice po 250 ml, cíl podle profilu (orientačně podle EFSA) -->
                 <section class="card water" aria-labelledby="water-title">
                     <div class="water-head">
-                        <h2 class="card-title" id="water-title">💧 Pití dnes</h2>
+                        <h2 class="card-title" id="water-title"><svg class="title-icon" aria-hidden="true"><use href="#i-voda"/></svg>Pití dnes</h2>
                         <span class="water-count" id="water-count" aria-live="polite"></span>
                     </div>
                     <div class="water-glasses" id="water-glasses" role="group" aria-label="Sklenice – klikni na sklenici"></div>
@@ -430,7 +476,7 @@
         <section class="panel" id="panel-lednicka" hidden>
             <h1 class="panel-title"><svg class="title-icon" aria-hidden="true"><use href="#i-lednicka"/></svg>Co mám v ledničce?</h1>
             <div class="app-comic" aria-hidden="false"><p class="app-bubble">Tři vajíčka a cuketa? To je večeře, ne prázdná lednice.</p><svg class="app-comic-tecka" aria-hidden="true"><use href="#t-nova-radost"/></svg></div>
-            <p class="panel-lead">Označ, co máš doma, a appka najde recepty, které z toho uvaříš.</p>
+            <p class="panel-lead">Označ, <strong>co máš doma</strong>, a appka najde recepty, které z toho uvaříš.</p>
 
             <div class="card">
                 <label for="fridge-search" class="sr-only">Hledat surovinu</label>
@@ -454,7 +500,7 @@
                 <button type="button" class="chip" data-filter="slane" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-slane"/></svg>Slané</button>
                 <button type="button" class="chip" data-filter="sladke" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-sladke"/></svg>Sladké</button>
                 <button type="button" class="chip" data-filter="napoje" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-napoje"/></svg>Nápoje</button>
-                <button type="button" class="chip" data-filter="vege" aria-pressed="false">🥕 Vege</button>
+                <button type="button" class="chip" data-filter="vege" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-vege"/></svg>Vege</button>
                 <button type="button" class="chip" data-filter="oblibene" aria-pressed="false"><svg class="title-icon" aria-hidden="true"><use href="#i-oblibene"/></svg>Oblíbené</button>
             </div>
             <label for="recipe-search" class="sr-only">Hledat recept</label>
